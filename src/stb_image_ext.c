@@ -31,18 +31,18 @@ void free_image(t_img_desc* img)
 
 void grey_scale(t_img_desc* tab)
 {
-    if (tab.comp == 3) {
+    if (tab->comp == 3) {
         int i = 0, j;
         int c = 0;
 
-        unsigned char* new_data = malloc(sizeof(char) * x  * y);
+        unsigned char* new_data = malloc(sizeof(char) * tab->x  * tab->y);
         if (new_data)
             exit(EXIT_FAILURE);
 
         while (j<tab->y) {
             j = 0;
             while(i<tab->x) {
-                c = coor(i,j);
+                c = coor(i,j, tab);
                 // save grey value in the new shorter array
                 new_data[i+ (tab->x)*j] = grey(tab->data[c],tab->data[c+1],tab->data[c+2]);
                 i++;
