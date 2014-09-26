@@ -28,3 +28,41 @@ void free_image(t_img_desc* img)
     free(img->data);
     *img = T_IMG_DESC_DEFAULT;
 }
+
+void grey_scale(t_img_desc* tab)
+{
+    if (tab.comp == 3) {
+        int i = 0, j;
+        int c = 0;
+
+        unsigned char* new_data = malloc(sizeof(char) * x  * y);
+        if (new_data)
+            exit(EXIT_FAILURE);
+
+        while (j<tab->y) {
+            j = 0;
+            while(i<tab->x) {
+                c = coor(i,j);
+                // save grey value in the new shorter array
+                new_data[i+ (tab->x)*j] = grey(tab->data[c],tab->data[c+1],tab->data[c+2]);
+                i++;
+            }
+            j++;
+        }
+
+        free(tab->data);
+        tab->data = new_data;
+        tab->comp = 1;
+    }
+}
+
+int coor(int i, int j, t_img_desc* img)
+{
+    //img->comp = number of pixels composants
+    return (img->comp)*(i+(img->x)*j);
+}
+
+char grey(char r, char g, char b)
+{
+    return (char)(0.299*r + 0.587*g + 0.144*b);
+}
