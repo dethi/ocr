@@ -3,7 +3,7 @@
 #include "main.h"
 #include "stb_image_ext.h"
 
-int main(__unused int argc, __unused char* argv[])
+int main()
 {
     t_img_desc img = load_image("test1.jpg", 1);
 

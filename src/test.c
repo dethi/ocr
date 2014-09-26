@@ -9,7 +9,7 @@
 
 int tests_run = 0;
 
-int main(__unused int argc, __unused char* argv[])
+int main()
 {
     printf("\nStart test...\n");
     PRINT_LINE;
