@@ -46,7 +46,7 @@ void grey_scale(t_img_desc* img)
     
         while(i < img->x) {
             c = coor(i,j, img);
-            // save grey value in the new shorter array
+            // save grey value in the array
             img->data[i + (img->x) * j] = grey(
                     img->data[c], img->data[c + 1], img->data[c + 2]);
             i++;
@@ -55,6 +55,7 @@ void grey_scale(t_img_desc* img)
         j++;
     }
     
+    // make the array shorter
     unsigned char *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
     if (!tmp) {
         free_image(img);
@@ -67,7 +68,6 @@ void grey_scale(t_img_desc* img)
 
 int coor(int i, int j, t_img_desc* img)
 {
-    //img->comp = number of pixels composants
     return (img->comp)*(i+(img->x)*j);
 }
 

@@ -52,7 +52,9 @@ void print_limits()
 char* all_tests()
 {
     mu_run_test(test_load_image);
+    PRINT_LINE;
     mu_run_test(test_greyscale);
+    PRINT_LINE;
     return 0;
 }
 
@@ -65,9 +67,9 @@ char* test_load_image()
         "test2.png",
         "test3.bmp",
     };
-
-    char* error = malloc(sizeof(char) * 50);
-
+    
+    char *error = malloc(sizeof(char) * 50);
+    
     for (int i = 0; i < 3; i++) {
         sprintf(error, "failed to load image %s", filename[i]);
         mu_assert(error, stbi_info(filename[i], &x, &y, &comp) == 1);
@@ -75,18 +77,40 @@ char* test_load_image()
         printf("%10s: %ix%i (%i)\n", filename[i], x, y, comp);
     }
 
+    free(error);
     return 0;
 }
 
 char* test_greyscale()
 {
-    t_img_desc *img = load_image("test1.jpg", 3);
-    grey_scale(img);
-    
-    int result = stbi_write_png("output/greyscale1.png", img->x, img->y, img->comp,
-            img->data, img->x);
-    mu_assert("failed to write greyscale1", result != 0);
+    t_img_desc *img;
 
-    free_image(img);
+    char filename[][50] = {
+        "greyscale1.jpg",
+        "greyscale2.jpg",
+        "greyscale3.jpg",
+        "greyscale4.png"
+    };
+
+    char *error = malloc(sizeof(char) * 150);
+    char *out = malloc(sizeof(char) * 100);
+
+    for (int i = 0; i < 4; i++) {
+        img = load_image(filename[i], 3);
+        grey_scale(img);
+
+        sprintf(out, "out_greyscale%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        int result = stbi_write_png(out, img->x, img->y, img->comp,
+                img->data, img->x);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
+        free_image(img);
+    }
+
+    free(error);
+    free(out);
     return 0;
 }
