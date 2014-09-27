@@ -10,7 +10,7 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
     .comp = 0
 };
 
-t_img_desc *load_image(char* filename, int comp)
+t_img_desc* load_image(char* filename, int comp)
 {
     t_img_desc *img = malloc(sizeof(t_img_desc));
     if (!img)
@@ -34,31 +34,35 @@ void free_image(t_img_desc* img)
     img = NULL;
 }
 
-void grey_scale(t_img_desc* tab)
+void grey_scale(t_img_desc* img)
 {
-    if (tab->comp == 3) {
-        int i = 0, j;
-        int c = 0;
+    if (img->comp != 3)
+        return;
 
-        unsigned char* new_data = malloc(sizeof(char) * tab->x  * tab->y);
-        if (!new_data)
-            exit(EXIT_FAILURE);
+    int i = 0, c = 0, j = 0;
 
-        while (j<tab->y) {
-            j = 0;
-            while(i<tab->x) {
-                c = coor(i,j, tab);
-                // save grey value in the new shorter array
-                new_data[i+ (tab->x)*j] = grey(tab->data[c],tab->data[c+1],tab->data[c+2]);
-                i++;
-            }
-            j++;
+    while (j < img->y) {
+        i = 0;
+    
+        while(i < img->x) {
+            c = coor(i,j, img);
+            // save grey value in the new shorter array
+            img->data[i + (img->x) * j] = grey(
+                    img->data[c], img->data[c + 1], img->data[c + 2]);
+            i++;
         }
-
-        free(tab->data);
-        tab->data = new_data;
-        tab->comp = 1;
+        
+        j++;
     }
+    
+    unsigned char *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
+    if (!tmp) {
+        free_image(img);
+        exit(EXIT_FAILURE);
+    }
+
+    img->data = tmp;
+    img->comp = 1;
 }
 
 int coor(int i, int j, t_img_desc* img)
@@ -69,5 +73,6 @@ int coor(int i, int j, t_img_desc* img)
 
 char grey(char r, char g, char b)
 {
-    return (char)(0.299*r + 0.587*g + 0.144*b);
+    return (char)(0.299 * r + 0.587 * g + 0.144 * b);
 }
+

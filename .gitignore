@@ -48,6 +48,7 @@ Makefile.in
 /config.status
 /ar-lib
 .deps/
+/test/output/
 Makefile
 ocr
 test

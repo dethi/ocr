@@ -4,6 +4,8 @@
 #include "test.h"
 #include "minunit.h"
 #include "stb_image.h"
+#include "stb_image_write.h"
+#include "stb_image_ext.h"
 
 #define PRINT_LINE printf("-----------------------------------\n")
 
@@ -50,6 +52,7 @@ void print_limits()
 char* all_tests()
 {
     mu_run_test(test_load_image);
+    mu_run_test(test_greyscale);
     return 0;
 }
 
@@ -72,5 +75,18 @@ char* test_load_image()
         printf("%10s: %ix%i (%i)\n", filename[i], x, y, comp);
     }
 
+    return 0;
+}
+
+char* test_greyscale()
+{
+    t_img_desc *img = load_image("test1.jpg", 3);
+    grey_scale(img);
+    
+    int result = stbi_write_png("output/greyscale1.png", img->x, img->y, img->comp,
+            img->data, img->x);
+    mu_assert("failed to write greyscale1", result != 0);
+
+    free_image(img);
     return 0;
 }
