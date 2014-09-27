@@ -41,7 +41,7 @@ void grey_scale(t_img_desc* tab)
         int c = 0;
 
         unsigned char* new_data = malloc(sizeof(char) * tab->x  * tab->y);
-        if (new_data)
+        if (!new_data)
             exit(EXIT_FAILURE);
 
         while (j<tab->y) {
