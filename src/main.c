@@ -5,12 +5,12 @@
 
 int main()
 {
-    t_img_desc img = load_image("test1.jpg", 1);
+    t_img_desc *img = load_image("test1.jpg", 1);
 
-    printf("Image: %ix%i\n", img.x, img.y);
+    printf("Image: %ix%i\n", img->x, img->y);
     printf("Comp: ");
 
-    switch (img.comp) {
+    switch (img->comp) {
     case 1:
         printf("grey\n");
         break;
@@ -25,6 +25,6 @@ int main()
         break;
     }
 
-    free_image(&img);
+    free_image(img);
     return EXIT_SUCCESS;
 }

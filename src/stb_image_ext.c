@@ -10,12 +10,16 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
     .comp = 0
 };
 
-t_img_desc load_image(char* filename, int comp)
+t_img_desc *load_image(char* filename, int comp)
 {
-    t_img_desc img = T_IMG_DESC_DEFAULT;
-    img.data = stbi_load(filename, &img.x, &img.y, &img.comp, comp);
+    t_img_desc *img = malloc(sizeof(t_img_desc));
+    if (!img)
+        exit(EXIT_FAILURE);
 
-    if (img.x == 0 || img.y == 0) {
+    *img = T_IMG_DESC_DEFAULT;
+    img->data = stbi_load(filename, &(img->x), &(img->y), &(img->comp), comp);
+
+    if (img->x == 0 || img->y == 0) {
         perror(stbi_failure_reason());
         exit(EXIT_FAILURE);
     }
@@ -26,7 +30,8 @@ t_img_desc load_image(char* filename, int comp)
 void free_image(t_img_desc* img)
 {
     free(img->data);
-    *img = T_IMG_DESC_DEFAULT;
+    free(img);
+    img = NULL;
 }
 
 void grey_scale(t_img_desc* tab)
