@@ -73,6 +73,6 @@ int coor(int i, int j, t_img_desc* img)
 
 char grey(char r, char g, char b)
 {
-    return (char)(0.299 * r + 0.587 * g + 0.144 * b);
+    return (char)(0.21 * r + 0.72 * g + 0.07 * b);
 }
 
