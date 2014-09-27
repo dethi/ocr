@@ -49,5 +49,5 @@ Makefile.in
 /ar-lib
 .deps/
 Makefile
-ocr
-test
+src/ocr
+src/test
