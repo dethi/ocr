@@ -6,6 +6,7 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_ext.h"
+#include "benchmark.h"
 
 #define PRINT_LINE printf("-----------------------------------\n")
 
@@ -55,6 +56,8 @@ char* all_tests()
     PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
+    mu_run_test(test_histogram);
+    PRINT_LINE;
     return 0;
 }
 
@@ -67,9 +70,9 @@ char* test_load_image()
         "test2.png",
         "test3.bmp",
     };
-    
+
     char *error = malloc(sizeof(char) * 50);
-    
+
     for (int i = 0; i < 3; i++) {
         sprintf(error, "failed to load image %s", filename[i]);
         mu_assert(error, stbi_info(filename[i], &x, &y, &comp) == 1);
@@ -112,5 +115,52 @@ char* test_greyscale()
 
     free(error);
     free(out);
+    return 0;
+}
+
+char* test_histogram()
+{
+    t_img_desc *img;
+
+    char filename[][50] = {
+        "greyscale1.jpg",
+        "greyscale2.jpg",
+        "greyscale3.jpg",
+        "greyscale4.png"
+    };
+
+    char *error = malloc(sizeof(char) * 150);
+
+    printf("Histogram bench:\n\n");
+
+    for (int i = 0; i < 4; i++) {
+        img = load_image(filename[i], 3);
+        grey_scale(img);
+
+        bench_start();
+        uint* h_fast = histogram_fast(img);
+        bench_end();
+
+        printf("%s:\n", filename[i]);
+        printf("\t");
+        bench_time();
+        printf("\t");
+        bench_write_mem(sizeof(char) * img->x * img->y * img->comp);
+
+        uint* h = histogram(img);
+        int n_error = 0;
+
+        for (int j = 0; j < 256; j++) {
+            if (h[i] != h_fast[i])
+                n_error++;
+        }
+
+        sprintf(error, "%d differences between the two histograms", n_error);
+        mu_assert(error, n_error == 0);
+
+        free(h_fast);
+        free_image(img);
+    }
+
     return 0;
 }

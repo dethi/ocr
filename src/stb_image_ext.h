@@ -1,8 +1,11 @@
 #ifndef HEADER_STB_IMAGE_EXT_H
 #define HEADER_STB_IMAGE_EXT_H
 
+typedef unsigned char uchar;
+typedef unsigned int uint;
+
 typedef struct {
-    unsigned char* data;
+    uchar* data;
     int x;
     int y;
     int comp;
@@ -10,8 +13,10 @@ typedef struct {
 
 t_img_desc* load_image(char* filename, int comp);
 void free_image(t_img_desc* img);
-void grey_scale(t_img_desc* tab);
 int coor(int i, int j, t_img_desc* img);
-char grey(char r, char g, char b);
+void grey_scale(t_img_desc* tab);
+uchar grey(uchar r, uchar g, uchar b);
+uint* histogram(t_img_desc* img);
+uint* histogram_fast(t_img_desc* img);
 
 #endif

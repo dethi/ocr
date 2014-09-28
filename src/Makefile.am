@@ -4,7 +4,7 @@ ocr_SOURCES = main.c main.h
 ocr_LDADD = lib_stb_image.a
 ocr_CFLAGS = -Wall -Wextra -Werror -std=c99
 
-test_SOURCES = test.c test.h minunit.h
+test_SOURCES = test.c test.h minunit.h benchmark.c benchmark.h
 test_LDADD = lib_stb_image.a
 test_CFLAGS = -Wall -Wextra -Werror -std=c99
 

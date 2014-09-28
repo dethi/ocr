@@ -34,6 +34,11 @@ void free_image(t_img_desc* img)
     img = NULL;
 }
 
+int coor(int i, int j, t_img_desc* img)
+{
+    return (img->comp)*(i+(img->x)*j);
+}
+
 void grey_scale(t_img_desc* img)
 {
     if (img->comp != 3)
@@ -43,7 +48,7 @@ void grey_scale(t_img_desc* img)
 
     while (j < img->y) {
         i = 0;
-    
+
         while(i < img->x) {
             c = coor(i,j, img);
             // save grey value in the array
@@ -51,12 +56,12 @@ void grey_scale(t_img_desc* img)
                     img->data[c], img->data[c + 1], img->data[c + 2]);
             i++;
         }
-        
+
         j++;
     }
-    
+
     // make the array shorter
-    unsigned char *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
+    uchar *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
     if (!tmp) {
         free_image(img);
         exit(EXIT_FAILURE);
@@ -66,13 +71,59 @@ void grey_scale(t_img_desc* img)
     img->comp = 1;
 }
 
-int coor(int i, int j, t_img_desc* img)
+uchar grey(uchar r, uchar g, uchar b)
 {
-    return (img->comp)*(i+(img->x)*j);
+    return (uchar)(0.21 * r + 0.72 * g + 0.07 * b);
 }
 
-char grey(char r, char g, char b)
+uint* histogram(t_img_desc* img)
 {
-    return (char)(0.21 * r + 0.72 * g + 0.07 * b);
+    uint *h = calloc(256, sizeof(int));
+    if (!h) {
+        free_image(img);
+        exit(EXIT_FAILURE);
+    }
+
+    uchar *ptr = img->data;
+    const uchar *end = &img->data[(img->x * img->y * img->comp) - 1];
+
+    while(ptr < end)
+        h[*ptr++]++;
+
+    return h;
+}
+
+// Faster than histogram()
+// Explanation: Counting bytes fast - http://goo.gl/5LZ7fE
+uint* histogram_fast(t_img_desc* img)
+{
+    uint *h = malloc(sizeof(int) * 256);
+    if (!h) {
+        free_image(img);
+        exit(EXIT_FAILURE);
+    }
+
+    uchar *ptr = img->data;
+    const uchar *end = &img->data[(img->x * img->y * img->comp) - 1];
+
+    uint count1[256] = { 0 };
+    uint count2[256] = { 0 };
+    uint count3[256] = { 0 };
+    uint count4[256] = { 0 };
+
+    while (ptr < end - 3) {
+        count1[*ptr++]++;
+        count2[*ptr++]++;
+        count3[*ptr++]++;
+        count4[*ptr++]++;
+    }
+
+    while (ptr < end)
+        count1[*ptr++]++;
+
+    for (int i = 0; i < 256; i++)
+        h[i] = count1[i] + count2[i] + count3[i] + count4[i];
+
+    return h;
 }
 
