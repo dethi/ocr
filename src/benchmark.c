@@ -10,8 +10,8 @@ double T_RESULT;
 double get_time()
 {
     struct timeval t;
-    struct timezone tzp;
-    gettimeofday(&t, &tzp);
+    //struct timezone tz;
+    gettimeofday(&t, NULL);
     return t.tv_sec + t.tv_usec * 1e-6;
 }
 
