@@ -18,5 +18,6 @@ void grey_scale(t_img_desc* tab);
 uchar grey(uchar r, uchar g, uchar b);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
+void binarize(t_img_desc* img);
 
 #endif

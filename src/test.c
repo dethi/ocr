@@ -58,6 +58,9 @@ char* all_tests()
     PRINT_LINE;
     mu_run_test(test_histogram);
     PRINT_LINE;
+    mu_run_test(test_binarize);
+
+    PRINT_LINE;
     return 0;
 }
 
@@ -162,5 +165,39 @@ char* test_histogram()
         free_image(img);
     }
 
+    return 0;
+}
+
+char* test_binarize()
+{
+    t_img_desc *img;
+
+    char filename[][50] = {
+        "greyscale1.jpg",
+        "greyscale2.jpg",
+        "greyscale3.jpg",
+        "greyscale4.png"
+    };
+
+    char *error = malloc(sizeof(char) * 150);
+    char *out = malloc(sizeof(char) * 100);
+
+    for (int i = 0; i < 4; i++) {
+        img = load_image(filename[i], 3);
+        grey_scale(img);
+        binarize(img);
+
+        sprintf(out, "out_binarize%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        int result = stbi_write_png(out, img->x, img->y, img->comp,
+                img-> data, img->x);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
+        free_image(img);
+    }
+
+    free(error);
     return 0;
 }

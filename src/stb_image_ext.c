@@ -127,3 +127,11 @@ uint* histogram_fast(t_img_desc* img)
     return h;
 }
 
+void binarize(t_img_desc* img)
+{
+    int th = 127;
+    int m = img->x * img->y;
+
+    for (int i = 0; i < m; i++)
+        img->data[i] = (img->data[i] >= th) ? 255 : 0;
+}

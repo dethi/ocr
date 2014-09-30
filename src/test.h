@@ -7,5 +7,6 @@ char* all_tests();
 char* test_load_image();
 char* test_greyscale();
 char* test_histogram();
+char* test_binarize();
 
 #endif
