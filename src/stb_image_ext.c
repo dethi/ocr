@@ -126,4 +126,3 @@ uint* histogram_fast(t_img_desc* img)
 
     return h;
 }
-
