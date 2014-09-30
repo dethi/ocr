@@ -8,5 +8,8 @@ typedef struct {
     int comp;
 } t_img_desc;
 
+typedef unsigned int uint;
+typedef unsigned char uchar;
+
 void binarize(t_image_desc*);
 t_img_desc* otsu(t_img_desc*);
