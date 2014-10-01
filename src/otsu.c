@@ -45,6 +45,10 @@ int thresold(uint* h)
         v2 = (1/i)*v2;
         ans[i] = p1*v1+p2*v2;
     }
-    //Return the minimum value of ans
-    return 128;
+    int min = ans[0];
+    for (int l = 1; l < 256; l++) {
+        if (ans[l]<min)
+            min = ans[i];
+    }
+    return min;
 }
