@@ -13,11 +13,12 @@ typedef struct {
 
 t_img_desc* load_image(char* filename, int comp);
 void free_image(t_img_desc* img);
-int coor(int i, int j, t_img_desc* img);
+static inline int xytoi(int i, int j, t_img_desc* img);
 void grey_scale(t_img_desc* tab);
 uchar grey(uchar r, uchar g, uchar b);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
 void binarize(t_img_desc* img);
+void average_filter(t_img_desc* img);
 
 #endif

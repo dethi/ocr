@@ -34,9 +34,11 @@ void free_image(t_img_desc* img)
     img = NULL;
 }
 
-int coor(int i, int j, t_img_desc* img)
+// (x,y) axis to tab index
+static inline
+int xytoi(int i, int j, t_img_desc* img)
 {
-    return (img->comp)*(i+(img->x)*j);
+    return (img->comp) * (i + (img->x) * j);
 }
 
 void grey_scale(t_img_desc* img)
@@ -44,20 +46,9 @@ void grey_scale(t_img_desc* img)
     if (img->comp != 3)
         return;
 
-    int i = 0, c = 0, j = 0;
-
-    while (j < img->y) {
-        i = 0;
-
-        while(i < img->x) {
-            c = coor(i,j, img);
-            // save grey value in the array
-            img->data[i + (img->x) * j] = grey(
-                    img->data[c], img->data[c + 1], img->data[c + 2]);
-            i++;
-        }
-
-        j++;
+    for (int i = 0; i < img->x * img->y; i++) {
+        img->data[i] = grey(img->data[(i * 3)], img->data[(i * 3) + 1],
+                img->data[(i * 3) + 2]);
     }
 
     // make the array shorter
@@ -134,4 +125,60 @@ void binarize(t_img_desc* img)
 
     for (int i = 0; i < m; i++)
         img->data[i] = (img->data[i] >= th) ? 255 : 0;
+}
+
+// currently it don't correctly work
+void average_filter(t_img_desc* img)
+{
+    if (img->comp != 3)
+        return;
+
+    uchar *result = malloc(sizeof(char) * img->x * img->y * img->comp);
+    if (!result)
+        exit(EXIT_FAILURE);
+
+    for (int y = 1; y < img->y - 1; y++) {
+        for (int x = 1; x < img->x - 1; x++) {
+            int k = xytoi(x, y, img);
+
+            //result[r]
+            result[k] =
+                (img->data[xytoi(x - 1, y - 1, img)] +
+                img->data[xytoi(x, y - 1, img)] +
+                img->data[xytoi(x + 1, y - 1, img)] +
+                img->data[xytoi(x - 1, y, img)] +
+                img->data[k] +
+                img->data[xytoi(x + 1, y, img)] +
+                img->data[xytoi(x - 1, y + 1, img)] +
+                img->data[xytoi(x, y + 1, img)] +
+                img->data[xytoi(x + 1, y + 1, img)]) / 9;
+
+            //result[g]
+            result[k + 1] =
+                (img->data[xytoi(x - 1, y - 1, img) + 1] +
+                img->data[xytoi(x, y - 1, img) + 1] +
+                img->data[xytoi(x + 1, y - 1, img) + 1] +
+                img->data[xytoi(x - 1, y, img) + 1] +
+                img->data[k + 1] +
+                img->data[xytoi(x + 1, y, img) + 1] +
+                img->data[xytoi(x - 1, y + 1, img) + 1] +
+                img->data[xytoi(x, y + 1, img) + 1] +
+                img->data[xytoi(x + 1, y + 1, img) + 1]) / 9;
+
+            //result[b]
+            result[k + 2] =
+                (img->data[xytoi(x - 1, y - 1, img) + 2] +
+                img->data[xytoi(x, y - 1, img) + 2] +
+                img->data[xytoi(x + 1, y - 1, img) + 2] +
+                img->data[xytoi(x - 1, y, img) + 2] +
+                img->data[k + 2] +
+                img->data[xytoi(x + 1, y, img) + 2] +
+                img->data[xytoi(x - 1, y + 1, img) + 2] +
+                img->data[xytoi(x, y + 1, img) + 2] +
+                img->data[xytoi(x + 1, y + 1, img) + 2]) / 9;
+        }
+    }
+
+    free(img->data);
+    img->data = result;
 }

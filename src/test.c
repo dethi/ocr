@@ -73,6 +73,8 @@ char* all_tests()
     
     mu_run_test(test_load_image);
     PRINT_LINE;
+    //mu_run_test(test_average_filter);
+    //PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
     mu_run_test(test_histogram);
@@ -100,6 +102,24 @@ char* test_load_image()
         printf("%10s: %ix%i (%i)\n", FILENAME[i], x, y, comp);
         
         img[i] = load_image(FILENAME[i], 3);
+    }
+
+    return 0;
+}
+
+char* test_average_filter()
+{
+    for (int i = 0; i < NFILES; i++) {
+        sprintf(out, "out_averagefilter%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        average_filter(img[i]);
+
+        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
+                img[i]->data, img[i]->x);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
     }
 
     return 0;
