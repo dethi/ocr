@@ -12,6 +12,18 @@
 
 int tests_run = 0;
 
+const int NFILES = 4;
+char FILENAME[][50] = {
+    "test1.jpg",
+    "test2.jpg",
+    "test3.jpg",
+    "test4.png"
+};
+
+char *error;
+char *out;
+t_img_desc **img;
+
 int main()
 {
     printf("\nStart test...\n");
@@ -52,6 +64,13 @@ void print_limits()
 
 char* all_tests()
 {
+    error = malloc(sizeof(char) * 200);
+    out = malloc(sizeof(char) * 100);
+    img = malloc(sizeof(t_img_desc*) * NFILES);
+    
+    if (!error || !out || !img)
+        exit(EXIT_FAILURE);
+    
     mu_run_test(test_load_image);
     PRINT_LINE;
     mu_run_test(test_greyscale);
@@ -59,8 +78,14 @@ char* all_tests()
     mu_run_test(test_histogram);
     PRINT_LINE;
     mu_run_test(test_binarize);
-
     PRINT_LINE;
+
+    for (int i = 0; i < NFILES; i++)
+        free_image(img[i]);
+    free(img);
+    free(error);
+    free(out);
+    
     return 0;
 }
 
@@ -68,89 +93,52 @@ char* test_load_image()
 {
     int x = 0, y = 0, comp = 0;
 
-    char filename[][10] = {
-        "test1.jpg",
-        "test2.png",
-        "test3.bmp",
-    };
-
-    char *error = malloc(sizeof(char) * 50);
-
-    for (int i = 0; i < 3; i++) {
-        sprintf(error, "failed to load image %s", filename[i]);
-        mu_assert(error, stbi_info(filename[i], &x, &y, &comp) == 1);
-
-        printf("%10s: %ix%i (%i)\n", filename[i], x, y, comp);
+    for (int i = 0; i < NFILES; i++) {
+        sprintf(error, "failed to load image %s", FILENAME[i]);
+        
+        mu_assert(error, stbi_info(FILENAME[i], &x, &y, &comp) == 1);
+        printf("%10s: %ix%i (%i)\n", FILENAME[i], x, y, comp);
+        
+        img[i] = load_image(FILENAME[i], 3);
     }
 
-    free(error);
     return 0;
 }
 
 char* test_greyscale()
 {
-    t_img_desc *img;
-
-    char filename[][50] = {
-        "greyscale1.jpg",
-        "greyscale2.jpg",
-        "greyscale3.jpg",
-        "greyscale4.png"
-    };
-
-    char *error = malloc(sizeof(char) * 150);
-    char *out = malloc(sizeof(char) * 100);
-
-    for (int i = 0; i < 4; i++) {
-        img = load_image(filename[i], 3);
-        grey_scale(img);
-
+    for (int i = 0; i < NFILES; i++) {
         sprintf(out, "out_greyscale%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        int result = stbi_write_png(out, img->x, img->y, img->comp,
-                img->data, img->x);
+        grey_scale(img[i]);
+        
+        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
+                img[i]->data, img[i]->x);
         mu_assert(error, result != 0);
 
         printf("write: %s\n", out);
-        free_image(img);
     }
 
-    free(error);
-    free(out);
     return 0;
 }
 
 char* test_histogram()
 {
-    t_img_desc *img;
-
-    char filename[][50] = {
-        "greyscale1.jpg",
-        "greyscale2.jpg",
-        "greyscale3.jpg",
-        "greyscale4.png"
-    };
-
-    char *error = malloc(sizeof(char) * 150);
-
     printf("Histogram bench:\n\n");
 
-    for (int i = 0; i < 4; i++) {
-        img = load_image(filename[i], 3);
-        grey_scale(img);
-
+    for (int i = 0; i < NFILES; i++) {
         bench_start();
-        uint* h_fast = histogram_fast(img);
+        uint* h_fast = histogram_fast(img[i]);
         bench_end();
 
-        printf("%s:\n", filename[i]);
+        printf("%s:\n", FILENAME[i]);
         printf("\t");
         bench_time();
         printf("\t");
-        bench_write_mem(sizeof(char) * img->x * img->y * img->comp);
+        bench_write_mem(sizeof(char) * img[i]->x * img[i]->y * img[i]->comp);
 
-        uint* h = histogram(img);
+        uint* h = histogram(img[i]);
         int n_error = 0;
 
         for (int j = 0; j < 256; j++) {
@@ -162,7 +150,7 @@ char* test_histogram()
         mu_assert(error, n_error == 0);
 
         free(h_fast);
-        free_image(img);
+        free(h);
     }
 
     return 0;
@@ -170,34 +158,18 @@ char* test_histogram()
 
 char* test_binarize()
 {
-    t_img_desc *img;
-
-    char filename[][50] = {
-        "greyscale1.jpg",
-        "greyscale2.jpg",
-        "greyscale3.jpg",
-        "greyscale4.png"
-    };
-
-    char *error = malloc(sizeof(char) * 150);
-    char *out = malloc(sizeof(char) * 100);
-
-    for (int i = 0; i < 4; i++) {
-        img = load_image(filename[i], 3);
-        grey_scale(img);
-        binarize(img);
-
+    for (int i = 0; i < NFILES; i++) {
         sprintf(out, "out_binarize%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        int result = stbi_write_png(out, img->x, img->y, img->comp,
-                img-> data, img->x);
+        binarize(img[i]);
+
+        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
+                img[i]->data, img[i]->x);
         mu_assert(error, result != 0);
 
         printf("write: %s\n", out);
-        free_image(img);
     }
 
-    free(error);
     return 0;
 }
