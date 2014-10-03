@@ -14,3 +14,4 @@ typedef unsigned char uchar;
 void binarize(t_image_desc*);
 t_img_desc* otsu(t_img_desc*);
 int thresold(uint*);
+t_img_desc* blackAndWhite(int, t_img_desc*);

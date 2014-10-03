@@ -18,11 +18,9 @@ void binarize(t_image_desc* img)
 
 t_img_desc* otsu(t_img_desc* img)
 {
-    //Fix me
-    uint *h = malloc(sizeof(int) * 256);
+    uint *h;
     h = histogram_fast(img);
-    int opti_thresold = thresold(h);
-    return img;
+    return blacAndWhite(thresold(h), img);
 }
 
 int thresold(uint* h)
@@ -51,4 +49,16 @@ int thresold(uint* h)
             min = ans[i];
     }
     return min;
+}
+
+t_img_desc* blackAndWhite(int t, t_img_desc* img)
+{
+    for (int i = 0; i < (img->x)*(img->y); i++)
+    {
+        if (img->data[i] >= t)
+            img->data[i] = 255;
+        else
+            img->data = 0;
+    }
+    return img;
 }
