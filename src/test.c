@@ -179,7 +179,8 @@ char* test_binarize()
         sprintf(out, "out_binarize%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        binarize(img[i]);
+        //binarize_otsu(img[i]);
+        binarize_basic(img[i]);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);

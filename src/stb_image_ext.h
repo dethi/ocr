@@ -19,7 +19,10 @@ void grey_scale(t_img_desc* tab);
 uchar grey(uchar r, uchar g, uchar b);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
-void binarize(t_img_desc* img);
+void binarize(uchar* data, int size, int th);
+void binarize_basic(t_img_desc* img);
+void binarize_otsu(t_img_desc* img);
+int thresold(uint* h);
 void average_filter(t_img_desc* img);
 
 #endif

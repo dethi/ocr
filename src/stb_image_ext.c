@@ -125,16 +125,80 @@ uint* histogram_fast(t_img_desc* img)
     return h;
 }
 
-void binarize(t_img_desc* img)
+void binarize(uchar* data, int size, int th)
 {
-    int th = 127;
-    int m = img->x * img->y;
-
-    for (int i = 0; i < m; i++)
-        img->data[i] = (img->data[i] >= th) ? 255 : 0;
+    for (int i = 0; i < size; i++)
+        data[i] = (data[i] >= th) ? 255 : 0;
 }
 
-// currently it don't correctly work
+void binarize_basic(t_img_desc* img)
+{
+    if (img->comp != 1)
+        return;
+
+    binarize(img->data, img->x * img->y, 127);
+}
+
+void binarize_otsu(t_img_desc* img)
+{
+    if (img->comp != 1)
+        return;
+
+    uint *h = histogram_fast(img);
+    int th = thresold(h);
+    free(h);
+
+    binarize(img->data, img->x * img->y, th);
+}
+
+int thresold(uint* h)
+{
+    /* Prevent using the function, currently it doesn't work.
+     *  - return big value;
+     *  - division by zero with i (fixed with 1e-6, bullshit..)
+     */
+    printf("ERROR: Thresold is not implemented yet.\n");
+    exit(EXIT_FAILURE);
+    /* END */
+
+    double *ans = malloc(sizeof(double) * 256);
+    if (!ans) {
+        free(h);
+        exit(EXIT_FAILURE);
+    }
+
+    double v1 = 0, v2 = 0, p1 = 0, p2 = 0;
+
+    //Loop that calculates the best thresold
+    for (int i = 0; i < 256; i++) {
+        //For the element under the current thresold
+        for (int j = 0; j < i; j++) {
+            v1 += (j-i)*(j-i);
+            p1 += h[j];
+        }
+        v1 = (1/(i+1e-6))*v1;
+
+        //For the element up the current thresold
+        for (int k = i; k < 256; k++) {
+            v2 += (k-i)*(k-i);
+            p2 += h[k];
+        }
+        v2 = (1/(i+1e-6))*v2;
+
+        ans[i] = p1*v1+p2*v2;
+    }
+
+    double min = ans[0];
+
+    for (int l = 1; l < 256; l++) {
+        if (ans[l]<min)
+            min = ans[l];
+    }
+
+    free(ans);
+    return (int)min;
+}
+
 void average_filter(t_img_desc* img)
 {
     if (img->comp != 3)
