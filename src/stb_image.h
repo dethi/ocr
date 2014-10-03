@@ -20,32 +20,11 @@
       PSD (composited view only, no extra channels)
 
       GIF (*comp always reports as 4-channel)
-      HDR (radiance rgbE format)
       PIC (Softimage PIC)
 
       - decode from memory or through FILE (define STBI_NO_STDIO to remove code)
       - decode from arbitrary I/O callbacks
       - overridable dequantizing-IDCT, YCbCr-to-RGB conversion (define STBI_SIMD)
-
-   Latest revisions:
-      1.46 (2014-08-26) fix broken tRNS chunk in non-paletted PNG
-      1.45 (2014-08-16) workaround MSVC-ARM internal compiler error by wrapping malloc
-      1.44 (2014-08-07) warnings
-      1.43 (2014-07-15) fix MSVC-only bug in 1.42
-      1.42 (2014-07-09) no _CRT_SECURE_NO_WARNINGS; error-path fixes; STBI_ASSERT
-      1.41 (2014-06-25) fix search&replace that messed up comments/error messages
-      1.40 (2014-06-22) gcc warning
-      1.39 (2014-06-15) TGA optimization bugfix, multiple BMP fixes
-      1.38 (2014-06-06) suppress MSVC run-time warnings, fix accidental rename of 'skip'
-      1.37 (2014-06-04) remove duplicate typedef
-      1.36 (2014-06-03) converted to header file, allow reading incorrect iphoned-images without iphone flag
-      1.35 (2014-05-27) warnings, bugfixes, TGA optimization, etc
-
-   See end of file for full revision history.
-
-   TODO:
-      stbi_info support for BMP,PSD,HDR,PIC
-
 
  ============================    Contributors    =========================
 
@@ -148,42 +127,6 @@
 //
 // ===========================================================================
 //
-// HDR image support   (disable by defining STBI_NO_HDR)
-//
-// stb_image now supports loading HDR images in general, and currently
-// the Radiance .HDR file format, although the support is provided
-// generically. You can still load any file through the existing interface;
-// if you attempt to load an HDR file, it will be automatically remapped to
-// LDR, assuming gamma 2.2 and an arbitrary scale factor defaulting to 1;
-// both of these constants can be reconfigured through this interface:
-//
-//     stbi_hdr_to_ldr_gamma(2.2f);
-//     stbi_hdr_to_ldr_scale(1.0f);
-//
-// (note, do not use _inverse_ constants; stbi_image will invert them
-// appropriately).
-//
-// Additionally, there is a new, parallel interface for loading files as
-// (linear) floats to preserve the full dynamic range:
-//
-//    float *data = stbi_loadf(filename, &x, &y, &n, 0);
-//
-// If you load LDR images through this interface, those images will
-// be promoted to floating point values, run through the inverse of
-// constants corresponding to the above:
-//
-//     stbi_ldr_to_hdr_scale(1.0f);
-//     stbi_ldr_to_hdr_gamma(2.2f);
-//
-// Finally, given a filename (or an open file or memory block--see header
-// file for details) containing image data, you can query for the "most
-// appropriate" interface to use (that is, whether the image is HDR or
-// not), using:
-//
-//     stbi_is_hdr(char *filename);
-//
-// ===========================================================================
-//
 // I/O callbacks
 //
 // I/O callbacks allow you to read from arbitrary sources, like packaged
@@ -248,32 +191,6 @@ typedef struct
 } stbi_io_callbacks;
 
 STBIDEF stbi_uc *stbi_load_from_callbacks  (stbi_io_callbacks const *clbk, void *user, int *x, int *y, int *comp, int req_comp);
-
-#ifndef STBI_NO_HDR
-   STBIDEF float *stbi_loadf_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp);
-
-   #ifndef STBI_NO_STDIO
-   STBIDEF float *stbi_loadf            (char const *filename,   int *x, int *y, int *comp, int req_comp);
-   STBIDEF float *stbi_loadf_from_file  (FILE *f,                int *x, int *y, int *comp, int req_comp);
-   #endif
-
-   STBIDEF float *stbi_loadf_from_callbacks  (stbi_io_callbacks const *clbk, void *user, int *x, int *y, int *comp, int req_comp);
-
-   STBIDEF void   stbi_hdr_to_ldr_gamma(float gamma);
-   STBIDEF void   stbi_hdr_to_ldr_scale(float scale);
-
-   STBIDEF void   stbi_ldr_to_hdr_gamma(float gamma);
-   STBIDEF void   stbi_ldr_to_hdr_scale(float scale);
-#endif // STBI_NO_HDR
-
-// stbi_is_hdr is always defined
-STBIDEF int    stbi_is_hdr_from_callbacks(stbi_io_callbacks const *clbk, void *user);
-STBIDEF int    stbi_is_hdr_from_memory(stbi_uc const *buffer, int len);
-#ifndef STBI_NO_STDIO
-STBIDEF int      stbi_is_hdr          (char const *filename);
-STBIDEF int      stbi_is_hdr_from_file(FILE *f);
-#endif // STBI_NO_STDIO
-
 
 // get a VERY brief reason for failure
 // NOT THREADSAFE
@@ -345,11 +262,6 @@ STBIDEF void stbi_install_YCbCr_to_RGB(stbi_YCbCr_to_RGB_run func);
 #endif // STBI_INCLUDE_STB_IMAGE_H
 
 #ifdef STB_IMAGE_IMPLEMENTATION
-
-#ifndef STBI_NO_HDR
-#include <math.h>  // ldexp
-#include <string.h> // strcmp, strtok
-#endif
 
 #ifndef STBI_NO_STDIO
 #include <stdio.h>
@@ -505,10 +417,6 @@ static stbi_uc *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int 
 static int      stbi__tga_info(stbi__context *s, int *x, int *y, int *comp);
 static int      stbi__psd_test(stbi__context *s);
 static stbi_uc *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req_comp);
-#ifndef STBI_NO_HDR
-static int      stbi__hdr_test(stbi__context *s);
-static float   *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int req_comp);
-#endif
 static int      stbi__pic_test(stbi__context *s);
 static stbi_uc *stbi__pic_load(stbi__context *s, int *x, int *y, int *comp, int req_comp);
 static int      stbi__gif_test(stbi__context *s);
@@ -555,11 +463,6 @@ STBIDEF void stbi_image_free(void *retval_from_stbi_load)
    free(retval_from_stbi_load);
 }
 
-#ifndef STBI_NO_HDR
-static float   *stbi__ldr_to_hdr(stbi_uc *data, int x, int y, int comp);
-static stbi_uc *stbi__hdr_to_ldr(float   *data, int x, int y, int comp);
-#endif
-
 static unsigned char *stbi_load_main(stbi__context *s, int *x, int *y, int *comp, int req_comp)
 {
    if (stbi__jpeg_test(s)) return stbi__jpeg_load(s,x,y,comp,req_comp);
@@ -568,13 +471,6 @@ static unsigned char *stbi_load_main(stbi__context *s, int *x, int *y, int *comp
    if (stbi__gif_test(s))  return stbi__gif_load(s,x,y,comp,req_comp);
    if (stbi__psd_test(s))  return stbi__psd_load(s,x,y,comp,req_comp);
    if (stbi__pic_test(s))  return stbi__pic_load(s,x,y,comp,req_comp);
-
-   #ifndef STBI_NO_HDR
-   if (stbi__hdr_test(s)) {
-      float *hdr = stbi__hdr_load(s, x,y,comp,req_comp);
-      return stbi__hdr_to_ldr(hdr, *x, *y, req_comp ? req_comp : *comp);
-   }
-   #endif
 
    // test tga last because it's a crappy test!
    if (stbi__tga_test(s))
@@ -634,120 +530,6 @@ unsigned char *stbi_load_from_callbacks(stbi_io_callbacks const *clbk, void *use
    stbi__start_callbacks(&s, (stbi_io_callbacks *) clbk, user);
    return stbi_load_main(&s,x,y,comp,req_comp);
 }
-
-#ifndef STBI_NO_HDR
-
-float *stbi_loadf_main(stbi__context *s, int *x, int *y, int *comp, int req_comp)
-{
-   unsigned char *data;
-   #ifndef STBI_NO_HDR
-   if (stbi__hdr_test(s))
-      return stbi__hdr_load(s,x,y,comp,req_comp);
-   #endif
-   data = stbi_load_main(s, x, y, comp, req_comp);
-   if (data)
-      return stbi__ldr_to_hdr(data, *x, *y, req_comp ? req_comp : *comp);
-   return stbi__errpf("unknown image type", "Image not of any known type, or corrupt");
-}
-
-float *stbi_loadf_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp)
-{
-   stbi__context s;
-   stbi__start_mem(&s,buffer,len);
-   return stbi_loadf_main(&s,x,y,comp,req_comp);
-}
-
-float *stbi_loadf_from_callbacks(stbi_io_callbacks const *clbk, void *user, int *x, int *y, int *comp, int req_comp)
-{
-   stbi__context s;
-   stbi__start_callbacks(&s, (stbi_io_callbacks *) clbk, user);
-   return stbi_loadf_main(&s,x,y,comp,req_comp);
-}
-
-#ifndef STBI_NO_STDIO
-float *stbi_loadf(char const *filename, int *x, int *y, int *comp, int req_comp)
-{
-   float *result;
-   FILE *f = stbi__fopen(filename, "rb");
-   if (!f) return stbi__errpf("can't fopen", "Unable to open file");
-   result = stbi_loadf_from_file(f,x,y,comp,req_comp);
-   fclose(f);
-   return result;
-}
-
-float *stbi_loadf_from_file(FILE *f, int *x, int *y, int *comp, int req_comp)
-{
-   stbi__context s;
-   stbi__start_file(&s,f);
-   return stbi_loadf_main(&s,x,y,comp,req_comp);
-}
-#endif // !STBI_NO_STDIO
-
-#endif // !STBI_NO_HDR
-
-// these is-hdr-or-not is defined independent of whether STBI_NO_HDR is
-// defined, for API simplicity; if STBI_NO_HDR is defined, it always
-// reports false!
-
-int stbi_is_hdr_from_memory(stbi_uc const *buffer, int len)
-{
-   #ifndef STBI_NO_HDR
-   stbi__context s;
-   stbi__start_mem(&s,buffer,len);
-   return stbi__hdr_test(&s);
-   #else
-   STBI_NOTUSED(buffer);
-   STBI_NOTUSED(len);
-   return 0;
-   #endif
-}
-
-#ifndef STBI_NO_STDIO
-STBIDEF int      stbi_is_hdr          (char const *filename)
-{
-   FILE *f = stbi__fopen(filename, "rb");
-   int result=0;
-   if (f) {
-      result = stbi_is_hdr_from_file(f);
-      fclose(f);
-   }
-   return result;
-}
-
-STBIDEF int      stbi_is_hdr_from_file(FILE *f)
-{
-   #ifndef STBI_NO_HDR
-   stbi__context s;
-   stbi__start_file(&s,f);
-   return stbi__hdr_test(&s);
-   #else
-   return 0;
-   #endif
-}
-#endif // !STBI_NO_STDIO
-
-STBIDEF int      stbi_is_hdr_from_callbacks(stbi_io_callbacks const *clbk, void *user)
-{
-   #ifndef STBI_NO_HDR
-   stbi__context s;
-   stbi__start_callbacks(&s, (stbi_io_callbacks *) clbk, user);
-   return stbi__hdr_test(&s);
-   #else
-   return 0;
-   #endif
-}
-
-#ifndef STBI_NO_HDR
-static float stbi__h2l_gamma_i=1.0f/2.2f, stbi__h2l_scale_i=1.0f;
-static float stbi__l2h_gamma=2.2f, stbi__l2h_scale=1.0f;
-
-void   stbi_hdr_to_ldr_gamma(float gamma) { stbi__h2l_gamma_i = 1/gamma; }
-void   stbi_hdr_to_ldr_scale(float scale) { stbi__h2l_scale_i = 1/scale; }
-
-void   stbi_ldr_to_hdr_gamma(float gamma) { stbi__l2h_gamma = gamma; }
-void   stbi_ldr_to_hdr_scale(float scale) { stbi__l2h_scale = scale; }
-#endif
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -920,51 +702,6 @@ static unsigned char *stbi__convert_format(unsigned char *data, int img_n, int r
    free(data);
    return good;
 }
-
-#ifndef STBI_NO_HDR
-static float   *stbi__ldr_to_hdr(stbi_uc *data, int x, int y, int comp)
-{
-   int i,k,n;
-   float *output = (float *) stbi__malloc(x * y * comp * sizeof(float));
-   if (output == NULL) { free(data); return stbi__errpf("outofmem", "Out of memory"); }
-   // compute number of non-alpha components
-   if (comp & 1) n = comp; else n = comp-1;
-   for (i=0; i < x*y; ++i) {
-      for (k=0; k < n; ++k) {
-         output[i*comp + k] = (float) (pow(data[i*comp+k]/255.0f, stbi__l2h_gamma) * stbi__l2h_scale);
-      }
-      if (k < comp) output[i*comp + k] = data[i*comp+k]/255.0f;
-   }
-   free(data);
-   return output;
-}
-
-#define stbi__float2int(x)   ((int) (x))
-static stbi_uc *stbi__hdr_to_ldr(float   *data, int x, int y, int comp)
-{
-   int i,k,n;
-   stbi_uc *output = (stbi_uc *) stbi__malloc(x * y * comp);
-   if (output == NULL) { free(data); return stbi__errpuc("outofmem", "Out of memory"); }
-   // compute number of non-alpha components
-   if (comp & 1) n = comp; else n = comp-1;
-   for (i=0; i < x*y; ++i) {
-      for (k=0; k < n; ++k) {
-         float z = (float) pow(data[i*comp+k]*stbi__h2l_scale_i, stbi__h2l_gamma_i) * 255 + 0.5f;
-         if (z < 0) z = 0;
-         if (z > 255) z = 255;
-         output[i*comp + k] = (stbi_uc) stbi__float2int(z);
-      }
-      if (k < comp) {
-         float z = data[i*comp+k] * 255 + 0.5f;
-         if (z < 0) z = 0;
-         if (z > 255) z = 255;
-         output[i*comp + k] = (stbi_uc) stbi__float2int(z);
-      }
-   }
-   free(data);
-   return output;
-}
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -4173,229 +3910,6 @@ static int stbi__gif_info(stbi__context *s, int *x, int *y, int *comp)
    return stbi__gif_info_raw(s,x,y,comp);
 }
 
-
-// *************************************************************************************************
-// Radiance RGBE HDR loader
-// originally by Nicolas Schulz
-#ifndef STBI_NO_HDR
-static int stbi__hdr_test_core(stbi__context *s)
-{
-   const char *signature = "#?RADIANCE\n";
-   int i;
-   for (i=0; signature[i]; ++i)
-      if (stbi__get8(s) != signature[i])
-         return 0;
-   return 1;
-}
-
-static int stbi__hdr_test(stbi__context* s)
-{
-   int r = stbi__hdr_test_core(s);
-   stbi__rewind(s);
-   return r;
-}
-
-#define STBI__HDR_BUFLEN  1024
-static char *stbi__hdr_gettoken(stbi__context *z, char *buffer)
-{
-   int len=0;
-   char c = '\0';
-
-   c = (char) stbi__get8(z);
-
-   while (!stbi__at_eof(z) && c != '\n') {
-      buffer[len++] = c;
-      if (len == STBI__HDR_BUFLEN-1) {
-         // flush to end of line
-         while (!stbi__at_eof(z) && stbi__get8(z) != '\n')
-            ;
-         break;
-      }
-      c = (char) stbi__get8(z);
-   }
-
-   buffer[len] = 0;
-   return buffer;
-}
-
-static void stbi__hdr_convert(float *output, stbi_uc *input, int req_comp)
-{
-   if ( input[3] != 0 ) {
-      float f1;
-      // Exponent
-      f1 = (float) ldexp(1.0f, input[3] - (int)(128 + 8));
-      if (req_comp <= 2)
-         output[0] = (input[0] + input[1] + input[2]) * f1 / 3;
-      else {
-         output[0] = input[0] * f1;
-         output[1] = input[1] * f1;
-         output[2] = input[2] * f1;
-      }
-      if (req_comp == 2) output[1] = 1;
-      if (req_comp == 4) output[3] = 1;
-   } else {
-      switch (req_comp) {
-         case 4: output[3] = 1; /* fallthrough */
-         case 3: output[0] = output[1] = output[2] = 0;
-                 break;
-         case 2: output[1] = 1; /* fallthrough */
-         case 1: output[0] = 0;
-                 break;
-      }
-   }
-}
-
-static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int req_comp)
-{
-   char buffer[STBI__HDR_BUFLEN];
-   char *token;
-   int valid = 0;
-   int width, height;
-   stbi_uc *scanline;
-   float *hdr_data;
-   int len;
-   unsigned char count, value;
-   int i, j, k, c1,c2, z;
-
-
-   // Check identifier
-   if (strcmp(stbi__hdr_gettoken(s,buffer), "#?RADIANCE") != 0)
-      return stbi__errpf("not HDR", "Corrupt HDR image");
-
-   // Parse header
-   for(;;) {
-      token = stbi__hdr_gettoken(s,buffer);
-      if (token[0] == 0) break;
-      if (strcmp(token, "FORMAT=32-bit_rle_rgbe") == 0) valid = 1;
-   }
-
-   if (!valid)    return stbi__errpf("unsupported format", "Unsupported HDR format");
-
-   // Parse width and height
-   // can't use sscanf() if we're not using stdio!
-   token = stbi__hdr_gettoken(s,buffer);
-   if (strncmp(token, "-Y ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
-   token += 3;
-   height = (int) strtol(token, &token, 10);
-   while (*token == ' ') ++token;
-   if (strncmp(token, "+X ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
-   token += 3;
-   width = (int) strtol(token, NULL, 10);
-
-   *x = width;
-   *y = height;
-
-   if (comp) *comp = 3;
-   if (req_comp == 0) req_comp = 3;
-
-   // Read data
-   hdr_data = (float *) stbi__malloc(height * width * req_comp * sizeof(float));
-
-   // Load image data
-   // image data is stored as some number of sca
-   if ( width < 8 || width >= 32768) {
-      // Read flat data
-      for (j=0; j < height; ++j) {
-         for (i=0; i < width; ++i) {
-            stbi_uc rgbe[4];
-           main_decode_loop:
-            stbi__getn(s, rgbe, 4);
-            stbi__hdr_convert(hdr_data + j * width * req_comp + i * req_comp, rgbe, req_comp);
-         }
-      }
-   } else {
-      // Read RLE-encoded data
-      scanline = NULL;
-
-      for (j = 0; j < height; ++j) {
-         c1 = stbi__get8(s);
-         c2 = stbi__get8(s);
-         len = stbi__get8(s);
-         if (c1 != 2 || c2 != 2 || (len & 0x80)) {
-            // not run-length encoded, so we have to actually use THIS data as a decoded
-            // pixel (note this can't be a valid pixel--one of RGB must be >= 128)
-            stbi_uc rgbe[4];
-            rgbe[0] = (stbi_uc) c1;
-            rgbe[1] = (stbi_uc) c2;
-            rgbe[2] = (stbi_uc) len;
-            rgbe[3] = (stbi_uc) stbi__get8(s);
-            stbi__hdr_convert(hdr_data, rgbe, req_comp);
-            i = 1;
-            j = 0;
-            free(scanline);
-            goto main_decode_loop; // yes, this makes no sense
-         }
-         len <<= 8;
-         len |= stbi__get8(s);
-         if (len != width) { free(hdr_data); free(scanline); return stbi__errpf("invalid decoded scanline length", "corrupt HDR"); }
-         if (scanline == NULL) scanline = (stbi_uc *) stbi__malloc(width * 4);
-
-         for (k = 0; k < 4; ++k) {
-            i = 0;
-            while (i < width) {
-               count = stbi__get8(s);
-               if (count > 128) {
-                  // Run
-                  value = stbi__get8(s);
-                  count -= 128;
-                  for (z = 0; z < count; ++z)
-                     scanline[i++ * 4 + k] = value;
-               } else {
-                  // Dump
-                  for (z = 0; z < count; ++z)
-                     scanline[i++ * 4 + k] = stbi__get8(s);
-               }
-            }
-         }
-         for (i=0; i < width; ++i)
-            stbi__hdr_convert(hdr_data+(j*width + i)*req_comp, scanline + i*4, req_comp);
-      }
-      free(scanline);
-   }
-
-   return hdr_data;
-}
-
-static int stbi__hdr_info(stbi__context *s, int *x, int *y, int *comp)
-{
-   char buffer[STBI__HDR_BUFLEN];
-   char *token;
-   int valid = 0;
-
-   if (strcmp(stbi__hdr_gettoken(s,buffer), "#?RADIANCE") != 0) {
-       stbi__rewind( s );
-       return 0;
-   }
-
-   for(;;) {
-      token = stbi__hdr_gettoken(s,buffer);
-      if (token[0] == 0) break;
-      if (strcmp(token, "FORMAT=32-bit_rle_rgbe") == 0) valid = 1;
-   }
-
-   if (!valid) {
-       stbi__rewind( s );
-       return 0;
-   }
-   token = stbi__hdr_gettoken(s,buffer);
-   if (strncmp(token, "-Y ", 3)) {
-       stbi__rewind( s );
-       return 0;
-   }
-   token += 3;
-   *y = (int) strtol(token, &token, 10);
-   while (*token == ' ') ++token;
-   if (strncmp(token, "+X ", 3)) {
-       stbi__rewind( s );
-       return 0;
-   }
-   token += 3;
-   *x = (int) strtol(token, NULL, 10);
-   *comp = 3;
-   return 1;
-}
-#endif // STBI_NO_HDR
-
 static int stbi__bmp_info(stbi__context *s, int *x, int *y, int *comp)
 {
    int hsz;
@@ -4514,10 +4028,6 @@ static int stbi__info_main(stbi__context *s, int *x, int *y, int *comp)
        return 1;
    if (stbi__pic_info(s, x, y, comp))
        return 1;
-   #ifndef STBI_NO_HDR
-   if (stbi__hdr_info(s, x, y, comp))
-       return 1;
-   #endif
    // test tga last because it's a crappy test!
    if (stbi__tga_info(s, x, y, comp))
        return 1;
@@ -4562,126 +4072,3 @@ STBIDEF int stbi_info_from_callbacks(stbi_io_callbacks const *c, void *user, int
 }
 
 #endif // STB_IMAGE_IMPLEMENTATION
-
-/*
-   revision history:
-      1.46 (2014-08-26)
-             fix broken tRNS chunk (colorkey-style transparency) in non-paletted PNG
-      1.45 (2014-08-16)
-             fix MSVC-ARM internal compiler error by wrapping malloc
-      1.44 (2014-08-07)
-		       various warning fixes from Ronny Chevalier
-      1.43 (2014-07-15)
-             fix MSVC-only compiler problem in code changed in 1.42
-      1.42 (2014-07-09)
-             don't define _CRT_SECURE_NO_WARNINGS (affects user code)
-             fixes to stbi__cleanup_jpeg path
-             added STBI_ASSERT to avoid requiring assert.h
-      1.41 (2014-06-25)
-             fix search&replace from 1.36 that messed up comments/error messages
-      1.40 (2014-06-22)
-             fix gcc struct-initialization warning
-      1.39 (2014-06-15)
-             fix to TGA optimization when req_comp != number of components in TGA;
-             fix to GIF loading because BMP wasn't rewinding (whoops, no GIFs in my test suite)
-             add support for BMP version 5 (more ignored fields)
-      1.38 (2014-06-06)
-             suppress MSVC warnings on integer casts truncating values
-             fix accidental rename of 'skip' field of I/O
-      1.37 (2014-06-04)
-             remove duplicate typedef
-      1.36 (2014-06-03)
-             convert to header file single-file library
-             if de-iphone isn't set, load iphone images color-swapped instead of returning NULL
-      1.35 (2014-05-27)
-             various warnings
-             fix broken STBI_SIMD path
-             fix bug where stbi_load_from_file no longer left file pointer in correct place
-             fix broken non-easy path for 32-bit BMP (possibly never used)
-             TGA optimization by Arseny Kapoulkine
-      1.34 (unknown)
-             use STBI_NOTUSED in stbi__resample_row_generic(), fix one more leak in tga failure case
-      1.33 (2011-07-14)
-             make stbi_is_hdr work in STBI_NO_HDR (as specified), minor compiler-friendly improvements
-      1.32 (2011-07-13)
-             support for "info" function for all supported filetypes (SpartanJ)
-      1.31 (2011-06-20)
-             a few more leak fixes, bug in PNG handling (SpartanJ)
-      1.30 (2011-06-11)
-             added ability to load files via callbacks to accomidate custom input streams (Ben Wenger)
-             removed deprecated format-specific test/load functions
-             removed support for installable file formats (stbi_loader) -- would have been broken for IO callbacks anyway
-             error cases in bmp and tga give messages and don't leak (Raymond Barbiero, grisha)
-             fix inefficiency in decoding 32-bit BMP (David Woo)
-      1.29 (2010-08-16)
-             various warning fixes from Aurelien Pocheville
-      1.28 (2010-08-01)
-             fix bug in GIF palette transparency (SpartanJ)
-      1.27 (2010-08-01)
-             cast-to-stbi_uc to fix warnings
-      1.26 (2010-07-24)
-             fix bug in file buffering for PNG reported by SpartanJ
-      1.25 (2010-07-17)
-             refix trans_data warning (Won Chun)
-      1.24 (2010-07-12)
-             perf improvements reading from files on platforms with lock-heavy fgetc()
-             minor perf improvements for jpeg
-             deprecated type-specific functions so we'll get feedback if they're needed
-             attempt to fix trans_data warning (Won Chun)
-      1.23   fixed bug in iPhone support
-      1.22 (2010-07-10)
-             removed image *writing* support
-             stbi_info support from Jetro Lauha
-             GIF support from Jean-Marc Lienher
-             iPhone PNG-extensions from James Brown
-             warning-fixes from Nicolas Schulz and Janez Zemva (i.stbi__err. Janez (U+017D)emva)
-      1.21   fix use of 'stbi_uc' in header (reported by jon blow)
-      1.20   added support for Softimage PIC, by Tom Seddon
-      1.19   bug in interlaced PNG corruption check (found by ryg)
-      1.18 2008-08-02
-             fix a threading bug (local mutable static)
-      1.17   support interlaced PNG
-      1.16   major bugfix - stbi__convert_format converted one too many pixels
-      1.15   initialize some fields for thread safety
-      1.14   fix threadsafe conversion bug
-             header-file-only version (#define STBI_HEADER_FILE_ONLY before including)
-      1.13   threadsafe
-      1.12   const qualifiers in the API
-      1.11   Support installable IDCT, colorspace conversion routines
-      1.10   Fixes for 64-bit (don't use "unsigned long")
-             optimized upsampling by Fabian "ryg" Giesen
-      1.09   Fix format-conversion for PSD code (bad global variables!)
-      1.08   Thatcher Ulrich's PSD code integrated by Nicolas Schulz
-      1.07   attempt to fix C++ warning/errors again
-      1.06   attempt to fix C++ warning/errors again
-      1.05   fix TGA loading to return correct *comp and use good luminance calc
-      1.04   default float alpha is 1, not 255; use 'void *' for stbi_image_free
-      1.03   bugfixes to STBI_NO_STDIO, STBI_NO_HDR
-      1.02   support for (subset of) HDR files, float interface for preferred access to them
-      1.01   fix bug: possible bug in handling right-side up bmps... not sure
-             fix bug: the stbi__bmp_load() and stbi__tga_load() functions didn't work at all
-      1.00   interface to zlib that skips zlib header
-      0.99   correct handling of alpha in palette
-      0.98   TGA loader by lonesock; dynamically add loaders (untested)
-      0.97   jpeg errors on too large a file; also catch another malloc failure
-      0.96   fix detection of invalid v value - particleman@mollyrocket forum
-      0.95   during header scan, seek to markers in case of padding
-      0.94   STBI_NO_STDIO to disable stdio usage; rename all #defines the same
-      0.93   handle jpegtran output; verbose errors
-      0.92   read 4,8,16,24,32-bit BMP files of several formats
-      0.91   output 24-bit Windows 3.0 BMP files
-      0.90   fix a few more warnings; bump version number to approach 1.0
-      0.61   bugfixes due to Marc LeBlanc, Christopher Lloyd
-      0.60   fix compiling as c++
-      0.59   fix warnings: merge Dave Moore's -Wall fixes
-      0.58   fix bug: zlib uncompressed mode len/nlen was wrong endian
-      0.57   fix bug: jpg last huffman symbol before marker was >9 bits but less than 16 available
-      0.56   fix bug: zlib uncompressed mode len vs. nlen
-      0.55   fix bug: restart_interval not initialized to 0
-      0.54   allow NULL for 'int *comp'
-      0.53   fix bug in png 3->4; speedup png decoding
-      0.52   png handles req_comp=3,4 directly; minor cleanup; jpeg comments
-      0.51   obey req_comp requests, 1-component jpegs return as 1-component,
-             on 'test' only check type, not whether we support this variant
-      0.50   first released version
-*/
