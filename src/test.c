@@ -4,7 +4,6 @@
 #include "test.h"
 #include "minunit.h"
 #include "stb_image.h"
-#include "stb_image_write.h"
 #include "stb_image_ext.h"
 #include "benchmark.h"
 
@@ -67,10 +66,10 @@ char* all_tests()
     error = malloc(sizeof(char) * 200);
     out = malloc(sizeof(char) * 100);
     img = malloc(sizeof(t_img_desc*) * NFILES);
-    
+
     if (!error || !out || !img)
         exit(EXIT_FAILURE);
-    
+
     mu_run_test(test_load_image);
     PRINT_LINE;
     mu_run_test(test_average_filter);
@@ -100,7 +99,7 @@ char* test_load_image()
 
         mu_assert(error, stbi_info(FILENAME[i], &x, &y, &comp) == 1);
         printf("%10s: %ix%i (%i)\n", FILENAME[i], x, y, comp);
-        
+
         img[i] = load_image(FILENAME[i], 3);
     }
 
@@ -115,8 +114,7 @@ char* test_average_filter()
 
         average_filter(img[i]);
 
-        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
-                img[i]->data, img[i]->x);
+        int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
 
         printf("write: %s\n", out);
@@ -132,9 +130,8 @@ char* test_greyscale()
         sprintf(error, "failed to write %s", out);
 
         grey_scale(img[i]);
-        
-        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
-                img[i]->data, img[i]->x);
+
+        int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
 
         printf("write: %s\n", out);
@@ -184,8 +181,7 @@ char* test_binarize()
 
         binarize(img[i]);
 
-        int result = stbi_write_png(out, img[i]->x, img[i]->y, img[i]->comp,
-                img[i]->data, img[i]->x);
+        int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
 
         printf("write: %s\n", out);

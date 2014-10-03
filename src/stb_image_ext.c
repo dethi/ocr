@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "stb_image.h"
+#include "stb_image_write.h"
 #include "stb_image_ext.h"
 
 const t_img_desc T_IMG_DESC_DEFAULT = {
@@ -25,6 +26,12 @@ t_img_desc* load_image(char* filename, int comp)
     }
 
     return img;
+}
+
+int write_image(char* filename, t_img_desc* img)
+{
+    return stbi_write_png(filename, img->x, img->y, img->comp, img->data,
+            img->x * img->comp);
 }
 
 void free_image(t_img_desc* img)

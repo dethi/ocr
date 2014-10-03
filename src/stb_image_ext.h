@@ -12,6 +12,7 @@ typedef struct {
 } t_img_desc;
 
 t_img_desc* load_image(char* filename, int comp);
+int write_image(char* filename, t_img_desc* img);
 void free_image(t_img_desc* img);
 static inline int xytoi(int i, int j, t_img_desc* img);
 void grey_scale(t_img_desc* tab);
