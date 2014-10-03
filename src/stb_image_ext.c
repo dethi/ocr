@@ -133,7 +133,7 @@ void average_filter(t_img_desc* img)
     if (img->comp != 3)
         return;
 
-    uchar *result = malloc(sizeof(char) * img->x * img->y * img->comp);
+    uchar *result = calloc(img->x * img->y * img->comp, sizeof(char));
     if (!result)
         exit(EXIT_FAILURE);
 

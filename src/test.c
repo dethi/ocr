@@ -73,8 +73,8 @@ char* all_tests()
     
     mu_run_test(test_load_image);
     PRINT_LINE;
-    //mu_run_test(test_average_filter);
-    //PRINT_LINE;
+    mu_run_test(test_average_filter);
+    PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
     mu_run_test(test_histogram);
@@ -87,7 +87,7 @@ char* all_tests()
     free(img);
     free(error);
     free(out);
-    
+
     return 0;
 }
 
@@ -97,7 +97,7 @@ char* test_load_image()
 
     for (int i = 0; i < NFILES; i++) {
         sprintf(error, "failed to load image %s", FILENAME[i]);
-        
+
         mu_assert(error, stbi_info(FILENAME[i], &x, &y, &comp) == 1);
         printf("%10s: %ix%i (%i)\n", FILENAME[i], x, y, comp);
         
