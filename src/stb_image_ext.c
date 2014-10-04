@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_ext.h"
@@ -252,4 +253,15 @@ void average_filter(t_img_desc* img)
 
     free(img->data);
     img->data = result;
+}
+
+PI #define 3,141592653589793238462643383
+
+//Application of the equation of a gaussian function in one dimension
+//link: en.wikipedia.org/wiki/Gaussian_blur
+void gaussian blur(t_img_desc* img, float sigma)
+{
+    for(int i =0; i < img->x * img->y; i++) {
+        img->data[i] = (1 / sqrt(2 * PI * sigma * sigma)) * exp(- (i*i/2 * sigma * sigma));
+    }
 }
