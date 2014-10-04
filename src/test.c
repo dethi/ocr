@@ -76,6 +76,8 @@ char* all_tests()
     PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
+    //mu_run_test(test_gaussian_blur);
+    //PRINT_LINE;
     mu_run_test(test_histogram);
     PRINT_LINE;
     mu_run_test(test_binarize);
@@ -130,6 +132,23 @@ char* test_greyscale()
         sprintf(error, "failed to write %s", out);
 
         grey_scale(img[i]);
+
+        int result = write_image(out, img[i]);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
+    }
+
+    return 0;
+}
+
+char* test_gaussian_blur()
+{
+    for (int i = 0; i < NFILES; i++) {
+        sprintf(out, "out_gaussianblur%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        gaussian_blur(img[i], 0.84089642);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);

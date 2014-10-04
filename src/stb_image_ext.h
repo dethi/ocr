@@ -24,5 +24,6 @@ void binarize_basic(t_img_desc* img);
 void binarize_otsu(t_img_desc* img);
 int thresold(uint* h);
 void average_filter(t_img_desc* img);
+void gaussian_blur(t_img_desc* img, float sigma);
 
 #endif

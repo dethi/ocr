@@ -257,9 +257,13 @@ void average_filter(t_img_desc* img)
 
 //Application of the equation of a gaussian function in one dimension
 //link: en.wikipedia.org/wiki/Gaussian_blur
-void gaussian blur(t_img_desc* img, float sigma)
+void gaussian_blur(t_img_desc* img, float sigma)
 {
-    for(int i =0; i < img->x * img->y; i++) {
-        img->data[i] = (1 / sqrt(2 * M_ PI * sigma * sigma)) * exp(- (i*i/2 * sigma * sigma));
+    if (img->comp != 1)
+        return;
+
+    for(int i = 0; i < img->x * img->y; i++) {
+        img->data[i] = (1 / sqrt(2 * M_PI * sigma * sigma)) *
+            exp(-(i * i) / (2 * sigma * sigma));
     }
 }
