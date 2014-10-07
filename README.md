@@ -1,5 +1,7 @@
 # OCR
 
+[![Build Status](https://magnum.travis-ci.com/dethi/ocr.svg?token=x9iDKPK5fQNGphzep8jS&branch=develop)](https://magnum.travis-ci.com/dethi/ocr)
+
 ## Compilation
 
 Pour initialiser la première fois le repos (nécessite le package autoconf) :

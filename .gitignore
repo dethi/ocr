@@ -47,6 +47,10 @@ Makefile.in
 /config.log
 /config.status
 /ar-lib
+/config.guess
+/config.sub
+/libtool
+/ltmain.sh
 .deps/
 Makefile
 /src/ocr
