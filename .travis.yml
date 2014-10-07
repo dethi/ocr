@@ -1,1 +1,7 @@
 language: c
+compiler:
+    - clang
+    - gcc
+
+before_script: autoreconf --install
+script: "./run_test.sh"
