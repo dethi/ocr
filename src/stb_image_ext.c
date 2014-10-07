@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -11,6 +12,13 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
     .y = 0,
     .comp = 0
 };
+
+// (x,y) axis to tab index
+static inline
+int xytoi(int i, int j, t_img_desc* img)
+{
+    return (img->comp) * (i + (img->x) * j);
+}
 
 t_img_desc* load_image(char* filename, int comp)
 {
@@ -40,13 +48,6 @@ void free_image(t_img_desc* img)
     free(img->data);
     free(img);
     img = NULL;
-}
-
-// (x,y) axis to tab index
-static inline
-int xytoi(int i, int j, t_img_desc* img)
-{
-    return (img->comp) * (i + (img->x) * j);
 }
 
 void grey_scale(t_img_desc* img)
