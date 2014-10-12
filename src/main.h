@@ -1,5 +1,5 @@
-#ifndef HEADER_MAIN_H
-#define HEADER_MAIN_H
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
 int main();
 

@@ -1,5 +1,5 @@
-#ifndef HEADER_TEST_H
-#define HEADER_TEST_H
+#ifndef _TEST_H_
+#define _TEST_H_
 
 int main();
 void print_limits();

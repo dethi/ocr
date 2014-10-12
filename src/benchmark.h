@@ -1,5 +1,5 @@
-#ifndef HEADER_BENCHMARK_H
-#define HEADER_BENCHMARK_H
+#ifndef _BENCHMARK_H_
+#define _BENCHMARK_H_
 
 double get_time();
 void bench_start();

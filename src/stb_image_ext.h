@@ -1,5 +1,5 @@
-#ifndef HEADER_STB_IMAGE_EXT_H
-#define HEADER_STB_IMAGE_EXT_H
+#ifndef _STB_IMAGE_EXT_H_
+#define _STB_IMAGE_EXT_H_
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
