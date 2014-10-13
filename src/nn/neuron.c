@@ -3,7 +3,7 @@
 #include <math.h>
 #include "neuron.h"
 
-static neuron* neuron_init(neuron *this);
+static void neuron_init(neuron *this);
 static float f(float x);
 
 neuron* new_neuron(int bias)
@@ -21,7 +21,7 @@ neuron* new_neuron(int bias)
     return this;
 }
 
-static neuron* neuron_init(neuron *this)
+static void neuron_init(neuron *this)
 {
     this->output = 0;
     this->links = NULL;
@@ -42,7 +42,7 @@ void neuron_calc_out(neuron *this)
     float bias = 0;
 
     for (size_t i = 0; i < this->nlinks; ++i) {
-        connec *l = this->links[i];
+        conn *l = &this->links[i];
         neuron *from = l->from;
         neuron *to = l->to;
 
@@ -62,16 +62,16 @@ static float f(float x)
     return 1.0f / (1.0f + (float)exp(-x));
 }
 
-void neuron_add_link(neuron *this, connec *l)
+void neuron_add_link(neuron *this, conn *l)
 {
-    connec *ptr = realloc(this->links, sizeof(connec) * (++this->nlinks));
+    conn *ptr = realloc(this->links, sizeof(conn) * (++this->nlinks));
     if (!ptr) {
         this->free(this);
         exit(EXIT_FAILURE);
     }
 
     this->links = ptr;
-    this->links[this->nlinks] = l;
+    this->links[this->nlinks] = *l;
 }
 
 void neuron_free(neuron *this)
