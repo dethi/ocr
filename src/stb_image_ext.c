@@ -21,6 +21,15 @@ double pw2(double x)
 }
 
 static inline
+double sigma_dbl(double *t, size_t start, size_t end)
+{
+    double c = 0;
+    for (size_t i = start; i < end; ++i)
+        c += t[i];
+    return c;
+}
+
+static inline
 uchar grey(uchar r, uchar g, uchar b)
 {
     return (r + g + b) / 3;
@@ -184,17 +193,11 @@ int thresold(uint *h)
     }
 
     for (size_t j = 1; j < 255; ++j) {
-        double prob_under = 0;
-        for (size_t k = 0; k < j; ++k)
-            prob_under += prob[k];
-
+        double prob_under = sigma_dbl(prob, 0, j);
         if (prob_under == 0)
             continue;
 
-        double prob_up = 0;
-        for (size_t k = j; k < 256; ++k)
-            prob_up += prob[k];
-
+        double prob_up = sigma_dbl(prob, j, 256);
         if (prob_up == 0)
             continue;
 
@@ -217,11 +220,6 @@ int thresold(uint *h)
             var_up += pw2(k - m_up) * prob[k];
 
         var[j] = var_under + var_up;
-
-        //warnx("prob_under: %lf \tprob_up: %lf", prob_under, prob_up);
-        //warnx("m_under: %lf \tm_up: %lf", m_under, m_up);
-        //warnx("var_under: %lf \tvar_up: %lf", var_under, var_up);
-        //warnx("(%zu) var: %lf \n", j, var[j]);
     }
 
     size_t min = 255;
@@ -232,8 +230,6 @@ int thresold(uint *h)
 
     free(prob);
     free(var);
-
-    //warnx("th: %zu", min);
     return min;
 }
 
