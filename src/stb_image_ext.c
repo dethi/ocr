@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_ext.h"
+//#include <err.h>
 
 const t_img_desc T_IMG_DESC_DEFAULT = {
     .data = NULL,
@@ -18,6 +20,12 @@ static inline
 int xytoi(int i, int j, t_img_desc* img)
 {
     return (img->comp) * (i + (img->x) * j);
+}
+
+static inline
+double pw2(double x)
+{
+    return x * x;
 }
 
 t_img_desc* load_image(char* filename, int comp)
@@ -130,7 +138,7 @@ uint* histogram_fast(t_img_desc* img)
 void binarize(uchar* data, int size, int th)
 {
     for (int i = 0; i < size; i++)
-        data[i] = (data[i] >= th) ? 255 : 0;
+        data[i] = (data[i] > th) ? 255 : 0;
 }
 
 void binarize_basic(t_img_desc* img)
@@ -153,52 +161,79 @@ void binarize_otsu(t_img_desc* img)
     binarize(img->data, img->x * img->y, th);
 }
 
-int thresold(uint* h)
+int thresold(uint *h)
 {
-    /* Prevent using the function, currently it doesn't work.
-     *  - return big value;
-     *  - division by zero with i (fixed with 1e-6, bullshit..)
-     */
-    printf("ERROR: Thresold is not implemented yet.\n");
-    exit(EXIT_FAILURE);
-    /* END */
+    size_t size = 0;
+    for (size_t i = 0; i < 256; ++i)
+        size += h[i];
 
-    double *ans = malloc(sizeof(double) * 256);
-    if (!ans) {
+    double *prob = malloc(sizeof(double) * 256);
+    if (!prob) {
         free(h);
         exit(EXIT_FAILURE);
     }
 
-    double v1 = 0, v2 = 0, p1 = 0, p2 = 0;
-
-    //Loop that calculates the best thresold
-    for (int i = 0; i < 256; i++) {
-        //For the element under the current thresold
-        for (int j = 0; j < i; j++) {
-            v1 += (j-i)*(j-i);
-            p1 += h[j];
-        }
-        v1 = (1/(i+1e-6))*v1;
-
-        //For the element up the current thresold
-        for (int k = i; k < 256; k++) {
-            v2 += (k-i)*(k-i);
-            p2 += h[k];
-        }
-        v2 = (1/(i+1e-6))*v2;
-
-        ans[i] = p1*v1+p2*v2;
+    double *var = malloc(sizeof(double) * 256);
+    if (!var) {
+        free(h);
+        free(prob);
+        exit(EXIT_FAILURE);
     }
 
-    double min = ans[0];
-
-    for (int l = 1; l < 256; l++) {
-        if (ans[l]<min)
-            min = ans[l];
+    for (size_t i = 0; i < 256; ++i) {
+        prob[i] = (double)h[i] / (double)size;
+        var[i] = DBL_MAX;
     }
 
-    free(ans);
-    return (int)min;
+    for (size_t j = 1; j < 255; ++j) {
+        double prob_under = 0;
+        for (size_t k = 0; k < j; ++k)
+            prob_under += prob[k];
+
+        if (prob_under == 0)
+            continue;
+
+        double prob_up = 0;
+        for (size_t k = j; k < 256; ++k)
+            prob_up += prob[k];
+
+        if (prob_up == 0)
+            continue;
+
+        double m_under = 0;
+        for (size_t k = 0; k < j; ++k)
+            m_under += k * prob[k];
+        m_under /= prob_under;
+
+        double m_up = 0;
+        for (size_t k = j; k < 256; ++k)
+            m_up += k * prob[k];
+        m_up /= prob_up;
+
+        double var_under = 0;
+        for (size_t k = 0; k < j; ++k)
+            var_under += pw2(k - m_under) * (1. / (double)j);
+
+        double var_up = 0;
+        for (size_t k = j; k < 256; ++k)
+            var_up += pw2(k - m_up) * (1. / (double)(256 - j));
+
+        var[j] = var_under + var_up;
+
+        //warnx("prob_under: %lf \tprob_up: %lf", prob_under, prob_up);
+        //warnx("m_under: %lf \tm_up: %lf", m_under, m_up);
+        //warnx("var_under: %lf \tvar_up: %lf", var_under, var_up);
+        //warnx("(%zu) var: %lf \n", j, var[j]);
+    }
+
+    size_t min = 255;
+    for (size_t i = 1; i < 255; ++i) {
+        if (var[min] > var[i])
+            min = i;
+    }
+
+    //warnx("th: %zu", min);
+    return min;
 }
 
 void average_filter(t_img_desc* img)

@@ -11,12 +11,15 @@
 
 int tests_run = 0;
 
-const int NFILES = 4;
+const int NFILES = 7;
 char FILENAME[][50] = {
     "test1.jpg",
     "test2.jpg",
     "test3.jpg",
-    "test4.png"
+    "test4.png",
+    "test5.jpg",
+    "test6.jpg",
+    "test7.jpg"
 };
 
 char *error;
@@ -198,8 +201,8 @@ char* test_binarize()
         sprintf(out, "out_binarize%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        //binarize_otsu(img[i]);
-        binarize_basic(img[i]);
+        binarize_otsu(img[i]);
+        //binarize_basic(img[i]);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
