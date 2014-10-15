@@ -1,6 +1,9 @@
 #ifndef _NEURON_H_
 #define _NEURON_H_
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 #include "connection.h"
 
 typedef struct neuron {

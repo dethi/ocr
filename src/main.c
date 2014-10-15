@@ -1,7 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "main.h"
-#include "stb_image_ext.h"
 
 int main()
 {

@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include "neuron.h"
 
 static void neuron_init(neuron *this);

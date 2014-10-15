@@ -1,6 +1,14 @@
 #ifndef _STB_IMAGE_EXT_H_
 #define _STB_IMAGE_EXT_H_
 
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+#include "stb_image.h"
+#include "stb_image_write.h"
+
 typedef unsigned char uchar;
 typedef unsigned int uint;
 

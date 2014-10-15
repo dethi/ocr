@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
 #include "connection.h"
 
 static void conn_init(conn *this, neuron *from, neuron *to);

@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#include "benchmark.h"
 
 double T_START;
 double T_END;

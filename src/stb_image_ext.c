@@ -1,12 +1,4 @@
-#define _GNU_SOURCE
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
-#include "stb_image.h"
-#include "stb_image_write.h"
 #include "stb_image_ext.h"
-//#include <err.h>
 
 const t_img_desc T_IMG_DESC_DEFAULT = {
     .data = NULL,
@@ -218,11 +210,11 @@ int thresold(uint *h)
 
         double var_under = 0;
         for (size_t k = 0; k < j; ++k)
-            var_under += pw2(k - m_under) * prob[k];//(1. / (double)j);
+            var_under += pw2(k - m_under) * prob[k];
 
         double var_up = 0;
         for (size_t k = j; k < 256; ++k)
-            var_up += pw2(k - m_up) * prob[k];// (1. / (double)(256 - j));
+            var_up += pw2(k - m_up) * prob[k];
 
         var[j] = var_under + var_up;
 
@@ -237,6 +229,9 @@ int thresold(uint *h)
         if (var[min] > var[i])
             min = i;
     }
+
+    free(prob);
+    free(var);
 
     //warnx("th: %zu", min);
     return min;

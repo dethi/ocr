@@ -1,6 +1,9 @@
 #ifndef _CONNECTION_H_
 #define _CONNECTION_H_
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 #include "neuron.h"
 
 typedef struct conn {

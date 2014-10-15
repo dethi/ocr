@@ -1,6 +1,14 @@
 #ifndef _TEST_H_
 #define _TEST_H_
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <limits.h>
+#include "minunit.h"
+#include "stb_image.h"
+#include "stb_image_ext.h"
+#include "benchmark.h"
+
 int main();
 void print_limits();
 char* all_tests();

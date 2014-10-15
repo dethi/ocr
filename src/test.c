@@ -1,11 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
 #include "test.h"
-#include "minunit.h"
-#include "stb_image.h"
-#include "stb_image_ext.h"
-#include "benchmark.h"
 
 #define PRINT_LINE printf("-----------------------------------\n")
 
