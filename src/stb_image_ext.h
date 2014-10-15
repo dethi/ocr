@@ -15,7 +15,7 @@ t_img_desc* load_image(char* filename, int comp);
 int write_image(char* filename, t_img_desc* img);
 void free_image(t_img_desc* img);
 void grey_scale(t_img_desc* tab);
-uchar grey(uchar r, uchar g, uchar b);
+uchar human_grey(uchar r, uchar g, uchar b);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
 void binarize(uchar* data, int size, int th);

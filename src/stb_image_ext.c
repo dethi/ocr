@@ -28,6 +28,12 @@ double pw2(double x)
     return x * x;
 }
 
+static inline
+uchar grey(uchar r, uchar g, uchar b)
+{
+    return (r + g + b) / 3;
+}
+
 t_img_desc* load_image(char* filename, int comp)
 {
     t_img_desc *img = malloc(sizeof(t_img_desc));
@@ -79,7 +85,7 @@ void grey_scale(t_img_desc* img)
     img->comp = 1;
 }
 
-uchar grey(uchar r, uchar g, uchar b)
+uchar human_grey(uchar r, uchar g, uchar b)
 {
     return (uchar)(0.21 * r + 0.72 * g + 0.07 * b);
 }
@@ -212,11 +218,11 @@ int thresold(uint *h)
 
         double var_under = 0;
         for (size_t k = 0; k < j; ++k)
-            var_under += pw2(k - m_under) * (1. / (double)j);
+            var_under += pw2(k - m_under) * prob[k];//(1. / (double)j);
 
         double var_up = 0;
         for (size_t k = j; k < 256; ++k)
-            var_up += pw2(k - m_up) * (1. / (double)(256 - j));
+            var_up += pw2(k - m_up) * prob[k];// (1. / (double)(256 - j));
 
         var[j] = var_under + var_up;
 
