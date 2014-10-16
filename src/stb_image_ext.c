@@ -21,15 +21,6 @@ double pw2(double x)
 }
 
 static inline
-double sigma_dbl(double *t, size_t start, size_t end)
-{
-    double c = 0;
-    for (size_t i = start; i < end; ++i)
-        c += t[i];
-    return c;
-}
-
-static inline
 uchar grey(uchar r, uchar g, uchar b)
 {
     return (r + g + b) / 3;
@@ -162,75 +153,51 @@ void binarize_otsu(t_img_desc* img)
         return;
 
     uint *h = histogram_fast(img);
-    int th = thresold(h);
+    int th = thresold(h, img->x * img->y);
     free(h);
 
     binarize(img->data, img->x * img->y, th);
 }
 
-int thresold(uint *h)
+int thresold(uint *h, size_t size)
 {
-    size_t size = 0;
+    double prob[256];
+    size_t min_i = 256;
+    double min_var = DBL_MAX;
+
     for (size_t i = 0; i < 256; ++i)
-        size += h[i];
-
-    double *prob = malloc(sizeof(double) * 256);
-    if (!prob) {
-        free(h);
-        exit(EXIT_FAILURE);
-    }
-
-    double *var = malloc(sizeof(double) * 256);
-    if (!var) {
-        free(h);
-        free(prob);
-        exit(EXIT_FAILURE);
-    }
-
-    for (size_t i = 0; i < 256; ++i) {
         prob[i] = (double)h[i] / (double)size;
-        var[i] = DBL_MAX;
-    }
 
     for (size_t j = 1; j < 255; ++j) {
-        double prob_under = sigma_dbl(prob, 0, j);
-        if (prob_under == 0)
-            continue;
-
-        double prob_up = sigma_dbl(prob, j, 256);
-        if (prob_up == 0)
-            continue;
-
-        double m_under = 0;
-        for (size_t k = 0; k < j; ++k)
+        double m_under = 0, c = 0;
+        for (size_t k = 0; k < j; ++k) {
             m_under += k * prob[k];
-        m_under /= prob_under;
+            c += prob[k];
+        }
+
+        // next iteration if a class is empty
+        if (c == 0 || c == 1)
+            continue;
+        m_under /= c;
 
         double m_up = 0;
         for (size_t k = j; k < 256; ++k)
             m_up += k * prob[k];
-        m_up /= prob_up;
+        m_up /= (1 - c);
 
-        double var_under = 0;
+        double var = 0;
         for (size_t k = 0; k < j; ++k)
-            var_under += pw2(k - m_under) * prob[k];
-
-        double var_up = 0;
+            var += pw2(k - m_under) * prob[k];
         for (size_t k = j; k < 256; ++k)
-            var_up += pw2(k - m_up) * prob[k];
+            var += pw2(k - m_up) * prob[k];
 
-        var[j] = var_under + var_up;
+        if (min_var > var) {
+            min_i = j;
+            min_var = var;
+        }
     }
 
-    size_t min = 255;
-    for (size_t i = 1; i < 255; ++i) {
-        if (var[min] > var[i])
-            min = i;
-    }
-
-    free(prob);
-    free(var);
-    return min;
+    return min_i;
 }
 
 void average_filter(t_img_desc* img)
