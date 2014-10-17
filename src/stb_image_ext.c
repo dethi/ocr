@@ -7,13 +7,6 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
     .comp = 0
 };
 
-// (x,y) axis to tab index
-static inline
-int xytoi(int i, int j, t_img_desc* img)
-{
-    return (img->comp) * (i + (img->x) * j);
-}
-
 static inline
 double pw2(double x)
 {
@@ -268,6 +261,7 @@ void gaussian_blur(t_img_desc* img, float sigma)
     }
 }
 
+static inline
 int coordonates(int x, int y, t_img_desc *img)
 {
     if (x < 0 || x> = img->x || y < 0 || y >= img->y)
