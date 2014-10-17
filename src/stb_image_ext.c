@@ -19,13 +19,25 @@ uchar grey(uchar r, uchar g, uchar b)
     return (r + g + b) / 3;
 }
 
+//Function that returns the mirror pixel when out of the img
 static inline
-int coordonates(int x, int y, t_img_desc *img)
+int coor(int x, int y, int i, int j, t_img_desc *img)
 {
-    if (x < 0 || x>= img->x || y < 0 || y >= img->y)
-        return -1;
-    else
-        return x + img->x * y;
+    while (x < 0 && x >= img->x) {
+        if (x < 0)
+            x = -x;
+        else {
+            x = 2 * i - x;
+        }
+    }
+    while (y < 0 && x >= img->y) {
+       if (y < 0)
+           y = -y;
+       else {
+           y = 2 * j - y;
+       }
+    }
+    return x + img->x * y;
 }
 
 static inline
@@ -255,7 +267,7 @@ void average_filter(t_img_desc* img)
                 img->data[xytoi(x + 1, y, img) + 2] +
                 img->data[xytoi(x - 1, y + 1, img) + 2] +
                 img->data[xytoi(x, y + 1, img) + 2] +
-                img->data[xytoi(x + 1, y + 1, img) + 2]) / 9;
+                img->data[coor(x + 1, y + 1, img, 1, 1) + 2]) / 9;
         }
     }
 
