@@ -32,5 +32,6 @@ void binarize_otsu(t_img_desc* img);
 int thresold(uint* h, size_t size);
 void average_filter(t_img_desc* img);
 void gaussian_blur(t_img_desc* img, float sigma);
+int coordonates(int, int, t_img_desc*);
 
 #endif

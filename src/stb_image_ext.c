@@ -267,3 +267,11 @@ void gaussian_blur(t_img_desc* img, float sigma)
             exp(-(i * i) / (2 * sigma * sigma));
     }
 }
+
+int coordonates(int x, int y, t_img_desc *img)
+{
+    if (x < 0 || x> = img->x || y < 0 || y >= img->y)
+        return -1;
+    else
+        return x + img->x * y;
+}
