@@ -7,13 +7,6 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
     .comp = 0
 };
 
-// (x,y) axis to tab index
-static inline
-int xytoi(int i, int j, t_img_desc* img)
-{
-    return (img->comp) * (i + (img->x) * j);
-}
-
 static inline
 double pw2(double x)
 {
@@ -24,6 +17,33 @@ static inline
 uchar grey(uchar r, uchar g, uchar b)
 {
     return (r + g + b) / 3;
+}
+
+//Function that returns the mirror pixel when out of the img
+static inline
+int coor(int x, int y, int i, int j, t_img_desc *img)
+{
+    while (x < 0 && x >= img->x) {
+        if (x < 0)
+            x = -x;
+        else {
+            x = 2 * i - x;
+        }
+    }
+    while (y < 0 && x >= img->y) {
+       if (y < 0)
+           y = -y;
+       else {
+           y = 2 * j - y;
+       }
+    }
+    return x + img->x * y;
+}
+
+static inline
+int xytoi(int x, int y, t_img_desc* img)
+{
+    return (img->comp) * (x + (img->x) * y);
 }
 
 t_img_desc* load_image(char* filename, int comp)
@@ -247,7 +267,7 @@ void average_filter(t_img_desc* img)
                 img->data[xytoi(x + 1, y, img) + 2] +
                 img->data[xytoi(x - 1, y + 1, img) + 2] +
                 img->data[xytoi(x, y + 1, img) + 2] +
-                img->data[xytoi(x + 1, y + 1, img) + 2]) / 9;
+                img->data[coor(x + 1, y + 1, img, 1, 1) + 2]) / 9;
         }
     }
 
