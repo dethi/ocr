@@ -267,5 +267,11 @@ int coordonates(int x, int y, t_img_desc *img)
     if (x < 0 || x> = img->x || y < 0 || y >= img->y)
         return -1;
     else
-        return x + img->x * y;
+        return (img->comp)x + img->x * y;
+}
+
+static inline
+int xytoi(int x, int y, t_image_desc* img)
+{
+    return (img->comp) * (x + (img->x) * j);
 }
