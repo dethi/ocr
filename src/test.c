@@ -144,7 +144,7 @@ char* test_gaussian_blur()
         sprintf(out, "out_gaussianblur%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        gaussian_blur(img[i], 0.84089642);
+        // call the gaussian blur function here
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);

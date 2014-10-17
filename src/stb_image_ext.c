@@ -19,6 +19,9 @@ uchar grey(uchar r, uchar g, uchar b)
     return (r + g + b) / 3;
 }
 
+/*
+// TODO: uncomment when you will use it. Currently it generate a warning
+// because nobody use it.
 //Function that returns the mirror pixel when out of the img
 static inline
 int coor(int x, int y, int i, int j, t_img_desc *img)
@@ -39,6 +42,7 @@ int coor(int x, int y, int i, int j, t_img_desc *img)
     }
     return x + img->x * y;
 }
+*/
 
 static inline
 int xytoi(int x, int y, t_img_desc* img)
@@ -267,7 +271,7 @@ void average_filter(t_img_desc* img)
                 img->data[xytoi(x + 1, y, img) + 2] +
                 img->data[xytoi(x - 1, y + 1, img) + 2] +
                 img->data[xytoi(x, y + 1, img) + 2] +
-                img->data[coor(x + 1, y + 1, img, 1, 1) + 2]) / 9;
+                img->data[xytoi(x + 1, y + 1, img) + 2]) / 9;
         }
     }
 
@@ -275,29 +279,26 @@ void average_filter(t_img_desc* img)
     img->data = result;
 }
 
-//Application of the equation of a gaussian function in one dimension
-//link: en.wikipedia.org/wiki/Gaussian_blur
-void gaussian_blur(t_img_desc* img, uchar *mask, int sum_mask, int n) 
+/*
+void gaussian_blur(t_img_desc *img, uchar *mask, int sum_mask, int n)
 {
-  /* n = sizemask */
-    /*if (img->comp != 1)
-        return;
+    // TODO: RTFM about calloc, or see Grayscale function
+    uchar *tmp = calloc(img->x * img->y, sizeof(char)*256);
 
-    for(int i = 0; i < img->x * img->y; i++) {
-        img->data[i] = (1 / sqrt(2 * M_PI * sigma * sigma)) *
-            exp(-(i * i) / (2 * sigma * sigma));
-    }*/
-  uchar *tmp = calloc(img->x*img->y, sizeof(char)*256);
-  for(int j = 0; j< img->y; j++){
-    for(int i = 0; i< img->x; i++){
+    for(int j = 0; j< img->y; j++) {
+        for(int i = 0; i< img->x; i++) {
+            for(int y = -n/2 + 1; y< n/2; y++) {
+                for(int x = -n/2 + 1; x < n/2; x++) {
+                    // TODO: Currently (in the function declaration), mask is not 2-dimentionnal array.
+                    // And when you fix that, look on the internet the methods to get a value
+                    // from a 2-dimentionnal array.
+                    tmp[xytoi(i,j,img)] +=
+                        img->data[coor(i - x, j - y, i, j, img)] * mask[x, y];
+                }
+            }
 
-      for(int y = -n/2 + 1; y< n/2; y++){
-        for(int x = -n/2 + 1; x < n/2; x++){
-          tmp[xytoi(i,j,img)] += 
-            img->data[coor(i - x, j - y, i, j, img)] * mask[x, y];
+            tmp[xytoi(i, j, img)] /= sum_mask;
         }
-      }
-      tmp[xytoi(i, j, img)] /= sum_mask;
     }
-  }
 }
+*/
