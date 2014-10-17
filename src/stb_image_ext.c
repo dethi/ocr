@@ -19,6 +19,21 @@ uchar grey(uchar r, uchar g, uchar b)
     return (r + g + b) / 3;
 }
 
+static inline
+int coordonates(int x, int y, t_img_desc *img)
+{
+    if (x < 0 || x>= img->x || y < 0 || y >= img->y)
+        return -1;
+    else
+        return x + img->x * y;
+}
+
+static inline
+int xytoi(int x, int y, t_img_desc* img)
+{
+    return (img->comp) * (x + (img->x) * y);
+}
+
 t_img_desc* load_image(char* filename, int comp)
 {
     t_img_desc *img = malloc(sizeof(t_img_desc));
@@ -259,19 +274,4 @@ void gaussian_blur(t_img_desc* img, float sigma)
         img->data[i] = (1 / sqrt(2 * M_PI * sigma * sigma)) *
             exp(-(i * i) / (2 * sigma * sigma));
     }
-}
-
-static inline
-int coordonates(int x, int y, t_img_desc *img)
-{
-    if (x < 0 || x> = img->x || y < 0 || y >= img->y)
-        return -1;
-    else
-        return (img->comp)x + img->x * y;
-}
-
-static inline
-int xytoi(int x, int y, t_image_desc* img)
-{
-    return (img->comp) * (x + (img->x) * j);
 }
