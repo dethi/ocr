@@ -257,13 +257,27 @@ void average_filter(t_img_desc* img)
 
 //Application of the equation of a gaussian function in one dimension
 //link: en.wikipedia.org/wiki/Gaussian_blur
-void gaussian_blur(t_img_desc* img, float sigma)
+void gaussian_blur(t_img_desc* img, uchar *mask, int sum_mask, int n) 
 {
-    if (img->comp != 1)
+  /* n = sizemask */
+    /*if (img->comp != 1)
         return;
 
     for(int i = 0; i < img->x * img->y; i++) {
         img->data[i] = (1 / sqrt(2 * M_PI * sigma * sigma)) *
             exp(-(i * i) / (2 * sigma * sigma));
+    }*/
+  uchar *tmp = calloc(img->x*img->y, sizeof(char)*256);
+  for(int j = 0; j< img->y; j++){
+    for(int i = 0; i< img->x; i++){
+
+      for(int y = -n/2 + 1; y< n/2; y++){
+        for(int x = -n/2 + 1; x < n/2; x++){
+          tmp[xytoi(i,j,img)] += 
+            img->data[coor(i - x, j - y, i, j, img)] * mask[x, y];
+        }
+      }
+      tmp[xytoi(i, j, img)] /= sum_mask;
     }
+  }
 }
