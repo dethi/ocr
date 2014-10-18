@@ -162,21 +162,79 @@ void average_filter(t_img_desc* img)
 
 void gaussian_blur(t_img_desc *img, uchar *mask, int sum_mask, int n)
 {
-    // TODO: RTFM about calloc, or see Grayscale function
-    uchar *tmp = calloc(img->x * img->y, sizeof(char)*256);
+    uchar *tmp = calloc(img->x * img->y, sizeof(char));
 
-    for(int j = 0; j< img->y; j++) {
-        for(int i = 0; i< img->x; i++) {
-            for(int y = -n/2 + 1; y< n/2; y++) {
-                for(int x = -n/2 + 1; x < n/2; x++) {
+    for(int j = 0; j< img->y; ++j) {
+        for(int i = 0; i< img->x; ++i) {
+            for(int y = -n/2 + 1; y< n/2; ++y) {
+                for(int x = -n/2 + 1; x < n/2; ++x) {
                     tmp[xytoi(i,j,img)] +=
-                        img->data[coor(i - x, j - y, i, j, img)] * mask[x+n*y];
+                        img->data[coor(i - x, j - y, i, j, img)] * mask[x + n * y];
                 }
             }
             tmp[xytoi(i, j, img)] /= sum_mask;
         }
     }
-
+	
     free(img->data);
     img->data = tmp;
+}
+
+//Function that discriminates text and blocks of img
+void RLSA(t_img_desc *img, int i, int j)
+{
+    uchar *tab = malloc(sizeof(char) * img->x);
+    uchar *tmp = malloc(sizeof(char) * img->x * img ->y);
+	
+    for (int row = 0; row < img->y; ++row) {
+        for (int x = 0; x < img->x; ++x)
+            tab[x] = img->data[row * img->x + x];
+		
+        trans_RLSA(tab, img->x, i);
+		
+        for (int x = 0; x < img->x; ++x)
+            tmp[row * img->x + x] = tab[x];
+    }
+	
+    tab = realloc(tab, sizeof(uchar) * img->y);
+	
+    for (int col = 0; col < img->x; ++col) {
+        for (int y = 0; y < img->y; ++y)
+            tab[y] = img->data[col + img->x * y];
+		
+        trans_RLSA(tab, img->y, j);
+		
+        for (int y = 0; y < img->y; ++y)
+            tmp[col + img->x * y] = tab[y];
+    }
+	
+    free(tab);
+    free(img->data);
+    img->data = tmp;
+}
+
+void trans_RLSA(uchar *tab, int size, int c)
+{
+    int count;
+    for (int i = 0; i < size; ++i) {
+        if (tab[i] == 0) {
+            count = 1;
+			
+            while(tab[i] == 0 && i < size)
+                ++count;
+			
+            if (count > c) {
+                while (count >= 0) {
+                    tab[i] = 0;
+                    --count;
+                }
+            }
+            else {
+                while (count >= 0) {
+                    tab[i] = 1;
+                    --count;
+                }
+            }
+        }
+    }
 }

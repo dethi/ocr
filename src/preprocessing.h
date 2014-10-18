@@ -16,5 +16,7 @@ void binarize_otsu(t_img_desc* img);
 int thresold(uint* h, size_t size);
 void average_filter(t_img_desc* img);
 void gaussian_blur(t_img_desc* img, uchar *mask, int sum_mask, int n);
+void RLSA(t_img_desc *img, int i, int j);
+void trans_RLSA(uchar *tab, int size, int c);
 
 #endif
