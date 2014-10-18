@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "stb_image_ext.h"
+#include "stb_image/stb_image_ext.h"
 
 int main();
 

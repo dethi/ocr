@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <limits.h>
 #include "minunit.h"
-#include "stb_image.h"
-#include "stb_image_ext.h"
+#include "stb_image/stb_image.h"
+#include "stb_image/stb_image_ext.h"
+#include "preprocessing.h"
 #include "benchmark.h"
 
 int main();

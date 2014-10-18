@@ -1,11 +1,8 @@
 #ifndef _STB_IMAGE_EXT_H_
 #define _STB_IMAGE_EXT_H_
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
-#include <float.h>
 #include "stb_image.h"
 #include "stb_image_write.h"
 
@@ -19,18 +16,16 @@ typedef struct {
     int comp;
 } t_img_desc;
 
+inline
+int xytoi(int x, int y, t_img_desc* img) {
+    return (img->comp) * (x + (img->x) * y);
+}
+
 t_img_desc* load_image(char* filename, int comp);
 int write_image(char* filename, t_img_desc* img);
 void free_image(t_img_desc* img);
-void grey_scale(t_img_desc* tab);
-uchar human_grey(uchar r, uchar g, uchar b);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
-void binarize(uchar* data, int size, int th);
-void binarize_basic(t_img_desc* img);
-void binarize_otsu(t_img_desc* img);
-int thresold(uint* h, size_t size);
-void average_filter(t_img_desc* img);
-void gaussian_blur(t_img_desc* img, uchar *mask, int sum_mask, int n);
+int coor(int x, int y, int i, int j, t_img_desc *img);
 
 #endif
