@@ -220,18 +220,18 @@ void trans_RLSA(uchar *tab, int size, int c)
         if (tab[i] == 0) {
             count = 1;
 
-            while(tab[i] == 0 && i < size)
+            while(tab[i+count] == 0 && i+count < size)
                 ++count;
 
             if (count > c) {
                 while (count >= 0) {
-                    tab[i] = 0;
+                    tab[i+count] = 0;
                     --count;
                 }
             }
             else {
                 while (count >= 0) {
-                    tab[i] = 1;
+                    tab[i+count] = 1;
                     --count;
                 }
             }

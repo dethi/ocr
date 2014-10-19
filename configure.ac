@@ -1,10 +1,34 @@
 AC_INIT([OCR], [0.1], [thibault.deutsch@epita.fr])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-AC_PROG_CC([clang gcc])
-AC_PROG_INSTALL
-AC_CHECK_HEADERS([math.h], [break])
-AM_PROG_CC_C_O
+
 AM_PROG_AR
 LT_INIT
+AC_PROG_CC([clang gcc])
+AC_PROG_INSTALL
+AC_PREREQ
+AC_PROG_MAKE_SET
+
+AC_CHECK_HEADERS([math.h])
+AC_CHECK_HEADERS([float.h])
+AC_CHECK_HEADERS([limits.h])
+AC_CHECK_HEADERS([stddef.h])
+AC_CHECK_HEADERS([sys/time.h])
+AC_CHECK_HEADER_STDBOOL
+
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+
+AC_C_INLINE
+
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([gettimeofday])
+AC_CHECK_FUNCS([memmove])
+AC_CHECK_FUNCS([memset])
+AC_CHECK_FUNCS([sqrt])
+
 AC_CONFIG_FILES([Makefile src/Makefile src/stb_image/Makefile])
 AC_OUTPUT

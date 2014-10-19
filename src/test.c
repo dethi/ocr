@@ -4,7 +4,7 @@
 
 int tests_run = 0;
 
-const int NFILES = 7;
+const int NFILES = 9;
 char FILENAME[][50] = {
     "test1.jpg",
     "test2.jpg",
@@ -12,7 +12,9 @@ char FILENAME[][50] = {
     "test4.png",
     "test5.jpg",
     "test6.jpg",
-    "test7.jpg"
+    "test7.jpg",
+    "test8.png",
+    "test9.png"
 };
 
 char *error;
