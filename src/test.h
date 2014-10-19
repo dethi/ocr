@@ -19,5 +19,6 @@ char* test_greyscale();
 char* test_gaussian_blur();
 char* test_histogram();
 char* test_binarize();
+char* test_RLSA();
 
 #endif

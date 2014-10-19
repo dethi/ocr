@@ -78,6 +78,8 @@ char* all_tests()
     PRINT_LINE;
     mu_run_test(test_binarize);
     PRINT_LINE;
+    mu_run_test(test_RLSA);
+    PRINT_LINE;
 
     for (int i = 0; i < NFILES; i++)
         free_image(img[i]);
@@ -196,6 +198,23 @@ char* test_binarize()
 
         binarize_otsu(img[i]);
         //binarize_basic(img[i]);
+
+        int result = write_image(out, img[i]);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
+    }
+
+    return 0;
+}
+
+char* test_RLSA()
+{
+    for (int i = 0; i < NFILES; i++) {
+        sprintf(out, "out_RLSA%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        RLSA(img[i], 5, 5);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
