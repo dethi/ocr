@@ -1,5 +1,5 @@
 AC_INIT([OCR], [0.1], [thibault.deutsch@epita.fr])
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign])
 
 AM_PROG_AR
 LT_INIT
@@ -13,7 +13,6 @@ AC_CHECK_HEADERS([float.h])
 AC_CHECK_HEADERS([limits.h])
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([sys/time.h])
-AC_CHECK_HEADER_STDBOOL
 
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
