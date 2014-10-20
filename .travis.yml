@@ -1,10 +1,17 @@
 language: c
+
 compiler:
     - clang
     - gcc
 
-before_script:
+before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq autoconf libtool gengetopt 
+    - sudo apt-get install -y autoconf libtool gengetopt
+before_script:
     - autoreconf --install
+
 script: "./configure && make && ./run_test.sh"
+
+notifications:
+    email:
+        - thibault.deutsch@epita.fr"
