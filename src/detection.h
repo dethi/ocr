@@ -1,5 +1,5 @@
 #ifndef _DETECTION_H_
-#define _DETECTION_H
+#define _DETECTION_H_
 
 #include <stdlib.h>
 #include <stdio.h>
