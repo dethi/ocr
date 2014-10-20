@@ -11,4 +11,4 @@ script: "./configure && make && ./run_test.sh"
 
 notifications:
     email:
-        - thibault.deutsch@epita.fr"
+        - thibault.deutsch@epita.fr
