@@ -9,5 +9,5 @@ test_SOURCES = test.c benchmark.c
 test_LDADD = stb_image/lib_stb_image.la lib_processing.la
 
 noinst_LTLIBRARIES = lib_processing.la
-lib_processing_la_SOURCES = preprocessing.c
+lib_processing_la_SOURCES = preprocessing.c detection.c
 lib_processing_la_LIBADD = -lm

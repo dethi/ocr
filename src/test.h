@@ -8,6 +8,7 @@
 #include "stb_image/stb_image.h"
 #include "stb_image/stb_image_ext.h"
 #include "preprocessing.h"
+#include "detection.h"
 #include "benchmark.h"
 
 int main();
