@@ -5,8 +5,9 @@ compiler:
     - gcc
 
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -y autoconf libtool gengetopt
+    - apt-get update -qq
+    - apt-get install -y autoconf libtool gengetopt
+
 before_script:
     - autoreconf --install
 
