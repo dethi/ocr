@@ -37,6 +37,26 @@ void free_image(t_img_desc* img)
     img = NULL;
 }
 
+int grey2RGB(t_img_desc* img)
+{
+    if (img->comp != 1)
+        return EXIT_FAILURE;
+
+    uchar *ptr = realloc(img->data, sizeof(char) * img->x * img->y * 3);
+    if (!ptr)
+        return EXIT_FAILURE;
+
+    for (size_t i = (img->x * img->y) - 1; i != 0; --i) {
+        ptr[3 * i] = ptr[i];
+        ptr[3 * i + 1] = ptr[i];
+        ptr[3 * i + 2] = ptr[i];
+    }
+
+    img->data = ptr;
+    img->comp = 3;
+    return EXIT_SUCCESS;
+}
+
 uint* histogram(t_img_desc* img)
 {
     uint *h = calloc(256, sizeof(int));

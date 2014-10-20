@@ -24,6 +24,7 @@ int xytoi(int x, int y, t_img_desc* img) {
 t_img_desc* load_image(char* filename, int comp);
 int write_image(char* filename, t_img_desc* img);
 void free_image(t_img_desc* img);
+int grey2RGB(t_img_desc* img);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
 int coor(int x, int y, int i, int j, t_img_desc *img);

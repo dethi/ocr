@@ -1,12 +1,12 @@
 AC_INIT([OCR], [0.1], [thibault.deutsch@epita.fr])
 AM_INIT_AUTOMAKE([foreign])
 
-AM_PROG_AR
-LT_INIT
 AC_PROG_CC([clang gcc])
 AC_PROG_INSTALL
 AC_PREREQ
 AC_PROG_MAKE_SET
+AM_PROG_AR
+LT_INIT
 
 AC_CHECK_HEADERS([math.h])
 AC_CHECK_HEADERS([float.h])
