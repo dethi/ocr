@@ -4,7 +4,7 @@
 
 ## Compilation
 
-Pour initialiser la première fois le repos (nécessite le package autoconf et libtool) :
+Pour initialiser la première fois le repos (nécessite le package autoconf, libtool et gengetopt) :
 
 ````bash
 autoreconf --install
