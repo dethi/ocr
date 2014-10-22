@@ -29,5 +29,5 @@ AC_CHECK_FUNCS([memmove])
 AC_CHECK_FUNCS([memset])
 AC_CHECK_FUNCS([sqrt])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/stb_image/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/stb_image/Makefile src/proc/Makefile])
 AC_OUTPUT
