@@ -9,6 +9,7 @@
 #include "stb_image/stb_image_ext.h"
 #include "proc/preprocessing.h"
 #include "proc/detection.h"
+#include "proc/filter.c"
 #include "benchmark.h"
 
 int main();
