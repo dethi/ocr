@@ -70,12 +70,12 @@ char* all_tests()
 
     mu_run_test(test_load_image);
     PRINT_LINE;
-    mu_run_test(test_average_filter);
-    PRINT_LINE;
+    //mu_run_test(test_average_filter);
+    //PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
-    //mu_run_test(test_gaussian_blur);
-    //PRINT_LINE;
+    mu_run_test(test_gaussian_blur);
+    PRINT_LINE;
     mu_run_test(test_histogram);
     PRINT_LINE;
     mu_run_test(test_binarize);
@@ -114,7 +114,8 @@ char* test_average_filter()
         sprintf(out, "out_averagefilter%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        average_filter(img[i]);
+        extern const char mask_median[];
+        filter_mask(img[i], mask_median, 9, 3);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
@@ -148,7 +149,8 @@ char* test_gaussian_blur()
         sprintf(out, "out_gaussianblur%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        // call the gaussian blur function here
+        extern const char mask_gaussien[];
+        filter_mask(img[i], mask_gaussien, 273, 5);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
@@ -199,7 +201,6 @@ char* test_binarize()
         sprintf(error, "failed to write %s", out);
 
         binarize_otsu(img[i]);
-        //binarize_basic(img[i]);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);

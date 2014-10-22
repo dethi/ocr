@@ -27,6 +27,5 @@ void free_image(t_img_desc* img);
 int grey2RGB(t_img_desc* img);
 uint* histogram(t_img_desc* img);
 uint* histogram_fast(t_img_desc* img);
-int coor(int x, int y, int i, int j, t_img_desc *img);
 
 #endif

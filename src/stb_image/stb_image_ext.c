@@ -107,24 +107,3 @@ uint* histogram_fast(t_img_desc* img)
 
     return h;
 }
-
-//Function that returns the mirror pixel when (x,y)
-//is out of the img
-int coor(int x, int y, int i, int j, t_img_desc *img)
-{
-    while (x < 0 && x >= img->x) {
-        if (x < 0)
-            x = -x;
-        else
-            x = 2 * i - x;
-    }
-
-    while (y < 0 && x >= img->y) {
-       if (y < 0)
-           y = -y;
-       else
-           y = 2 * j - y;
-    }
-
-    return x + img->x * y;
-}

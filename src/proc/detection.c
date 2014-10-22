@@ -1,5 +1,32 @@
 #include "detection.h"
 
+static
+void trans_RLSA(uchar *tab, int size, int c)
+{
+    int count;
+    for (int i = 0; i < size; ++i) {
+        if (tab[i] == 0) {
+            count = 1;
+
+            while(i+count < size && tab[i+count] == 0)
+                ++count;
+
+            if (count > c) {
+                while (count >= 0) {
+                    tab[i+count] = 0;
+                    --count;
+                }
+            }
+            else {
+                while (count >= 0) {
+                    tab[i+count] = 255;
+                    --count;
+                }
+            }
+        }
+    }
+}
+
 //Function that discriminates text and blocks of img
 void RLSA(t_img_desc *img, int i, int j)
 {
@@ -44,30 +71,4 @@ void RLSA(t_img_desc *img, int i, int j)
     free(tab);
     free(img->data);
     img->data = tmp;
-}
-
-void trans_RLSA(uchar *tab, int size, int c)
-{
-    int count;
-    for (int i = 0; i < size; ++i) {
-        if (tab[i] == 0) {
-            count = 1;
-
-            while(i+count < size && tab[i+count] == 0)
-                ++count;
-
-            if (count > c) {
-                while (count >= 0) {
-                    tab[i+count] = 0;
-                    --count;
-                }
-            }
-            else {
-                while (count >= 0) {
-                    tab[i+count] = 255;
-                    --count;
-                }
-            }
-        }
-    }
 }
