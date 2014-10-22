@@ -1,5 +1,6 @@
 #include "filter.h"
 
+// Div: 9
 const char mask_median[] =
 {
     1, 1, 1,
@@ -7,6 +8,7 @@ const char mask_median[] =
     1, 1, 1
 };
 
+// Div: 273
 const char mask_gaussien[] =
 {
 	1,  4,  7,  4, 1,
@@ -14,6 +16,14 @@ const char mask_gaussien[] =
 	7, 26, 41, 26, 7,
 	4, 16, 26, 16, 4,
 	1,  4,  7,  4, 1
+};
+
+// Div: 9
+const char mask_sharpening[] =
+{
+    -1, -1, -1,
+    -1, 17, -1,
+    -1, -1, -1
 };
 
 static inline
