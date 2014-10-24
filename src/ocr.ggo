@@ -6,9 +6,17 @@ args "--unamed-opts"
 
 option "grey" g "Converts the image to greyscale" flag off
 option "binarize" b "Binarize the image" flag off
+option "segmentation" s "Detect the different part of the image"
+    int
+    multiple(2)
+    optional
 option "thresold" - "Select the methods used to compute the thresold"
     string typestr="methods"
     values="fixed", "otsu"
     default="otsu"
     dependon="binarize"
+    optional
+option "filter" - "Apply a filter on the image"
+    string typestr="methods"
+    values="median", "gaussien", "sharpening"
     optional

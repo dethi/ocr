@@ -43,15 +43,25 @@ struct gengetopt_args_info
   const char *grey_help; /**< @brief Converts the image to greyscale help description.  */
   int binarize_flag;	/**< @brief Binarize the image (default=off).  */
   const char *binarize_help; /**< @brief Binarize the image help description.  */
+  int* segmentation_arg;	/**< @brief Detect the different part of the image.  */
+  char ** segmentation_orig;	/**< @brief Detect the different part of the image original value given at command line.  */
+  unsigned int segmentation_min; /**< @brief Detect the different part of the image's minimum occurreces */
+  unsigned int segmentation_max; /**< @brief Detect the different part of the image's maximum occurreces */
+  const char *segmentation_help; /**< @brief Detect the different part of the image help description.  */
   char * thresold_arg;	/**< @brief Select the methods used to compute the thresold (default='otsu').  */
   char * thresold_orig;	/**< @brief Select the methods used to compute the thresold original value given at command line.  */
   const char *thresold_help; /**< @brief Select the methods used to compute the thresold help description.  */
+  char * filter_arg;	/**< @brief Apply a filter on the image.  */
+  char * filter_orig;	/**< @brief Apply a filter on the image original value given at command line.  */
+  const char *filter_help; /**< @brief Apply a filter on the image help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int grey_given ;	/**< @brief Whether grey was given.  */
   unsigned int binarize_given ;	/**< @brief Whether binarize was given.  */
+  unsigned int segmentation_given ;	/**< @brief Whether segmentation was given.  */
   unsigned int thresold_given ;	/**< @brief Whether thresold was given.  */
+  unsigned int filter_given ;	/**< @brief Whether filter was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */
@@ -177,6 +187,7 @@ int cmdline_parser_required (struct gengetopt_args_info *args_info,
   const char *prog_name);
 
 extern const char *cmdline_parser_thresold_values[];  /**< @brief Possible values for thresold. */
+extern const char *cmdline_parser_filter_values[];  /**< @brief Possible values for filter. */
 
 
 #ifdef __cplusplus

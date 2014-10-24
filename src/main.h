@@ -7,6 +7,8 @@
 #include "cmdline.h"
 #include "stb_image/stb_image_ext.h"
 #include "proc/preprocessing.h"
+#include "proc/detection.h"
+#include "proc/filter.h"
 
 int main(int argc, char *argv[]);
 void writing_error();
