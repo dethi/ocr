@@ -1,4 +1,4 @@
-package "OCR"
+package "ocr"
 version "0.1"
 purpose "Optical character recognition"
 

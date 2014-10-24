@@ -27,7 +27,7 @@
 
 const char *gengetopt_args_info_purpose = "Optical character recognition";
 
-const char *gengetopt_args_info_usage = "Usage: OCR [OPTIONS]... [FILES]...";
+const char *gengetopt_args_info_usage = "Usage: ocr [OPTIONS]... [FILES]...";
 
 const char *gengetopt_args_info_description = "";
 

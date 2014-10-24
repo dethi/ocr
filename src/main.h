@@ -3,8 +3,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include "cmdline.h"
 #include "stb_image/stb_image_ext.h"
+#include "proc/preprocessing.h"
 
-int main();
+int main(int argc, char *argv[]);
+void writing_error();
 
 #endif
