@@ -4,17 +4,24 @@
 
 int tests_run = 0;
 
-const int NFILES = 9;
+const int NFILES = 16;
 char FILENAME[][50] = {
     "test1.jpg",
     "test2.jpg",
     "test3.jpg",
-    "test4.png",
+    "test4.jpg",
     "test5.jpg",
     "test6.jpg",
     "test7.jpg",
-    "test8.png",
-    "test9.png"
+    "test8.jpg",
+    "test9.jpg",
+    "test10.jpg",
+    "test11.jpg",
+    "test12.jpg",
+    "test13.jpg",
+    "test14.jpg",
+    "test15.jpg",
+    "test16.jpg"
 };
 
 char *error;
@@ -25,8 +32,8 @@ int main()
 {
     printf("\nStart test...\n");
     PRINT_LINE;
-    print_limits();
-    PRINT_LINE;
+    //print_limits();
+    //PRINT_LINE;
 
     char* result = all_tests();
 
@@ -72,12 +79,14 @@ char* all_tests()
     PRINT_LINE;
     //mu_run_test(test_average_filter);
     //PRINT_LINE;
+    //mu_run_test(test_gaussian_blur);
+    //PRINT_LINE;
+    mu_run_test(test_sharpening);
+    PRINT_LINE;
     mu_run_test(test_greyscale);
     PRINT_LINE;
-    mu_run_test(test_gaussian_blur);
-    PRINT_LINE;
-    mu_run_test(test_histogram);
-    PRINT_LINE;
+    //mu_run_test(test_histogram);
+    //PRINT_LINE;
     mu_run_test(test_binarize);
     PRINT_LINE;
     mu_run_test(test_RLSA);
@@ -126,13 +135,14 @@ char* test_average_filter()
     return 0;
 }
 
-char* test_greyscale()
+char* test_gaussian_blur()
 {
     for (int i = 0; i < NFILES; i++) {
-        sprintf(out, "out_greyscale%i.png", i + 1);
+        sprintf(out, "out_gaussianblur%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        grey_scale(img[i]);
+        extern const char mask_gaussien[];
+        filter_mask(img[i], mask_gaussien, 273, 5);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
@@ -143,14 +153,31 @@ char* test_greyscale()
     return 0;
 }
 
-char* test_gaussian_blur()
+char* test_sharpening()
 {
     for (int i = 0; i < NFILES; i++) {
-        sprintf(out, "out_gaussianblur%i.png", i + 1);
+        sprintf(out, "out_sharpening%i.png", i + 1);
         sprintf(error, "failed to write %s", out);
 
-        extern const char mask_gaussien[];
-        filter_mask(img[i], mask_gaussien, 273, 5);
+        extern const char mask_sharpening[];
+        filter_mask(img[i], mask_sharpening, 9, 3);
+
+        int result = write_image(out, img[i]);
+        mu_assert(error, result != 0);
+
+        printf("write: %s\n", out);
+    }
+
+    return 0;
+}
+
+char* test_greyscale()
+{
+    for (int i = 0; i < NFILES; i++) {
+        sprintf(out, "out_greyscale%i.png", i + 1);
+        sprintf(error, "failed to write %s", out);
+
+        grey_scale(img[i]);
 
         int result = write_image(out, img[i]);
         mu_assert(error, result != 0);
