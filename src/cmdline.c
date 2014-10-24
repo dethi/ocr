@@ -80,7 +80,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->binarize_flag = 0;
   args_info->thresold_arg = gengetopt_strdup ("otsu");
   args_info->thresold_orig = NULL;
-  
+
 }
 
 static
@@ -93,7 +93,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->grey_help = gengetopt_args_info_help[2] ;
   args_info->binarize_help = gengetopt_args_info_help[3] ;
   args_info->thresold_help = gengetopt_args_info_help[4] ;
-  
+
 }
 
 void
@@ -143,7 +143,7 @@ void
 cmdline_parser_params_init(struct cmdline_parser_params *params)
 {
   if (params)
-    { 
+    {
       params->override = 0;
       params->initialize = 1;
       params->check_required = 1;
@@ -155,9 +155,9 @@ cmdline_parser_params_init(struct cmdline_parser_params *params)
 struct cmdline_parser_params *
 cmdline_parser_params_create(void)
 {
-  struct cmdline_parser_params *params = 
+  struct cmdline_parser_params *params =
     (struct cmdline_parser_params *)malloc(sizeof(struct cmdline_parser_params));
-  cmdline_parser_params_init(params);  
+  cmdline_parser_params_init(params);
   return params;
 }
 
@@ -178,8 +178,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   unsigned int i;
   free_string_field (&(args_info->thresold_arg));
   free_string_field (&(args_info->thresold_orig));
-  
-  
+
+
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
 
@@ -231,7 +231,7 @@ write_into_file(FILE *outfile, const char *opt, const char *arg, const char *val
   int found = -1;
   if (arg) {
     if (values) {
-      found = check_possible_values(arg, values);      
+      found = check_possible_values(arg, values);
     }
     if (found >= 0)
       fprintf(outfile, "%s=\"%s\" # %s\n", opt, arg, values[found]);
@@ -264,7 +264,7 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "binarize", 0, 0 );
   if (args_info->thresold_given)
     write_into_file(outfile, "thresold", args_info->thresold_orig, cmdline_parser_thresold_values);
-  
+
 
   i = EXIT_SUCCESS;
   return i;
@@ -329,7 +329,7 @@ cmdline_parser_ext (int argc, char **argv, struct gengetopt_args_info *args_info
       cmdline_parser_free (args_info);
       exit (EXIT_FAILURE);
     }
-  
+
   return result;
 }
 
@@ -338,7 +338,7 @@ cmdline_parser2 (int argc, char **argv, struct gengetopt_args_info *args_info, i
 {
   int result;
   struct cmdline_parser_params params;
-  
+
   params.override = override;
   params.initialize = initialize;
   params.check_required = check_required;
@@ -352,7 +352,7 @@ cmdline_parser2 (int argc, char **argv, struct gengetopt_args_info *args_info, i
       cmdline_parser_free (args_info);
       exit (EXIT_FAILURE);
     }
-  
+
   return result;
 }
 
@@ -369,7 +369,7 @@ cmdline_parser_required (struct gengetopt_args_info *args_info, const char *prog
       cmdline_parser_free (args_info);
       exit (EXIT_FAILURE);
     }
-  
+
   return result;
 }
 
@@ -380,7 +380,7 @@ cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *pro
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
-  
+
   /* checks for dependences among options */
   if (args_info->thresold_given && ! args_info->binarize_given)
     {
@@ -414,7 +414,7 @@ static char *package_name = 0;
  */
 static
 int update_arg(void *field, char **orig_field,
-               unsigned int *field_given, unsigned int *prev_given, 
+               unsigned int *field_given, unsigned int *prev_given,
                char *value, const char *possible_values[],
                const char *default_value,
                cmdline_parser_arg_type arg_type,
@@ -423,23 +423,21 @@ int update_arg(void *field, char **orig_field,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *stop_char = 0;
   const char *val = value;
   int found;
   char **string_field;
   FIX_UNUSED (field);
 
-  stop_char = 0;
   found = 0;
 
   if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
     {
       if (short_opt != '-')
-        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n",
                package_name, long_opt, short_opt,
                (additional_error ? additional_error : ""));
       else
-        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n",
                package_name, long_opt,
                (additional_error ? additional_error : ""));
       return 1; /* failure */
@@ -448,16 +446,16 @@ int update_arg(void *field, char **orig_field,
   if (possible_values && (found = check_possible_values((value ? value : default_value), possible_values)) < 0)
     {
       if (short_opt != '-')
-        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n",
           package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt, short_opt,
           (additional_error ? additional_error : ""));
       else
-        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n",
           package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt,
           (additional_error ? additional_error : ""));
       return 1; /* failure */
     }
-    
+
   if (field_given && *field_given && ! override)
     return 0;
   if (prev_given)
@@ -514,14 +512,14 @@ cmdline_parser_internal (
 
   int error = 0;
   struct gengetopt_args_info local_args_info;
-  
+
   int override;
   int initialize;
   int check_required;
   int check_ambiguity;
-  
+
   package_name = argv[0];
-  
+
   override = params->override;
   initialize = params->initialize;
   check_required = params->check_required;
@@ -567,42 +565,42 @@ cmdline_parser_internal (
           exit (EXIT_SUCCESS);
 
         case 'g':	/* Converts the image to greyscale.  */
-        
-        
+
+
           if (update_arg((void *)&(args_info->grey_flag), 0, &(args_info->grey_given),
               &(local_args_info.grey_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "grey", 'g',
               additional_error))
             goto failure;
-        
+
           break;
         case 'b':	/* Binarize the image.  */
-        
-        
+
+
           if (update_arg((void *)&(args_info->binarize_flag), 0, &(args_info->binarize_given),
               &(local_args_info.binarize_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "binarize", 'b',
               additional_error))
             goto failure;
-        
+
           break;
 
         case 0:	/* Long option with no short option */
           /* Select the methods used to compute the thresold.  */
           if (strcmp (long_options[option_index].name, "thresold") == 0)
           {
-          
-          
-            if (update_arg( (void *)&(args_info->thresold_arg), 
+
+
+            if (update_arg( (void *)&(args_info->thresold_arg),
                  &(args_info->thresold_orig), &(args_info->thresold_given),
                 &(local_args_info.thresold_given), optarg, cmdline_parser_thresold_values, "otsu", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "thresold", '-',
                 additional_error))
               goto failure;
-          
+
           }
-          
+
           break;
         case '?':	/* Invalid option.  */
           /* `getopt_long' already printed an error message.  */
@@ -653,7 +651,7 @@ cmdline_parser_internal (
   return 0;
 
 failure:
-  
+
   cmdline_parser_release (&local_args_info);
   return (EXIT_FAILURE);
 }
