@@ -19,17 +19,9 @@ static void conn_init(conn *this, neuron *from, neuron *to)
     this->from = from;
     this->to = to;
     this->weight = -1 * 2 * ((float)rand() / RAND_MAX);
-
-    this->adjust_weight = conn_adjust_weight;
-    this->free = conn_free;
 }
 
 void conn_adjust_weight(conn *this, float dw)
 {
     this->weight += dw;
-}
-
-void conn_free(conn *this)
-{
-    free(this);
 }
