@@ -8,7 +8,7 @@
 
 typedef struct neuron {
     int bias; //BOOL
-    float out;
+    double out;
     size_t nlink;
     struct conn **links;
 } neuron;

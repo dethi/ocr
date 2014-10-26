@@ -15,7 +15,7 @@ typedef struct net {
 } net;
 
 net* new_net(size_t ninput, size_t nhidden);
-float net_feedforward(net *this, float *values, size_t n);
-float net_train(net *this, float *values, size_t n, float answer);
+double net_feedforward(net *this, double *values, size_t n);
+double net_train(net *this, double *values, size_t n, double answer);
 
 #endif

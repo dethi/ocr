@@ -9,10 +9,11 @@
 typedef struct conn {
     struct neuron *from;
     struct neuron *to;
-    float weight;
+    double weight;
+    double dlast;
 } conn;
 
 conn* new_conn(struct neuron *from, struct neuron *to);
-void conn_adjust_weight(conn *this, float dw);
+void conn_adjust_weight(conn *this, double dw);
 
 #endif

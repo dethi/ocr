@@ -1,6 +1,6 @@
 #include "network.h"
 
-const float LEARNING = 0.5;
+const double LEARNING = 0.3;
 
 static void net_init(net *this, size_t ninput, size_t nhidden);
 
@@ -52,7 +52,7 @@ static void net_init(net *this, size_t ninput, size_t nhidden)
     }
 }
 
-float net_feedforward(net *this, float *values, size_t n)
+double net_feedforward(net *this, double *values, size_t n)
 {
     for (size_t i = 0; i < n; ++i)
         this->inputs[i]->out = values[i];
@@ -64,45 +64,42 @@ float net_feedforward(net *this, float *values, size_t n)
     return this->output->out;
 }
 
-float net_train(net *this, float *values, size_t n, float answer)
+double net_train(net *this, double *values, size_t n, double answer)
 {
-    float result = net_feedforward(this, values, n);
-    float d_output = result * (1 - result) * (answer - result);
+    double output = net_feedforward(this, values, n);
+    double derror = answer - output;
+    double dydx_out = output * (1 - output);
 
-    // Backpropagation
-    // Apply delta to link between hidden and output
-    for (size_t i = 0; i < this->output->nlink; ++i) {
-        conn *c = this->output->links[i];
-        neuron *from = c->from;
-        float output = from->out;
-        float d_weight = output * d_output;
-        conn_adjust_weight(c, LEARNING * d_weight);
-    }
+    for (size_t i = 0; i < this->nhidden; ++i) {
+        neuron *hide = this->hiddens[i];
+        double derror_hide = 0;
 
-    // Adjust hidden weights
-    for (size_t i = 0; this->nhidden; ++i) {
-        float sum = 0;
+        for (size_t j = 0; j < hide->nlink; ++j) {
+            conn *c = hide->links[j];
 
-        for (size_t j = 0; j < this->hiddens[i]->nlink; ++j) {
-            conn *c = this->hiddens[i]->links[j];
-
-            if (c->from == this->hiddens[i])
-                sum += c->weight * d_output;
+            if (c->from == hide)
+                derror_hide += c->weight * derror;
         }
 
-        for (size_t j = 0; j < this->hiddens[i]->nlink; ++j) {
-            conn *c = this->hiddens[i]->links[j];
+        for (size_t j = 0; j < hide->nlink; ++j) {
+            conn *c = hide->links[j];
 
-            if (c->to == this->hiddens[i]) {
-                float output = this->hiddens[i]->out;
-                float d_hidden = output * (1 - output);
-                d_hidden *= sum;
-                neuron *from = c->from;
-                float d_weight = from->out * d_hidden;
-                conn_adjust_weight(c, LEARNING * d_weight);
+            if (c->to == hide) {
+                double dydx = hide->out * (1 - hide->out);
+                double d = LEARNING * derror_hide * dydx * c->from->out;
+                conn_adjust_weight(c, d);
+            }
+        }
+
+        for (size_t j = 0; j < hide->nlink; ++j) {
+            conn *c = hide->links[j];
+
+            if (c->from == hide) {
+                double d = LEARNING * derror * dydx_out * hide->out;
+                conn_adjust_weight(c, d);
             }
         }
     }
 
-    return result;
+    return output;
 }
