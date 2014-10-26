@@ -23,13 +23,17 @@ void net_main()
     while (1) {
         printf("\n");
 
-        printf("Input 1 [0/1] : ");
-        scanf("%d", &in1);
+        do {
+            printf("Input 1 [0/1] : ");
+        } while (scanf("%d", &in1) != 1);
+
         if (in1 != 0 && in1 != 1)
             return;
 
-        printf("Input 2 [0/1] : ");
-        scanf("%d", &in2);
+        do {
+            printf("Input 2 [0/1] : ");
+        } while (scanf("%d", &in2) != 1);
+
         if (in2 != 0 && in2 != 1)
             return;
 
