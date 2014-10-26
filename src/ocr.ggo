@@ -20,3 +20,4 @@ option "filter" - "Apply a filter on the image"
     string typestr="methods"
     values="median", "gaussien", "sharpening"
     optional
+option "xor" - "Neural network that can solve XOR gate" flag off

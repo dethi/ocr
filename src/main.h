@@ -9,6 +9,7 @@
 #include "proc/preprocessing.h"
 #include "proc/detection.h"
 #include "proc/filter.h"
+#include "nn/xor.h"
 
 int main(int argc, char *argv[]);
 void writing_error();

@@ -19,8 +19,8 @@ struct net {
     struct neuron output;
 };
 
-int main();
-void train();
+void net_main();
+void net_train(struct net *this);
 void net_randomize_w(struct net *this);
 double net_calc_output(struct net *this, double in1, double in2);
 double neuron_calc_output(struct neuron *this);

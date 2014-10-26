@@ -6,6 +6,11 @@ int main(int argc, char *argv[])
     if (cmdline_parser(argc, argv, &ai) != 0)
         exit(EXIT_FAILURE);
 
+    if (ai.xor_given) {
+        net_main();
+        return EXIT_SUCCESS;
+    }
+
     if (ai.inputs_num == 0) {
         cmdline_parser_print_help();
         exit(EXIT_FAILURE);

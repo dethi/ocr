@@ -54,6 +54,8 @@ struct gengetopt_args_info
   char * filter_arg;	/**< @brief Apply a filter on the image.  */
   char * filter_orig;	/**< @brief Apply a filter on the image original value given at command line.  */
   const char *filter_help; /**< @brief Apply a filter on the image help description.  */
+  int xor_flag;	/**< @brief Neural network that can solve XOR gate (default=off).  */
+  const char *xor_help; /**< @brief Neural network that can solve XOR gate help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -62,6 +64,7 @@ struct gengetopt_args_info
   unsigned int segmentation_given ;	/**< @brief Whether segmentation was given.  */
   unsigned int thresold_given ;	/**< @brief Whether thresold was given.  */
   unsigned int filter_given ;	/**< @brief Whether filter was given.  */
+  unsigned int xor_given ;	/**< @brief Whether xor was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */

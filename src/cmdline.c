@@ -39,6 +39,7 @@ const char *gengetopt_args_info_help[] = {
   "  -s, --segmentation=INT  Detect the different part of the image",
   "      --thresold=methods  Select the methods used to compute the thresold  \n                            (possible values=\"fixed\", \"otsu\" \n                            default=`otsu')",
   "      --filter=methods    Apply a filter on the image  (possible \n                            values=\"median\", \"gaussien\", \"sharpening\")",
+  "      --xor               Neural network that can solve XOR gate  (default=off)",
     0
 };
 
@@ -76,6 +77,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->segmentation_given = 0 ;
   args_info->thresold_given = 0 ;
   args_info->filter_given = 0 ;
+  args_info->xor_given = 0 ;
 }
 
 static
@@ -90,6 +92,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->thresold_orig = NULL;
   args_info->filter_arg = NULL;
   args_info->filter_orig = NULL;
+  args_info->xor_flag = 0;
   
 }
 
@@ -107,6 +110,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->segmentation_max = 2;
   args_info->thresold_help = gengetopt_args_info_help[5] ;
   args_info->filter_help = gengetopt_args_info_help[6] ;
+  args_info->xor_help = gengetopt_args_info_help[7] ;
   
 }
 
@@ -338,6 +342,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "thresold", args_info->thresold_orig, cmdline_parser_thresold_values);
   if (args_info->filter_given)
     write_into_file(outfile, "filter", args_info->filter_orig, cmdline_parser_filter_values);
+  if (args_info->xor_given)
+    write_into_file(outfile, "xor", 0, 0 );
   
 
   i = EXIT_SUCCESS;
@@ -907,6 +913,7 @@ cmdline_parser_internal (
         { "segmentation",	1, NULL, 's' },
         { "thresold",	1, NULL, 0 },
         { "filter",	1, NULL, 0 },
+        { "xor",	0, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
@@ -981,6 +988,18 @@ cmdline_parser_internal (
                 &(local_args_info.filter_given), optarg, cmdline_parser_filter_values, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "filter", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Neural network that can solve XOR gate.  */
+          else if (strcmp (long_options[option_index].name, "xor") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->xor_flag), 0, &(args_info->xor_given),
+                &(local_args_info.xor_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "xor", '-',
                 additional_error))
               goto failure;
           

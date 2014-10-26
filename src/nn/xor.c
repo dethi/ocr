@@ -12,10 +12,10 @@ double df(double x)
     return x * (1 - x);
 }
 
-int main()
+void net_main()
 {
     struct net net;
-    train(&net);
+    net_train(&net);
 
     int in1 = -1;
     int in2 = -1;
@@ -26,19 +26,19 @@ int main()
         printf("Input 1 [0/1] : ");
         scanf("%d", &in1);
         if (in1 != 0 && in1 != 1)
-            return EXIT_SUCCESS;
+            return;
 
         printf("Input 2 [0/1] : ");
         scanf("%d", &in2);
         if (in2 != 0 && in2 != 1)
-            return EXIT_SUCCESS;
+            return;
 
         printf("Result: %d\n",
                 (net_calc_output(&net, in1, in2) > 0.5) ? 1 : 0);
     }
 }
 
-void train(struct net *net)
+void net_train(struct net *this)
 {
     double inputs[] =
     {
@@ -50,7 +50,7 @@ void train(struct net *net)
 
     double results[4] = { 0, 1, 1, 0 };
 
-    net_randomize_w(net);
+    net_randomize_w(this);
 
     int epoch = 0;
     double error;
@@ -61,28 +61,28 @@ void train(struct net *net)
         printf("[epoch %d]\n", epoch);
 
         for (int i = 0; i < 4; ++i) {
-            double out = net_calc_output(net, inputs[2*i], inputs[2*i+1]);
+            double out = net_calc_output(this, inputs[2*i], inputs[2*i+1]);
 
             printf("\t%f xor %f = %d (%f)\n", inputs[2 * i], inputs[2 * i + 1],
                     (out > 0.5) ? 1 : 0, out);
 
             // Back propagation
-            net->output.error = df(out) * (results[i] - out);
-            neuron_adjust_w(&net->output);
+            this->output.error = df(out) * (results[i] - out);
+            neuron_adjust_w(&this->output);
 
-            net->hidden1.error = df(neuron_calc_output(&net->hidden1)) *
-                net->output.error * net->output.w[0];
-            net->hidden2.error = df(neuron_calc_output(&net->hidden2)) *
-                net->output.error * net->output.w[1];
+            this->hidden1.error = df(neuron_calc_output(&this->hidden1)) *
+                this->output.error * this->output.w[0];
+            this->hidden2.error = df(neuron_calc_output(&this->hidden2)) *
+                this->output.error * this->output.w[1];
 
-            neuron_adjust_w(&net->hidden1);
-            neuron_adjust_w(&net->hidden2);
+            neuron_adjust_w(&this->hidden1);
+            neuron_adjust_w(&this->hidden2);
 
             error += abs(((out > 0.5) ? 1 : 0) - results[i]);
         }
 
         if (error && (epoch % 2000) == 0)
-            net_randomize_w(net);
+            net_randomize_w(this);
 
     } while (error);
 }
