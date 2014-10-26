@@ -87,6 +87,7 @@ double net_train(net *this, double *values, size_t n, double answer)
                 derror_hide += c->weight * derror;
         }
 
+        // Adjust weight hidden neuron
         for (size_t j = 0; j < hide->nlink; ++j) {
             conn *c = hide->links[j];
 
@@ -97,6 +98,7 @@ double net_train(net *this, double *values, size_t n, double answer)
             }
         }
 
+        // Adjust weight output neuron
         for (size_t j = 0; j < hide->nlink; ++j) {
             conn *c = hide->links[j];
 
