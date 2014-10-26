@@ -47,15 +47,16 @@ void neuron_calc_out(neuron *this)
 
 static double f(double x)
 {
-    return 1.0 / (1.0 + exp(-x));
+    return 1 / (1 + exp(-x));
 }
 
 void neuron_add_link(neuron *this, conn *l)
 {
-    conn **ptr = realloc(this->links, sizeof(conn *) * ++(this->nlink));
+    conn **ptr = realloc(this->links, sizeof(conn *) * (this->nlink + 1));
     if (!ptr)
         exit(EXIT_FAILURE);
 
     this->links = ptr;
-    this->links[this->nlink - 1] = l;
+    this->links[this->nlink] = l;
+    ++(this->nlink);
 }

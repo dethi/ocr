@@ -4,6 +4,12 @@ const double LEARNING = 0.3;
 
 static void net_init(net *this, size_t ninput, size_t nhidden);
 
+static inline
+double df(double x)
+{
+    return x * (1 - x);
+}
+
 net* new_net(size_t ninput, size_t nhidden)
 {
     net *this = malloc(sizeof(net));
@@ -68,7 +74,7 @@ double net_train(net *this, double *values, size_t n, double answer)
 {
     double output = net_feedforward(this, values, n);
     double derror = answer - output;
-    double dydx_out = output * (1 - output);
+    double dydx_out = df(output);
 
     for (size_t i = 0; i < this->nhidden; ++i) {
         neuron *hide = this->hiddens[i];
@@ -85,7 +91,7 @@ double net_train(net *this, double *values, size_t n, double answer)
             conn *c = hide->links[j];
 
             if (c->to == hide) {
-                double dydx = hide->out * (1 - hide->out);
+                double dydx = df(hide->out);
                 double d = LEARNING * derror_hide * dydx * c->from->out;
                 conn_adjust_weight(c, d);
             }

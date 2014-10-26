@@ -6,7 +6,7 @@ int main()
 {
     net *nn = new_net(2,3);
     unsigned error, it = 1;
-    double in[8] = { 0.3, 0.7, 0.7, 0.3, 0.3, 0.3, 0.7, 0.7 };
+    double in[8] = { 0, 1, 1, 0, 0, 0, 1, 1 };
     double result = 0;
 
     do {
@@ -51,9 +51,9 @@ int main()
         if (error && it % 100 == 0)
             printf("%sERROR = %d%s\n", KRED, error, KNRM);
         ++it;
-    } while (error && it <= 1000000);
+    } while (error && it <= 40000);
 
-    printf("iteration: %d\n", it);
+    printf("iteration: %d\n", it-1);
     return EXIT_SUCCESS;
 }
 
