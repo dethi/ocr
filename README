@@ -1,0 +1,6 @@
+Compilation :
+    > make
+
+Launch the application and view the built-in help :
+    > ./ocr
+

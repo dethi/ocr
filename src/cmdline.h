@@ -56,7 +56,7 @@ struct gengetopt_args_info
   const char *filter_help; /**< @brief Apply a filter on the image help description.  */
   int xor_flag;	/**< @brief Neural network that can solve XOR gate (default=off).  */
   const char *xor_help; /**< @brief Neural network that can solve XOR gate help description.  */
-  
+
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int grey_given ;	/**< @brief Whether grey was given.  */
@@ -153,7 +153,7 @@ void cmdline_parser_print_help(void);
 void cmdline_parser_print_version(void);
 
 /**
- * Initializes all the fields a cmdline_parser_params structure 
+ * Initializes all the fields a cmdline_parser_params structure
  * to their default values
  * @param params the structure to initialize
  */
