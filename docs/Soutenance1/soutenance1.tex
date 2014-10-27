@@ -1,0 +1,189 @@
+\documentclass[11pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[unicode=true]{hyperref}
+\usepackage{lmodern}
+\usepackage[french]{babel}
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry}
+\geometry{a4paper}
+\geometry{top=2.5cm, bottom=2.5cm, left=4.5cm , right=3.5cm}
+\usepackage{graphicx}
+
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{amssymb,amsmath}
+\usepackage{xcolor}
+\usepackage{sistyle}
+\usepackage{shorttoc}
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+\hypersetup{breaklinks=true,
+            pdfauthor={Thibault Deutsch (deutsc\_t); Ilan Dubois (dubois\_o); Arthur Douillard (douill\_a); Axel Mendoza (mendoz\_a)},
+            pdftitle={Rapport de soutenance 1},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=black,
+            pdfborder={0 0 0}}
+
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{4}
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy}
+\fancyhead[L]{(Neurone)\up{*}}
+\fancyhead[C]{}
+\fancyhead[R]{Oh! Ça seRt}
+
+\title{Rapport de soutenance 1}
+\author{Thibault Deutsch (deutsc\_t) \and Ilan Dubois (dubois\_o) \and Arthur Douillard (douill\_a) \and Axel Mendoza (mendoz\_a)}
+\date{29 octobre 2014}
+
+\dottedcontents{chapter}%
+  [\dimexpr 10mm]
+  {}
+  {\dimexpr 10mm}
+  {3.2mm}
+
+\dottedcontents{figure}%
+  [\dimexpr 15mm]
+  {}
+  {\dimexpr 15mm}
+  {3.2mm}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\bullet$}
+
+\begin{titlepage}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+\flushright
+\includegraphics[width = 4.5cm]{epita.png}\\[0.5cm] % Include a department/university logo - this will require the graphicx package
+
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+\textsc{\Large Rapport de soutenance 1}\\[0.15cm] % Major heading such as course name
+\textsc{\large 2\up{ème} année du cycle préparatoire}\\[3cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+\center
+\HRule \\[0.5cm]
+{\Huge \bfseries Oh! Ça seRt}\\[0.3cm] % Title of your document
+\textsc{\Large Un OCR dévelopé en C}\\[0.1cm]
+\large Réalisé par le groupe \emph{(Neurone)\up{*}}\\[1.5cm]
+\large 29 octobre 2014\\[0.1cm]
+\HRule \\[2cm]
+
+\includegraphics[width = 4cm]{eie.png}\\[1cm]
+
+\Large
+\textbf{Thibault Deutsch} (\emph{deutsc\_t}) \\
+\textbf{Ilan Dubois} (\emph{dubois\_o}) \\
+\textbf{Arthur Douillard} (\emph{douill\_a}) \\
+\textbf{Axel Mendoza} (\emph{mendoz\_a})\\[2cm]
+
+%----------------------------------------------------------------------------------------
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\newpage
+\pagenumbering{arabic}
+\shorttableofcontents{Sommaire}{1}
+
+\chapter{Introduction}
+
+Ce document est le rapport de la soutenance finale. Il a pour but de présenter une synthèse sur le travail fournit par l'équipe en charge du projet. Cette équipe est formée de quatre étudiants en première année du cycle préparatoire de l'EPITA : Anthony BELTIER (beltie\_a), Rémy BERNIER (bernie\_r), Thibault DEUTSCH (deutsc\_t) et Marc FRESNE (fresne\_m).
+
+Le projet consiste en la réalisation d'un logiciel de notre choix, en C\# ou en CAML. Le développement s'est déroulé sur une période d'environ 6 mois, découpée en 4 étapes : la remise d'un cahier des charges, une soutenance de présentation, une soutenance intermédiaire de démonstration des avancées et une soutenance finale pour présenter le projet achevé. Il a pour but l'apprentissage du développement, du travail de groupe, et de la réponse à une demande précise en un temps donné. L'objectif est d'offrir aux étudiants l'occasion de réaliser un projet dans des conditions similaires à celles qui régissent le monde professionnel.
+
+Nous avons choisi de réaliser un jeu vidéo car c'est un domaine que nous apprécions et que nous pensions que cela faciliterait la réalisation par le côté ludique du projet. Nous avons opté pour l’utilisation du C\# car il s’agit d’un langage particulièrement adapté à ce type de projet. 
+
+Nous nous sommes orientés sur un jeu en 3D car cela représentait un véritable défi pour l'ensemble du groupe. Le style de jeu retenu est un jeu de tir en vue subjective\footnote{FPS : First Person Shooter} car c'est un type de jeu que nous apprécions mais aussi car la demande dans l'industrie du jeu vidéo ne cesse de croître. La thématique de notre jeu est la seconde Guerre Mondiale par soucis d'originalité, en effet l'offre s'oriente aujourd'hui principalement vers des univers futuristes, mais aussi afin d'être en accord avec le soixante dixième anniversaire du débarquement de Normandie. Notre jeu se découpe principalement en deux parties : un mode d'entrainement en solo et un mode multijoueur.
+
+Une fois le style de notre jeu défini, il nous fallait un nom pour le projet. C'est en réfléchissant longuement sur la seconde Guerre Mondiale que nous avons pensé au mot ``traumatisme''. Ce mot représente l'effet de la guerre sur une génération entière. Cependant ce mot était un peu trop long. Nous avons donc poussé notre réflexion plus loin et sommes tombés sur le mot ``trauma''.
+
+\begin{quote}
+``Un trauma est une blessure physique ou psychique infligée à l'organisme, ou la lésion locale qui en résulte. Le traumatisme renvoie quant à lui aux conséquences locales ou générales du trauma.'', \emph{Wikipédia}
+\end{quote}
+
+Comme le montre cette définition, les deux mots sont intimement liés. Mais nous sommes allés encore un peu plus loin. Nous avons décidé de surpasser l'orthographe du mot. Ainsi notre jeu s'appelle Troma. Court, évoquant, surprenant ! On ne pouvait pas trouver mieux. A partir de là, le projet pouvait commencer. 
+
+La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
+
+\colorlet{darkgreen}{green!60!black}
+
+\begin{figure}[htbp]
+\centering
+\begin{tabular}{ | c || c | c | c | c | }
+\hline Tâches & Thibault & Rémy & Marc & Anthony \\
+\hline Modélisation & & & \textcolor{darkgreen}{X} & \\
+\hline Moteur graphique & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} & \\
+\hline Moteur physique & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
+\hline Menu & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
+\hline Réseau & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} \\
+\hline Gameplay & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
+\hline Audio & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
+\hline Site web & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
+\hline
+\end{tabular}
+\caption{Répartition des tâches sur l'ensemble de la durée du projet}
+\label{tab}
+\end{figure}
+
+Vous trouverez dans la suite de ce rapport une présentation détaillée sur les différentes dimensions du développement ainsi qu'une synthèse personnelle de cette expérience.
+
+\chapter{Modélisation}
+
+\section{La conception}
+
+
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=8cm]{batiment.png}
+%\caption{Modélisation d'un bâtiment}
+%\end{figure}
+
+\subsection{La génération de terrain}
+
+
+\chapter{Conclusion}
+
+Le projet Troma a débuté en janvier 2014, nous avions l'objectif de réaliser un jeu de guerre sous le thème de la Seconde Guerre Mondiale. Le groupe est formé de quatre étudiants en première année sans connaissance préalable particulière en langage C\#. Cependant nous avons décidé dès le début de donner notre maximum en choisissant un jeu en 3D muni d'un mode de jeu en ligne ! 
+
+Durant toute la phase de développement nous avons essayé de garder cet état d'esprit qui est de toujours donner le maximum. Les notes que nous avons obtenues aux deux premières soutenances nous ont encourager à continuer dans cette voie. Nous avons donc implémenter toutes les fonctionnalités du jeu une par une avec plus ou moins de difficulté mais sans jamais abandonner même quand cela s'avérait beaucoup plus difficile que prévu. L'aspect technique n'a pas été la seule difficulté, le côté organisationnel des soutenances et du planning à respecter pour l'équipe en a aussi été une! Notre point fort a été de ne jamais attendre le dernier moment et d'essayer de prendre le maximum d'avance possible sur notre planning prévisionnel lorsque cela était possible.
+
+Aujourd'hui nous sommes fiers d'avoir réussi à mener à bien notre projet de bout en bout. Cette expérience a été très enrichissante pour chacun d'entre nous. Nous pensons que ce travail de groupe nous permettra d'aborder avec plus de facilité nos futurs projets à l'EPITA et/ou en entreprise.
+
+\newpage
+\pagenumbering{Roman}
+\part*{Annexes}
+
+\newpage
+\listoffigures
+
+\newpage
+\tableofcontents
+ 
+\end{document}
