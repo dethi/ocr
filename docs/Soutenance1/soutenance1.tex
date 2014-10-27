@@ -95,7 +95,7 @@
 \large 29 octobre 2014\\[0.1cm]
 \HRule \\[2cm]
 
-\includegraphics[width = 4cm]{eie.png}\\[1cm]
+\includegraphics[width = 10cm]{logo.png}\\[1cm]
 
 \Large
 \textbf{Thibault Deutsch} (\emph{deutsc\_t}) \\
@@ -114,21 +114,13 @@
 
 \chapter{Introduction}
 
-Ce document est le rapport de la soutenance finale. Il a pour but de présenter une synthèse sur le travail fournit par l'équipe en charge du projet. Cette équipe est formée de quatre étudiants en première année du cycle préparatoire de l'EPITA : Anthony BELTIER (beltie\_a), Rémy BERNIER (bernie\_r), Thibault DEUTSCH (deutsc\_t) et Marc FRESNE (fresne\_m).
+Ce document est le rapport de soutenance 1. Son objectif est de présenter une synthèse du travail fournit par l’équipe du projet (Neurone)\up{*}.\ Ce groupe est composé de quatre étudiants en deuxième année du cycle préparatoire de l’EPITA : Thibault DEUTSCH (deutsc\_t), Ilan DUBOIS (dubois\_o),  Axel MENDOZA (mendoz\_a), et Arthur DOUILLARD (douill\_a).
 
-Le projet consiste en la réalisation d'un logiciel de notre choix, en C\# ou en CAML. Le développement s'est déroulé sur une période d'environ 6 mois, découpée en 4 étapes : la remise d'un cahier des charges, une soutenance de présentation, une soutenance intermédiaire de démonstration des avancées et une soutenance finale pour présenter le projet achevé. Il a pour but l'apprentissage du développement, du travail de groupe, et de la réponse à une demande précise en un temps donné. L'objectif est d'offrir aux étudiants l'occasion de réaliser un projet dans des conditions similaires à celles qui régissent le monde professionnel.
+Le projet consiste en la réalisation d’un logiciel de reconnaissance optique de caractères (OCR, en anglais \emph{optical character recognition}). Le but de ce logiciel est de convertir un document numérisé, à l'aide d'un scanner, en un fichier numérique modifiable. Pour cela, le programme doit être capable de reconnaître la structure du document et de reconnaître les différents caractères.
 
-Nous avons choisi de réaliser un jeu vidéo car c'est un domaine que nous apprécions et que nous pensions que cela faciliterait la réalisation par le côté ludique du projet. Nous avons opté pour l’utilisation du C\# car il s’agit d’un langage particulièrement adapté à ce type de projet. 
+Nous devons réalisés ce projet en C. Son développement se déroule sur une période d’environ trois mois, en équipe de quatre personnes. Ce projet à pour objectifs, outre l'apprentissage du C, de nous familiariser avec le développement sur environnement GNU/Linux, le respect d'un cahier des charges, ains que le travail de groupe sur un projet commun.
 
-Nous nous sommes orientés sur un jeu en 3D car cela représentait un véritable défi pour l'ensemble du groupe. Le style de jeu retenu est un jeu de tir en vue subjective\footnote{FPS : First Person Shooter} car c'est un type de jeu que nous apprécions mais aussi car la demande dans l'industrie du jeu vidéo ne cesse de croître. La thématique de notre jeu est la seconde Guerre Mondiale par soucis d'originalité, en effet l'offre s'oriente aujourd'hui principalement vers des univers futuristes, mais aussi afin d'être en accord avec le soixante dixième anniversaire du débarquement de Normandie. Notre jeu se découpe principalement en deux parties : un mode d'entrainement en solo et un mode multijoueur.
-
-Une fois le style de notre jeu défini, il nous fallait un nom pour le projet. C'est en réfléchissant longuement sur la seconde Guerre Mondiale que nous avons pensé au mot ``traumatisme''. Ce mot représente l'effet de la guerre sur une génération entière. Cependant ce mot était un peu trop long. Nous avons donc poussé notre réflexion plus loin et sommes tombés sur le mot ``trauma''.
-
-\begin{quote}
-``Un trauma est une blessure physique ou psychique infligée à l'organisme, ou la lésion locale qui en résulte. Le traumatisme renvoie quant à lui aux conséquences locales ou générales du trauma.'', \emph{Wikipédia}
-\end{quote}
-
-Comme le montre cette définition, les deux mots sont intimement liés. Mais nous sommes allés encore un peu plus loin. Nous avons décidé de surpasser l'orthographe du mot. Ainsi notre jeu s'appelle Troma. Court, évoquant, surprenant ! On ne pouvait pas trouver mieux. A partir de là, le projet pouvait commencer. 
+Nous avons choisi d’appeler notre groupe (Neurone)\up{*} en référence à l’étoile de Kleene vu en conférence de THLR\footnote{Théorie des langages rationnels}. Le choix du nom du projet a été fait dans un objectif comique, ``Oh ça sert'' a bien sûr pour initiales OCR\footnote{Ce n'est pas immédiat, mais tout de même...}.
 
 La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 
@@ -137,7 +129,7 @@ La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 \begin{figure}[htbp]
 \centering
 \begin{tabular}{ | c || c | c | c | c | }
-\hline Tâches & Thibault & Rémy & Marc & Anthony \\
+\hline Tâches & Thibault & Ilan & Arthur & Axel \\
 \hline Modélisation & & & \textcolor{darkgreen}{X} & \\
 \hline Moteur graphique & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} & \\
 \hline Moteur physique & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
@@ -152,12 +144,7 @@ La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 \label{tab}
 \end{figure}
 
-Vous trouverez dans la suite de ce rapport une présentation détaillée sur les différentes dimensions du développement ainsi qu'une synthèse personnelle de cette expérience.
-
-\chapter{Modélisation}
-
-\section{La conception}
-
+Vous trouverez dans la suite de ce rapport une présentation détaillée sur les différentes dimensions du développement.
 
 %\begin{figure}[htbp]
 %\centering
@@ -165,8 +152,37 @@ Vous trouverez dans la suite de ce rapport une présentation détaillée sur les
 %\caption{Modélisation d'un bâtiment}
 %\end{figure}
 
-\subsection{La génération de terrain}
+\chapter{Pré-traitement}
 
+Les filtres et masques flou, dans un logiciel à reconnaissance de caractère, sont utilisés lors du pré-traitement. Cette étape préalable à détection des caractères est indispensable. En effet, son but est d’adaptés les caractéristiques de l'image à notre algorithme qui segmentera l'image en lignes et en caractères. L'image subit alors plusieurs transformations. En premier lieu, nous devons saturé les couleurs de celle-ci afin d'obtenir uniquement du noir et du blanc. Le second traitement consiste à éliminer le bruit, grâce à l'application d'un filtre sur notre image d'origine.
+
+\section{Filtres}
+
+%TODO: courte intro
+
+Après m'être documenté sur la partie de l'élimination du bruit, à l'aide de documents se réfèrent au bruit dans les images, aux différents problèmes récurrents en imagerie numérique et aux méthode utilisés pour résoudre ces problèmes. J'ai choisit deux méthodes pour éliminer le bruit, le filtre moyen qui est un filtre basique à but purement pédagogique, et le filtre gaussien qui effectue un flou plus sophistiqué et mieux adaptés à notre projet. L'image à traiter proviendra d'un scanner, nous remarquerons que cette image aura certains défauts qu'il faudra éliminer à l'aide du flou en question. En effet, si l'image est floue, le passage d'une valeur à l'autre se fait plus progressivement et l'algorithme de détection de caractères et donc plus optimale. Mathématiquement, une image est rendue floue en utilisant un filtre qui élimine les détails associés à de plus hautes fréquences qui constitue le bruit et les parasites en imagerie numérique qui polluent l'information. Malheureusement, nous ne pouvons appliquer directement un filtre passe-bas ``classique'' sur notre image car cette méthode risque de supprimer les petits caractères isolés tel que les points sur les ``i'' ou les accents. C'est pour cela que nous avons choisit d'appliquer une méthode qui adapte le flou en fonction de la nature des pixels voisins.
+
+Nous allons aborder maintenant le principe du flou gaussien. En premier lieu, il nous faut définir l'opération mathématique appelée ``convolution'' utilisé dans tout les filtres dit linéaires. Lorsqu'il s'agit de données numérisés comme dans notre cas en traitement d'image, la relation entre les valeurs des pixels d'entrée et celle des pixels de sortie est décrite par un tableau de nombres, généralement carré, appelé matrice de convolution.  Le filtre gaussien, comme son nom l'indique, utilise la loi de probabilité de Gauss et la courbe gaussienne. Le principale problème de ce filtre est que l'application directe de la formule gaussienne nécessite un temps de calcul considérable. Heureusement, certains algorithmes effectuent ce calcul à l'aide d'approximations de plus en plus précises qui améliore grandement la complexité de l'algorithme qui applique ce filtre sur notre image.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=9cm]{matconvol.jpg}
+\caption{Application d'une matrice de convolution}
+\end{figure}
+
+Au départ nous avons utilisé un filtre moyen, qui calcule les composants de chaque pixels en fonctions de ses pixels directement adjacents mais nous n'étions pas convaincue en ce qui concerne  l'efficacité de ce flou. La première méthode du filtre gaussien, consiste à appliquer une matrice de convolution de dimension impaire ($3 \times 3, 5 \times 5, …$). Une matrice de convolution de dimension $3 \times 3$ nous a parut plus performant. En effet, plus la dimension de la matrice est élevée, plus la perte d'information est importante. Chaque pixels de l'image est modifié en fonction des composantes des pixels environnants. Plus la matrice de convolution est grande, plus les composantes des  pixels seront influencées par les pixels environnants. En somme, plus notre matrice de convolution est grande, plus le flou est important. En appliquant la matrice sur un pixel, les produits des composantes des pixels voisins avec la valeur de la matrice correspondante. Le résultat est en suite divisé par la somme des valeurs de notre matrice de convolution. 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=9cm]{filtre_gaussien.png}
+\caption{Application du filtre gaussien sur une image bruitée}
+\end{figure}
+
+Le principe du filtre gaussien est donc le suivant : on parcours l'image pixel par pixel, en appliquant le masque sur chaque pixels et ses voisins. On stocke le résultat des calculs effectuer sur les pixel dans une variable constituant un tableau à deux dimensions et on retourne cette variable. Nous avons également utilisé une fonction qui nous renvoi le symétrique d'un pixel par rapport à la matrice de convolution lorsque ce pixel était en dehors de notre image. Lorsque l'on veut appliquer le masque sur un pixel au bord de l'image, on tente de sommer les composantes d'un pixel qui n'existe pas. Mais lorsque l'on somme le pixel symétrique à celui-ci et qu'on le divise par le coefficient au même emplacement dans le masque, le résultat n'est pas erroné.
+
+\chapter{Réseau de neurones}
+
+\chapter{Site web}
 
 \chapter{Conclusion}
 
