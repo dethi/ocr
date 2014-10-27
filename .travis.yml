@@ -4,10 +4,7 @@ compiler:
     - clang
     - gcc
 
-before_script:
-    - autoreconf --install
-
-script: "./configure && make && ./run_test.sh"
+script: "make"
 
 notifications:
     email:
