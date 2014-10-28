@@ -116,7 +116,7 @@
 
 Ce document est le rapport de soutenance 1. Son objectif est de présenter une synthèse du travail fournit par l’équipe du projet (Neurone)\up{*}.\ Ce groupe est composé de quatre étudiants en deuxième année du cycle préparatoire de l’EPITA : Thibault DEUTSCH (deutsc\_t), Ilan DUBOIS (dubois\_o),  Axel MENDOZA (mendoz\_a), et Arthur DOUILLARD (douill\_a).
 
-Le projet consiste en la réalisation d’un logiciel de reconnaissance optique de caractères (OCR, en anglais \emph{optical character recognition}). Le but de ce logiciel est de convertir un document numérisé, à l'aide d'un scanner, en un fichier numérique modifiable. Pour cela, le programme doit être capable de reconnaître la structure du document et de reconnaître les différents caractères.
+Le projet consiste en la réalisation d’un logiciel de reconnaissance optique de caractères (OCR, en anglais \emph{optical character recognition}). Le but de ce logiciel est de convertir un document numérisé, à l'aide d'un scanner, en un fichier numérique modifiable. Pour cela, le programme doit être capable d'extraire la structure du document et de reconnaître les différents caractères.
 
 Nous devons réalisés ce projet en C. Son développement se déroule sur une période d’environ trois mois, en équipe de quatre personnes. Ce projet à pour objectifs, outre l'apprentissage du C, de nous familiariser avec le développement sur environnement GNU/Linux, le respect d'un cahier des charges, ains que le travail de groupe sur un projet commun.
 
@@ -285,6 +285,12 @@ Nous pensons qu'il s'agit d'une légère erreur d'implémentation mais pensons a
 %TODO: ce qu'on doit faire encore après
 
 \chapter{Interface graphique}
+
+Pour l'interface graphique, nous utiliserons la bibliothèque GTK. Cette bibliothèque va nous permettre de réaliser une interface graphique pour utiliser notre OCR. Sa composition sera des plus simples. Il y aura un bouton pour charger une image à analyser. L'image brute s'affichera ensuite à l'écran. Un autre bouton permettra de lancer l'analyse. Le résultat textuel s'affichera ensuite à côté de l'image et un bouton permettra de sauvegarder le résultat ainsi obtenu.
+
+L'utilisation de GTK nous permettra en outre de faire une correction orthographique et ainsi d'améliorer l'analyse finale. Si l'utilisateur est satisfait, il pourra choisir de prendre en compte les résultats d'analyse afin d'améliorer l'OCR via le machine Learning.
+
+Ainsi, nous nous assurons de toujours améliorer la précision de nos résultats. Mais nous permettons aussi à l'utilisateur de rester maître du Machine Learning et ainsi d'éviter l'ajout d'un trop grand nombre d'erreurs ou de faux positifs.
 
 \chapter{Site web}
 
