@@ -89,13 +89,14 @@
 %----------------------------------------------------------------------------------------
 \center
 \HRule \\[0.5cm]
-{\Huge \bfseries Oh! Ça seRt}\\[0.3cm] % Title of your document
-\textsc{\Large Un OCR dévelopé en C}\\[0.1cm]
-\large Réalisé par le groupe \emph{(Neurone)\up{*}}\\[1.5cm]
-\large 29 octobre 2014\\[0.1cm]
-\HRule \\[2cm]
-
 \includegraphics[width = 10cm]{logo.png}\\[1cm]
+%{\Huge \bfseries Oh! Ça seRt}\\[0.3cm] % Title of your document
+\textsc{\Large Un OCR dévelopé en C}\\[0.1cm]
+%\large Réalisé par le groupe \emph{(Neurone)\up{*}}\\[1.5cm]
+\large 29 octobre 2014\\[0.1cm]
+\HRule \\[3cm]
+
+%\includegraphics[width = 10cm]{logo.png}\\[1cm]
 
 \Large
 \textbf{Thibault Deutsch} (\emph{deutsc\_t}) \\
@@ -111,7 +112,6 @@
 \newpage
 \pagenumbering{arabic}
 \shorttableofcontents{Sommaire}{1}
-
 \chapter{Introduction}
 
 Ce document est le rapport de soutenance 1. Son objectif est de présenter une synthèse du travail fournit par l’équipe du projet (Neurone)\up{*}.\ Ce groupe est composé de quatre étudiants en deuxième année du cycle préparatoire de l’EPITA : Thibault DEUTSCH (deutsc\_t), Ilan DUBOIS (dubois\_o),  Axel MENDOZA (mendoz\_a), et Arthur DOUILLARD (douill\_a).
@@ -122,8 +122,32 @@ Nous devons réalisés ce projet en C. Son développement se déroule sur une p�
 
 Nous avons choisi d’appeler notre groupe (Neurone)\up{*} en référence à l’étoile de Kleene vu en conférence de THLR\footnote{Théorie des langages rationnels}. Le choix du nom du projet a été fait dans un objectif comique, ``Oh ça sert'' a bien sûr pour initiales OCR\footnote{Ce n'est pas immédiat, mais tout de même...}.
 
+Vous trouverez dans la suite de ce rapport une présentation détaillée sur les différentes dimensions du développement.
+
+\newpage
+\section{Présentation des membres du groupe}
+
+\subsection{Thibault Deutsch}
+
+\subsection{Ilan Dubois}
+
+Je m’intéresse à l’informatique depuis le collège. En effet, pendant cette période j’avais entrepris de faire un site traitant des jeux-vidéo avec quelques amis. J’ai donc dû m’intéresser au Web et j’ai administré ce site pendant 4 ans. J’ai récemment arrêté car il devenait difficile de concilier les divers emplois du temps. En regardant différents tutoriels, je me suis progressivement intéressé aux systèmes Unix. Je m’intéresse aussi au monde du logiciel libre, et aux bénéfices que leur utilisation peut nous apporter.
+
+Aujourd'hui, j'aimerais améliorer mes compétences en C/C++ pour pouvoir participer à des projets libres ou en lancer certains. C'est une des raisons qui fait que j'apprécie particulièrement ce projet. Je met aussi en place un certain de nombre de choses sur mon serveur dédié pour progresser dans la maîtrise de système UNIX, une Debian en l'occurence.
+
+\subsection{Arthur Douillard}
+
+\subsection{Axel Mendoza}
+
+Mon nom est Axel Mendoza, j'ai 20 ans et je n'ai jamais touché à l'informatique avant mon entrée à l'Epita. Malgré tout, depuis que j'ai découvert ce domaine, j'y porte un grand intérêt car l'Epita constitue un accédé à un  métier d'ingénieur qui est une profession d'avenir. 
+
+L'année dernière, j'ai eu le malheur de faire partie d'un groupe de projet où mes partenaires n'ont pas eu le courage de suivre le rythme de travail que l'ont nous a imposé. Mais je n'ai pas perdu espoir pour autant, je suis parvenu à présenter un jeu plutôt convenable lors de ma soutenance finale. Cette année tout à changer ! Mes partenaires sont motivés, sympathique et ne refusent jamais de fournir un peu d'aide à quelqu'un qui ne parvient pas a trouver la solution à un problème. Pour finir, je dois reconnaître que le langage C me plaît plus que le C\# et que le fait de travailler sur un OCR va indéniablement élargir nos domaines de compétence.
+
+\section{Répartition des tâches}
+
 La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 
+%TODO: remplir tableau
 \colorlet{darkgreen}{green!60!black}
 
 \begin{figure}[htbp]
@@ -144,17 +168,57 @@ La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 \label{tab}
 \end{figure}
 
-Vous trouverez dans la suite de ce rapport une présentation détaillée sur les différentes dimensions du développement.
-
 %\begin{figure}[htbp]
 %\centering
-%\includegraphics[width=8cm]{batiment.png}
+%\includegraphics[width=9cm]{batiment.png}
 %\caption{Modélisation d'un bâtiment}
 %\end{figure}
 
 \chapter{Pré-traitement}
 
+%TODO: modif texte
 Les filtres et masques flou, dans un logiciel à reconnaissance de caractère, sont utilisés lors du pré-traitement. Cette étape préalable à détection des caractères est indispensable. En effet, son but est d’adaptés les caractéristiques de l'image à notre algorithme qui segmentera l'image en lignes et en caractères. L'image subit alors plusieurs transformations. En premier lieu, nous devons saturé les couleurs de celle-ci afin d'obtenir uniquement du noir et du blanc. Le second traitement consiste à éliminer le bruit, grâce à l'application d'un filtre sur notre image d'origine.
+
+\section{Binarisation}
+
+La première étape de la binarisation est de passer l’image en niveaux de gris. Nous avons choisi de faire une moyenne pour obtenir l’image en niveaux de gris, cela nous semblait suffisant. Ensuite la partie intéressante de la binarisation arrive : transformer cette image qui est en niveaux de gris en une image binaire.
+
+\subsection{Seuil fixe}
+
+Notre première idée fut d'utiliser un seuil fixe. Il s'agit de la méthode la plus classique. Les 128 niveaux de gris les plus clairs deviennent blancs, et les 128 niveaux de gris les plus foncés deviennent noir. Cela revient à prendre un seuil de 127. Cette méthode fonctionne sur des images à fort contraste (texte sombre et fond clair par exemple). Cependant si l'on prend, par exemple, une image avec un fond et un texte de couleurs sombre (mais qui reste lisible par l’être humain), cette méthode de binarisation génère une image soit toute blanche, soit toute noire.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=9cm]{b_fixed.png}
+\caption{Binarisation à seuil fixe}
+\end{figure}
+
+Nous avons donc décider d'abandonner cette méthode afin de nous tourner vers un algorithme capable d'adapter le seuil en fonction de l'image.
+
+\subsection{Méthode d'Otsu}
+
+L'algorithme que nous avons décider d'utiliser s'appelle la méthode d'Otsu, du nom de son initiateur japonais Nobuyuki Otsu. Cette algorithme considère que l’image que l’on souhaite binariser n’est composée que de deux types de pixels, le premier-plan et l’arrière-plan. Ce qui est exactement ce que l’on veut sachant que l’on travaille sur des images constitués de textes (premier-plan) et d’un fond (arrière-plan). En partant de ce principe, la méthode d'Otsu calcule le seuil optimal qui sépare ces deux plans.
+
+%TODO: modifier texte
+Nous utilisons un histogramme de notre image en niveaux de gris. Ainsi pour la même image on obtient le nombre de fois que tel niveau de gris apparait. Ce résultat est réutilisé pour calculer sa probabilité d’apparaître dans l’image. Probabilité qu’on utilisera dans le calcul de la variance nécessaire à la formule d’Otsu :
+
+\[ \sigma ^{2}_{w} \left( t\right) = w_{1}\left( t\right) \sigma ^{2}_{1}\left( t\right) + w_{2}\left( t\right) \sigma ^{2}_{2}\left( t\right) \]
+
+\begin{description}
+\item[$w_{i}$] représentent la probabilité d'être dans l'arrière-plan ou le premier-plan.
+\item[$\sigma ^{2}_{i}$] représentent les variances de ces deux catégories.
+\end{description}
+
+\medskip
+
+%TODO: relire texte
+Ensuite nous procédons à une binarisation de la même manière que celle mentionnée précédemment mais en ne choisissant pas 127 comme seuil mais le résultat de la fonction thresold. Ainsi nous pouvons être certain que notre binarisation sera adapté à l’image qui lui est donné.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=9cm]{b_otsu.png}
+\caption{Binarisation utilisant la méthode d'Otsu}
+\end{figure}
 
 \section{Filtres}
 
@@ -180,12 +244,79 @@ Au départ nous avons utilisé un filtre moyen, qui calcule les composants de ch
 
 Le principe du filtre gaussien est donc le suivant : on parcours l'image pixel par pixel, en appliquant le masque sur chaque pixels et ses voisins. On stocke le résultat des calculs effectuer sur les pixel dans une variable constituant un tableau à deux dimensions et on retourne cette variable. Nous avons également utilisé une fonction qui nous renvoi le symétrique d'un pixel par rapport à la matrice de convolution lorsque ce pixel était en dehors de notre image. Lorsque l'on veut appliquer le masque sur un pixel au bord de l'image, on tente de sommer les composantes d'un pixel qui n'existe pas. Mais lorsque l'on somme le pixel symétrique à celui-ci et qu'on le divise par le coefficient au même emplacement dans le masque, le résultat n'est pas erroné.
 
-\chapter{Réseau de neurones}
+\chapter{Analyse de l'image et extraction des caractères}
+
+\section{Segmentation}
+
+RLSA (Run Length Smoothing Algorithm) est la méthode que nous avons choisis pour la segmentation des caractères, des lignes et des paragraphes. Elle nous permet en effet de noircir les zones à détecter. Une fois noircies, celle-ci sont ainsi parfaitement isolées du reste de l'image. Par l'exploitation des coordonnées de ces "zones noires" nous pouvons déterminer avec une bonne précision quel est la zone de l'image dans laquelle se trouve un caractère à analyser, une ligne à assembler ou un paragraphe à enregistrer. Nous obtenons ainsi par analyse de l'image noircie la liste des éléments à traiter dans les différentes fonctions que nous écrirons pour la seconde soutenance.
+
+RLSA, fonctionne selon un principe très simple. Il se base sur le postula que l'image qui lui est donnée en entrée est "parfaite". Nous procédons donc avant de l'appeler à tout le pré-traitement de l'image: passage en niveau de gris, application d'un filtre pour faire le flou à l'aide d'une matrice de convolution et une binarisation de l'image avec Otsu. Ainsi, nous obtenons une image où seul les caractères et éventuelles images contiennes des pixels noirs.
+
+Ensuite, il faut analyser l'image deux fois. Nous avons décider de commencer par les rangées puis d'effectuer le traitement en colonne. Ce traitement consiste à faire passer en noir les pixels blancs qui font parti d'un ensemble de pixels noirs. Pour ce faire, nous passons à la fonction un paramètre qui déterminera sous quelle intervalle maximum le nombre de pixels blancs d'affilé doit se trouver pour que ceux-ci passent en noir.
+
+Par exemple, avec un paramètre réglé à 4, la séquence $S$ est transformée en la séquence $C$ :
+
+\begin{align*}
+S &= 00010000010100001000000011000\\
+C &= 11110000011111111000000011111
+\end{align*}
+
+Nous effectuons donc une passe sur chaque rangée, stockons le résultat dans une nouvelle image. Nous passons dans chaque colonne. Ensuite, en considérant le blanc (représenter ici par 1) comme vrai, nous appliquons un ET pour la passe verticale et la passe horizontale. L'image finale est ainsi obtenue et nous pouvons la retourner pour continuer le processus de traitement.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{rlsa.png}
+\caption{Détection des lignes}
+\end{figure}
+
+Les avantages de RLSA sont nombreux. En premier lieux, il nous permet de reconnaître les différents éléments de l'image en changeant simplement les paramètres d'appel. Ensuite, grâce à ses deux passes, il fonctionne sur des images droites comme des images penchées. Nous pourrons donc très facilement détecter l'inclinaison à partir de la détection des lignes. Enfin il s'execute dans des temps raisonnables pour des images moyennes ce qui rend son utilisation agréable.
+
+Cependant, RLSA n'est pas parfait. En premier lieu, la nécessité de passer des arguments en fonction de l'image voire de la zone de l'image est problématique. Nous exécutons RLSA avec des paramètres fixés à partir de nos observations et essais successifs mais nous ne sommes pas encore capables de les optimiser. En second lieux, la détection des caractères est problématiques. Nous ne sommes pas parvenus à réellement noircir uniquement les caractères et ceux, quelques soient les paramètres.
+
+Nous pensons qu'il s'agit d'une légère erreur d'implémentation mais pensons aussi que RLSA n'est pas la méthode la plus efficace pour cette application. Nous voulons donc pour la seconde soutenance trouver l'erreur d'implémentation. Dans le cas où ce correctif ne serait pas suffisant, nous devrons trouver une méthode plus adaptée à la détection de caractère.
+
+%TODO: écrire sur ce qu'on va faire après, notamment sur l'extraction
+
+\chapter{Reconnaissance des caractères}
+
+\section{Réseau de neurones}
+%TODO: explication + méthode + structure + resultat sur XOR
+
+%TODO: ce qu'on doit faire encore après
+
+\chapter{Interface graphique}
 
 \chapter{Site web}
 
+%TODO: relire tout
+\section{Conception du design}
+
+Le site a été conçu avec Foundation, un framework HTML/CSS/Javascript qui permet de concevoir très rapidement des sites internet avec de nombreuses fonctionnalités. Mais le grand intérêt de ce type de framework c’est qu’ils sont pensés pour être “responsive design” et qu’ils s’affichent à l’identique sur l’ensemble des navigateurs internet. Un avantage de Foundation par rapport à ces concurrents est une plus grande facilité de personnalisation du design de base. Tout est pensé pour obliger le développeur à y intégrer sa propre vision.
+
+L'image que l'on avons choisit pour illustrer le mieux notre projet est un dessin d'un livre dont les lignes, les mots, les morceaux de phrases forment un dédale surprenant. La première idée qui nous vient en voyant cette image est évidemment le découpage des paragraphes, des lignes et des caractères: un des aspects majeurs de tout OCR qui se respecte.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{www.png}
+\caption{Notre site web}
+\end{figure}
+
+\section{Contenu et accès au site web}
+
+Le site web consiste en une seule page que l'on fait défiler du haut vers le bas. On y trouve les informations suivantes :
+
+\begin{itemize}
+\item La page d’accueil, permettant d'accéder à l'aide de liens aux différentes parties du site. On peut aussi y trouver le nom du groupe instigateur de ce projet et son slogan.
+\item Une partie ``à propos'',  la présentation de notre fine équipe, et du groupe que l'on forme.
+\item Une partie essentielle : celle dédiée au téléchargement de notre OCR, que l'on peut effectuer très aisément à l'aide du lien fourni.
+\item Une partie ``contact'' si vous désirez joindre n'importe quel de nos membres, pour des questions, des remarques ou bien même des félicitations !
+\end{itemize}
+
+Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
+
 \chapter{Conclusion}
 
+%TODO: faire conclusion
 Le projet Troma a débuté en janvier 2014, nous avions l'objectif de réaliser un jeu de guerre sous le thème de la Seconde Guerre Mondiale. Le groupe est formé de quatre étudiants en première année sans connaissance préalable particulière en langage C\#. Cependant nous avons décidé dès le début de donner notre maximum en choisissant un jeu en 3D muni d'un mode de jeu en ligne ! 
 
 Durant toute la phase de développement nous avons essayé de garder cet état d'esprit qui est de toujours donner le maximum. Les notes que nous avons obtenues aux deux premières soutenances nous ont encourager à continuer dans cette voie. Nous avons donc implémenter toutes les fonctionnalités du jeu une par une avec plus ou moins de difficulté mais sans jamais abandonner même quand cela s'avérait beaucoup plus difficile que prévu. L'aspect technique n'a pas été la seule difficulté, le côté organisationnel des soutenances et du planning à respecter pour l'équipe en a aussi été une! Notre point fort a été de ne jamais attendre le dernier moment et d'essayer de prendre le maximum d'avance possible sur notre planning prévisionnel lorsque cela était possible.
