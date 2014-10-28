@@ -90,13 +90,9 @@
 \center
 \HRule \\[0.5cm]
 \includegraphics[width = 10cm]{logo.png}\\[1cm]
-%{\Huge \bfseries Oh! Ça seRt}\\[0.3cm] % Title of your document
 \textsc{\Large Un OCR dévelopé en C}\\[0.1cm]
-%\large Réalisé par le groupe \emph{(Neurone)\up{*}}\\[1.5cm]
 \large 29 octobre 2014\\[0.1cm]
 \HRule \\[3cm]
-
-%\includegraphics[width = 10cm]{logo.png}\\[1cm]
 
 \Large
 \textbf{Thibault Deutsch} (\emph{deutsc\_t}) \\
@@ -153,20 +149,19 @@ L'année dernière, j'ai eu le malheur de faire partie d'un groupe de projet où
 
 La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 
-%TODO: remplir tableau
+\medskip
+
 \colorlet{darkgreen}{green!60!black}
 
 \begin{figure}[htbp]
 \centering
 \begin{tabular}{ | c || c | c | c | c | }
 \hline Tâches & Thibault & Ilan & Arthur & Axel \\
-\hline Modélisation & & & \textcolor{darkgreen}{X} & \\
-\hline Moteur graphique & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} & \\
-\hline Moteur physique & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
-\hline Menu & & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} \\
-\hline Réseau & \textcolor{darkgreen}{X} & & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} \\
-\hline Gameplay & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
-\hline Site web & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
+\hline Pré-traitement & & & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} \\
+\hline Analyse et segmentation & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
+\hline Reconnaissance des caractères & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} & & \\
+\hline Interface graphique & & & \textcolor{darkgreen}{X} & \textcolor{darkgreen}{X} \\
+\hline Site web & & & \textcolor{darkgreen}{X} & \\
 \hline
 \end{tabular}
 \caption{Répartition des tâches sur l'ensemble de la durée du projet}
@@ -181,8 +176,9 @@ La répartition des tâches est présentée dans le tableau en figure~\ref{tab}.
 
 \chapter{Pré-traitement}
 
-%TODO: modif texte
-Les filtres et masques flou, dans un logiciel à reconnaissance de caractère, sont utilisés lors du pré-traitement. Cette étape préalable à détection des caractères est indispensable. En effet, son but est d’adaptés les caractéristiques de l'image à notre algorithme qui segmentera l'image en lignes et en caractères. L'image subit alors plusieurs transformations. En premier lieu, nous devons saturé les couleurs de celle-ci afin d'obtenir uniquement du noir et du blanc. Le second traitement consiste à éliminer le bruit, grâce à l'application d'un filtre sur notre image d'origine.
+Les filtres et masques flou, dans un logiciel à reconnaissance de caractère, sont utilisés lors du pré-traitement. Cette étape préalable à détection des caractères est indispensable. En effet, son but est d’adaptés les caractéristiques de l'image à notre algorithme qui segmentera l'image en lignes et en caractères. L'image subit alors plusieurs transformations. En premier lieu, nous devons saturé les couleurs de celle-ci afin d'obtenir uniquement du noir et du blanc. Le second traitement consiste à éliminer le bruit, grâce à l'application d'un filtre sur notre image d'origine. 
+
+Vous trouverez dans la suite de ce chapitre des explications détaillées sur l'ensemble des techniques mises en oeuvre.
 
 \section{Binarisation}
 
@@ -227,9 +223,9 @@ Ensuite nous procédons à une binarisation de la même manière que celle menti
 
 \section{Filtres}
 
-%TODO: courte intro
+Après m'être documenté sur l'élimination du bruit, à l'aide de documents se réfèrent au bruit dans les images, aux différents problèmes récurrents en imagerie numérique et aux méthode utilisés pour résoudre ces problèmes. J'ai choisit deux méthodes pour éliminer le bruit, le filtre moyen qui est un filtre basique à but purement pédagogique, et le filtre gaussien qui effectue un flou plus sophistiqué et mieux adaptés à notre projet. 
 
-Après m'être documenté sur la partie de l'élimination du bruit, à l'aide de documents se réfèrent au bruit dans les images, aux différents problèmes récurrents en imagerie numérique et aux méthode utilisés pour résoudre ces problèmes. J'ai choisit deux méthodes pour éliminer le bruit, le filtre moyen qui est un filtre basique à but purement pédagogique, et le filtre gaussien qui effectue un flou plus sophistiqué et mieux adaptés à notre projet. L'image à traiter proviendra d'un scanner, nous remarquerons que cette image aura certains défauts qu'il faudra éliminer à l'aide du flou en question. En effet, si l'image est floue, le passage d'une valeur à l'autre se fait plus progressivement et l'algorithme de détection de caractères et donc plus optimale. Mathématiquement, une image est rendue floue en utilisant un filtre qui élimine les détails associés à de plus hautes fréquences qui constitue le bruit et les parasites en imagerie numérique qui polluent l'information. Malheureusement, nous ne pouvons appliquer directement un filtre passe-bas ``classique'' sur notre image car cette méthode risque de supprimer les petits caractères isolés tel que les points sur les ``i'' ou les accents. C'est pour cela que nous avons choisit d'appliquer une méthode qui adapte le flou en fonction de la nature des pixels voisins.
+L'image à traiter proviendra d'un scanner, nous remarquerons que cette image aura certains défauts qu'il faudra éliminer à l'aide du flou en question. En effet, si l'image est floue, le passage d'une valeur à l'autre se fait plus progressivement et l'algorithme de détection de caractères et donc plus optimale. Mathématiquement, une image est rendue floue en utilisant un filtre qui élimine les détails associés à de plus hautes fréquences qui constitue le bruit et les parasites en imagerie numérique qui polluent l'information. Malheureusement, nous ne pouvons appliquer directement un filtre passe-bas ``classique'' sur notre image car cette méthode risque de supprimer les petits caractères isolés tel que les points sur les ``i'' ou les accents. C'est pour cela que nous avons choisit d'appliquer une méthode qui adapte le flou en fonction de la nature des pixels voisins.
 
 Nous allons aborder maintenant le principe du flou gaussien. En premier lieu, il nous faut définir l'opération mathématique appelée ``convolution'' utilisé dans tout les filtres dit linéaires. Lorsqu'il s'agit de données numérisés comme dans notre cas en traitement d'image, la relation entre les valeurs des pixels d'entrée et celle des pixels de sortie est décrite par un tableau de nombres, généralement carré, appelé matrice de convolution.  Le filtre gaussien, comme son nom l'indique, utilise la loi de probabilité de Gauss et la courbe gaussienne. Le principale problème de ce filtre est que l'application directe de la formule gaussienne nécessite un temps de calcul considérable. Heureusement, certains algorithmes effectuent ce calcul à l'aide d'approximations de plus en plus précises qui améliore grandement la complexité de l'algorithme qui applique ce filtre sur notre image.
 
@@ -280,14 +276,10 @@ Cependant, RLSA n'est pas parfait. En premier lieu, la nécessité de passer des
 
 Nous pensons qu'il s'agit d'une légère erreur d'implémentation mais pensons aussi que RLSA n'est pas la méthode la plus efficace pour cette application. Nous voulons donc pour la seconde soutenance trouver l'erreur d'implémentation. Dans le cas où ce correctif ne serait pas suffisant, nous devrons trouver une méthode plus adaptée à la détection de caractère.
 
-%TODO: écrire sur ce qu'on va faire après, notamment sur l'extraction
-
 \chapter{Reconnaissance des caractères}
 
 \section{Réseau de neurones}
 %TODO: explication + méthode + structure + resultat sur XOR
-
-%TODO: ce qu'on doit faire encore après
 
 \chapter{Interface graphique}
 
@@ -295,16 +287,17 @@ Pour l'interface graphique, nous utiliserons la bibliothèque GTK. Cette bibliot
 
 L'utilisation de GTK nous permettra en outre de faire une correction orthographique et ainsi d'améliorer l'analyse finale. Si l'utilisateur est satisfait, il pourra choisir de prendre en compte les résultats d'analyse afin d'améliorer l'OCR via le machine Learning.
 
-Ainsi, nous nous assurons de toujours améliorer la précision de nos résultats. Mais nous permettons aussi à l'utilisateur de rester maître du Machine Learning et ainsi d'éviter l'ajout d'un trop grand nombre d'erreurs ou de faux positifs.
+Ainsi, nous nous assurons de toujours améliorer la précision de nos résultats. Mais nous permettrons aussi à l'utilisateur de rester maître du Machine Learning et ainsi d'éviter l'ajout d'un trop grand nombre d'erreurs ou de faux positifs.
 
 \chapter{Site web}
 
-%TODO: relire tout
 \section{Conception du design}
 
-Le site a été conçu avec Foundation, un framework HTML/CSS/Javascript qui permet de concevoir très rapidement des sites internet avec de nombreuses fonctionnalités. Mais le grand intérêt de ce type de framework c’est qu’ils sont pensés pour être “responsive design” et qu’ils s’affichent à l’identique sur l’ensemble des navigateurs internet. Un avantage de Foundation par rapport à ces concurrents est une plus grande facilité de personnalisation du design de base. Tout est pensé pour obliger le développeur à y intégrer sa propre vision.
+Le site a été conçu avec Bootstrap, un framework HTML/CSS/Javascript qui permet de concevoir très rapidement des sites internet avec de nombreuses fonctionnalités. Mais le grand intérêt de ce type de framework c’est qu’ils sont pensés pour être “responsive design” et qu’ils s’affichent à l’identique sur l’ensemble des navigateurs internet.
 
-L'image que l'on avons choisit pour illustrer le mieux notre projet est un dessin d'un livre dont les lignes, les mots, les morceaux de phrases forment un dédale surprenant. La première idée qui nous vient en voyant cette image est évidemment le découpage des paragraphes, des lignes et des caractères: un des aspects majeurs de tout OCR qui se respecte.
+Le design s'inspire d'un effet de mode : ``scrolling website''. Cela consiste à faire tenir tout les informations sur une seule page, de manière esthétique, que l'utilisateur fera défiler (en anglais scroll) de haut en bas. De plus nous avons décidé d'adopter une palette de couleur sombre pour rappeler la couleur des textes et de l'encre : noir.
+
+L'image d'accueil que nous avons choisit pour illustrer notre projet est un dessin d'un livre dont les lignes, les mots, les morceaux de phrases forment un dédale surprenant. La première idée qui nous vient en voyant cette image est évidemment le découpage des paragraphes, des lignes et des caractères: un des aspects majeurs de tout OCR qui se respecte.
 
 \begin{figure}[htbp]
 \centering
@@ -317,10 +310,11 @@ L'image que l'on avons choisit pour illustrer le mieux notre projet est un dessi
 Le site web consiste en une seule page que l'on fait défiler du haut vers le bas. On y trouve les informations suivantes :
 
 \begin{itemize}
-\item La page d’accueil, permettant d'accéder à l'aide de liens aux différentes parties du site. On peut aussi y trouver le nom du groupe instigateur de ce projet et son slogan.
-\item Une partie ``à propos'',  la présentation de notre fine équipe, et du groupe que l'on forme.
+\item La page d’accueil, permettant d'accéder à l'aide de liens aux différentes parties du site. On peut aussi y trouver le nom du groupe instigateur du projet et son slogan.
+\item Une partie ``à propos'' qui présente rapidement les enjeux du projet.
+\item Une partie ``équipe``, listant les membres du groupe ainsi que des liens vers les réseaux sociaux.
 \item Une partie essentielle : celle dédiée au téléchargement de notre OCR, que l'on peut effectuer très aisément à l'aide du lien fourni.
-\item Une partie ``contact'' si vous désirez joindre n'importe quel de nos membres, pour des questions, des remarques ou bien même des félicitations !
+\item Une partie ``contact'' si vous désirez joindre un de nos membres, pour des questions, des remarques ou bien même des félicitations !
 \end{itemize}
 
 Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
@@ -328,11 +322,11 @@ Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
 \chapter{Conclusion}
 
 %TODO: faire conclusion
-Le projet Troma a débuté en janvier 2014, nous avions l'objectif de réaliser un jeu de guerre sous le thème de la Seconde Guerre Mondiale. Le groupe est formé de quatre étudiants en première année sans connaissance préalable particulière en langage C\#. Cependant nous avons décidé dès le début de donner notre maximum en choisissant un jeu en 3D muni d'un mode de jeu en ligne ! 
-
-Durant toute la phase de développement nous avons essayé de garder cet état d'esprit qui est de toujours donner le maximum. Les notes que nous avons obtenues aux deux premières soutenances nous ont encourager à continuer dans cette voie. Nous avons donc implémenter toutes les fonctionnalités du jeu une par une avec plus ou moins de difficulté mais sans jamais abandonner même quand cela s'avérait beaucoup plus difficile que prévu. L'aspect technique n'a pas été la seule difficulté, le côté organisationnel des soutenances et du planning à respecter pour l'équipe en a aussi été une! Notre point fort a été de ne jamais attendre le dernier moment et d'essayer de prendre le maximum d'avance possible sur notre planning prévisionnel lorsque cela était possible.
-
-Aujourd'hui nous sommes fiers d'avoir réussi à mener à bien notre projet de bout en bout. Cette expérience a été très enrichissante pour chacun d'entre nous. Nous pensons que ce travail de groupe nous permettra d'aborder avec plus de facilité nos futurs projets à l'EPITA et/ou en entreprise.
+%Le projet Troma a débuté en janvier 2014, nous avions l'objectif de réaliser un jeu de guerre sous le thème de la Seconde Guerre Mondiale. Le groupe est formé de quatre étudiants en première année sans connaissance préalable particulière en langage C\#. Cependant nous avons décidé dès le début de donner notre maximum en choisissant un jeu en 3D muni d'un mode de jeu en ligne ! 
+%
+%Durant toute la phase de développement nous avons essayé de garder cet état d'esprit qui est de toujours donner le maximum. Les notes que nous avons obtenues aux deux premières soutenances nous ont encourager à continuer dans cette voie. Nous avons donc implémenter toutes les fonctionnalités du jeu une par une avec plus ou moins de difficulté mais sans jamais abandonner même quand cela s'avérait beaucoup plus difficile que prévu. L'aspect technique n'a pas été la seule difficulté, le côté organisationnel des soutenances et du planning à respecter pour l'équipe en a aussi été une! Notre point fort a été de ne jamais attendre le dernier moment et d'essayer de prendre le maximum d'avance possible sur notre planning prévisionnel lorsque cela était possible.
+%
+%Aujourd'hui nous sommes fiers d'avoir réussi à mener à bien notre projet de bout en bout. Cette expérience a été très enrichissante pour chacun d'entre nous. Nous pensons que ce travail de groupe nous permettra d'aborder avec plus de facilité nos futurs projets à l'EPITA et/ou en entreprise.
 
 \newpage
 \pagenumbering{Roman}
