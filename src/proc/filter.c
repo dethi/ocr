@@ -62,7 +62,7 @@ int coor(int x, int y, int i, int j, size_t n, t_img_desc *img)
 
 void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
 {
-    uchar *tmp = calloc(img->x * img->y * img->comp, sizeof(char));
+    uchar *tmp = malloc(sizeof(char) * img->x * img->y * img->comp);
     if (!tmp)
         exit(EXIT_FAILURE);
 
