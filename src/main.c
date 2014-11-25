@@ -78,7 +78,8 @@ int main(int argc, char *argv[])
         printf("%s (%ix%i)", ai.inputs[i], img->x, img->y);
 
         if (filter_flag)
-            filter_mask(img, mask, div, size);
+            filter_median(img);
+           // filter_mask(img, mask, div, size);
 
         if (flag > 0)
             grey_scale(img);

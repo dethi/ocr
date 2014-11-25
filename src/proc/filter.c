@@ -62,7 +62,7 @@ int coor(int x, int y, int i, int j, size_t n, t_img_desc *img)
 
 void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
 {
-    uchar *tmp = calloc(img->x * img->y * img->comp, sizeof(char));
+    uchar *tmp = malloc(img->x * img->y * img->comp * sizeof(char));
     if (!tmp)
         exit(EXIT_FAILURE);
 
@@ -100,7 +100,7 @@ void tab_sort(int *tab, int lenght) {
     }
 }
 void filter_median(t_img_desc *img) {
-    uchar *tmp = calloc(img->x * img->y * img->comp, sizeof(char));
+    uchar *tmp = malloc(img->x * img->y * img->comp * sizeof(char));
     if(!tmp)
         exit(EXIT_FAILURE);
 
@@ -112,7 +112,7 @@ void filter_median(t_img_desc *img) {
 
                 for(int i = 0; i < 3; ++i) {
                     for( int j = 0; j < 3; ++j) {
-                        tab[i+j] = img->data[coor(x, y, i, j, 3, img) + k];
+                        tab[i+3*j] = img->data[coor(x, y, i, j, 3, img) + k];
                     }
                 }
                 tab_sort(tab, 9);
