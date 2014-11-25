@@ -10,7 +10,7 @@ struct lineData {
     size_t Y;
     size_t length;
     size_t height;
-}
+};
 
 void RLSA(t_img_desc *img, int i, int j);
 size_t charX(t_img_desc *img, struct lineData *ld);
