@@ -7,4 +7,5 @@
 
 void filter_mask(t_img_desc* img, const char *mask, int sum_mask, int n);
 
+void filter_median(t_img_desc* img);
 #endif

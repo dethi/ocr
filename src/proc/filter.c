@@ -86,3 +86,41 @@ void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
     free(img->data);
     img->data = tmp;
 }
+void tab_sort(int *tab, int lenght) {
+    int x, j;
+
+    for(int i = 0; i < lenght; ++i) {
+        x = tab[i];
+        j = i;
+        while(j > 0 && tab[j -1] > x) {
+            tab[j] = tab[j - 1];
+            j = j - 1;
+        }
+        tab[j] = x;
+    }
+}
+void filter_median(t_img_desc *img) {
+    uchar *tmp = calloc(img->x * img->y * img->comp, sizeof(char));
+    if(!tmp)
+        exit(EXIT_FAILURE);
+
+    for(int k = 0; k < img->comp; ++k) {
+        for(int x = 0; x < img->x; ++x) {
+            for(int y = 0; y < img->y; ++y) {
+                int med;
+                int *tab = malloc(9 * (sizeof(int)));
+
+                for(int i = 0; i < 3; ++i) {
+                    for( int j = 0; j < 3; ++j) {
+                        tab[i+j] = img->data[coor(x, y, i, j, 3, img) + k];
+                    }
+                }
+                tab_sort(tab, 9);
+                med = tab[4];
+                tmp[xytoi(x, y, img) + k] = med;
+            }
+        }
+    }
+    free(img->data);
+    img->data = tmp;
+}
