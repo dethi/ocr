@@ -38,7 +38,7 @@ const char *gengetopt_args_info_help[] = {
   "  -b, --binarize          Binarize the image  (default=off)",
   "  -s, --segmentation=INT  Detect the different part of the image",
   "      --thresold=methods  Select the methods used to compute the thresold  \n                            (possible values=\"fixed\", \"otsu\" \n                            default=`otsu')",
-  "      --filter=methods    Apply a filter on the image  (possible \n                            values=\"median\", \"gaussien\", \"sharpening\")",
+  "      --filter=methods    Apply a filter on the image  (possible \n                            values=\"median\", \"average\", \"gaussien\", \n                            \"sharpening\")",
   "      --xor               Neural network that can solve XOR gate  (default=off)",
     0
 };
@@ -62,7 +62,7 @@ static int
 cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
 const char *cmdline_parser_thresold_values[] = {"fixed", "otsu", 0}; /*< Possible values for thresold. */
-const char *cmdline_parser_filter_values[] = {"median", "gaussien", "sharpening", 0}; /*< Possible values for filter. */
+const char *cmdline_parser_filter_values[] = {"median", "average", "gaussien", "sharpening", 0}; /*< Possible values for filter. */
 
 static char *
 gengetopt_strdup (const char *s);

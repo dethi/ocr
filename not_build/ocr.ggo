@@ -18,6 +18,6 @@ option "thresold" - "Select the methods used to compute the thresold"
     optional
 option "filter" - "Apply a filter on the image"
     string typestr="methods"
-    values="median", "gaussien", "sharpening"
+    values="median", "average", "gaussien", "sharpening"
     optional
 option "xor" - "Neural network that can solve XOR gate" flag off

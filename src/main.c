@@ -45,14 +45,15 @@ int main(int argc, char *argv[])
 
     /* Filter */
     int filter_flag = ai.filter_given;
+    int filter_median_flag = 0;
     const char *mask = NULL;
     int div = 0;
     int size = 0;
 
     if (filter_flag) {
-        if (strcmp("median", ai.filter_arg) == 0) {
-            extern const char mask_median[];
-            mask = mask_median;
+        if (strcmp("average", ai.filter_arg) == 0) {
+            extern const char mask_avg[];
+            mask = mask_avg;
             div = 9;
             size = 3;
         } else if (strcmp("gaussien", ai.filter_arg) == 0) {
@@ -65,6 +66,8 @@ int main(int argc, char *argv[])
             mask = mask_sharpening;
             div = 9;
             size = 3;
+        } else if (strcmp("median", ai.filter_arg) == 0) {
+            filter_median_flag = 1;
         }
     }
     /* End filter */
@@ -77,8 +80,12 @@ int main(int argc, char *argv[])
         t_img_desc *img = load_image(ai.inputs[i], 3);
         printf("%s (%ix%i)", ai.inputs[i], img->x, img->y);
 
-        if (filter_flag)
-            filter_mask(img, mask, div, size);
+        if (filter_flag) {
+            if (filter_median_flag)
+                filter_median(img);
+            else
+                filter_mask(img, mask, div, size);
+        }
 
         if (flag > 0)
             grey_scale(img);
