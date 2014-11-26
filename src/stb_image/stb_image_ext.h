@@ -16,7 +16,7 @@ typedef struct {
     int comp;
 } t_img_desc;
 
-inline
+static inline
 int xytoi(int x, int y, t_img_desc* img) {
     return (img->comp) * (x + (img->x) * y);
 }
