@@ -77,9 +77,9 @@ void RLSA(t_img_desc *img, int i, int j)
 size_t charX(t_img_desc *img, struct lineData *ld)
 {
     size_t *array = calloc(ld->height, sizeof(size_t));
-    size_t k = 0;
+    size_t k;
     for (size_t i = 0; i < ld->height; ++i) {
-        //k = charCounterX;
+        k = ld->X;
         while (k < ld->X + ld->length && img->data[k + k*i] == 255)
             ++k;
         array[i - ld->Y] = k;

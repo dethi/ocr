@@ -5,6 +5,14 @@
 #include <stdio.h>
 #include "../stb_image/stb_image_ext.h"
 
+struct charCoorList {
+    size_t X;
+    size_t Y;
+    size_t height;
+    size_t length;
+    struct charCoorList *next;
+};
+
 struct lineData {
     size_t X;
     size_t Y;
