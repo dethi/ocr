@@ -91,3 +91,17 @@ size_t charX(t_img_desc *img, struct lineData *ld)
     }
     return k;
 }
+
+size_t charLength(t_img_desc *img, struct lineData *ld, size_t begin)
+{
+    size_t w = 0, b = begin - 1;
+    while (begin < ld->length + ld->X && w != ld->height) {
+        ++b;
+        w = 0;
+        for (size_t i = 0; i < ld->height; ++i) {
+            if (img->data[b + b * i] == 255)
+                ++w;
+        }
+    }
+    return b - begin;
+}

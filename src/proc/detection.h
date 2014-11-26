@@ -20,7 +20,12 @@ struct lineData {
     size_t height;
 };
 
+//Apply RLSA with i and j parameters to img picture
 void RLSA(t_img_desc *img, int i, int j);
+
+//Finds the first character in a line
 size_t charX(t_img_desc *img, struct lineData *ld);
 
+//Returns the length of the character located at begin in line ld
+size_t charLength(t_img_desc *img, struct lineData *ld, size_t begin);
 #endif
