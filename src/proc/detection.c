@@ -74,7 +74,7 @@ void RLSA(t_img_desc *img, int i, int j)
     img->data = tmp;
 }
 
-size_t charX(t_img_desc *img, struct lineData *ld)
+size_t charX(t_img_desc *img, struct coorList *ld)
 {
     size_t *array = calloc(ld->height, sizeof(size_t));
     size_t k;
@@ -92,7 +92,7 @@ size_t charX(t_img_desc *img, struct lineData *ld)
     return k;
 }
 
-size_t charLength(t_img_desc *img, struct lineData *ld, size_t begin)
+size_t charLength(t_img_desc *img, struct coorList *ld, size_t begin)
 {
     size_t w = 0, b = begin - 1;
     while (begin < ld->length + ld->X && w != ld->height) {
@@ -105,3 +105,43 @@ size_t charLength(t_img_desc *img, struct lineData *ld, size_t begin)
     }
     return b - begin;
 }
+
+struct coorList* getLines(t_img_desc *img)
+{
+    size_t i = 0, j = 0;
+    //We go to the first black pixel
+    while (img->data[i + i*j] == 255 && i + i*j < (size_t)(img->x * img->y)) {
+        if (i == (size_t)(img->x - 1)) {
+            i = 0;
+            ++j;
+        }
+        else {
+            ++i;
+        }
+    }
+    //We check if no black pixel were found
+    if (i + i*j == (size_t)(img->x * img->y))
+        return NULL;
+    //If we have found we create a coorList and initialize it
+    struct coorList *aux = malloc(sizeof(struct coorList));
+    struct coorList *ans = aux;
+    ans->X = 0;
+    ans->Y = 0;
+    ans->length = 0;
+    ans->height = 0;
+    while (i + i*j < (size_t)(img->x * img->y)) {
+        aux->next = malloc(sizeof(struct coorList));
+        aux = aux->next;
+        aux->X = i;
+        aux->Y = j;
+        //dimLine(aux, img, i, j);
+        //aux->next = NULL;
+        //Avance i et j jusqu'a la prochaine ligne
+    }
+    return ans;
+}
+
+//void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j)
+//{
+//    return;
+//}
