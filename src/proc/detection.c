@@ -129,19 +129,42 @@ struct coorList* getLines(t_img_desc *img)
     ans->Y = 0;
     ans->length = 0;
     ans->height = 0;
+    //Loop used to add all lines to the list
     while (i + i*j < (size_t)(img->x * img->y)) {
         aux->next = malloc(sizeof(struct coorList));
         aux = aux->next;
         aux->X = i;
         aux->Y = j;
-        //dimLine(aux, img, i, j);
-        //aux->next = NULL;
-        //Avance i et j jusqu'a la prochaine ligne
+        dimLine(aux, img, i, j);
+        aux->next = NULL;
+        //Goes to the next detected line
+        i += aux->length;
+        j += aux->height;
+        while (img->data[i + i*j] == 255 && i + i*j < (size_t)(img->x * img->y)) {
+            if (i == (size_t)(img->x - 1)) {
+                i = 0;
+                ++j;
+            }
+            else {
+                ++i;
+            }
+        }
     }
     return ans;
 }
 
-//void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j)
-//{
-//    return;
-//}
+void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j)
+{
+    size_t aux = j;
+    //Find height
+    while (img->data[i + i*aux] == 0)
+        ++aux;
+    l->height = aux - 1 - j;
+    //Find length
+    j = aux;
+    aux = i;
+    while (img->data[aux + aux*j] == 0)
+        ++aux;
+    l->length = aux - 1 - i;
+    return;
+}

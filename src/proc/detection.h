@@ -28,5 +28,5 @@ size_t charLength(t_img_desc *img, struct coorList *ld, size_t begin);
 struct coorList* getLines(t_img_desc *img);
 
 //Used for getLines
-//void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j);
+void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j);
 #endif
