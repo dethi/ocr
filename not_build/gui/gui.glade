@@ -222,7 +222,7 @@ mendoz_a</property>
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">  Loaded picture:  </property>
+            <property name="label" translatable="yes"> Loaded picture: </property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -277,6 +277,7 @@ mendoz_a</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="ocr_text" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">2</property>
@@ -305,6 +306,7 @@ mendoz_a</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="save_text" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">2</property>
