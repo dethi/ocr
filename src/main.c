@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     for (unsigned i = 0; i < ai.inputs_num; ++i)
     {
         t_img_desc *img = load_image(ai.inputs[i], 3);
-        printf("%s (%ix%i)", ai.inputs[i], img->x, img->y);
+        printf("%s (%ix%i -- %i)", ai.inputs[i], img->x, img->y, img->comp);
 
         if (filter_flag) {
             if (filter_median_flag)

@@ -12,6 +12,7 @@ typedef struct {
     double theta;
 } t_hough;
 
+/* Return the rotation angle in radians */
 double hough(t_img_desc *img);
 
 #endif

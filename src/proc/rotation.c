@@ -13,7 +13,7 @@ void hough_compute(t_img_desc *img, unsigned *acc, double maxRho,
 
                 for (size_t i_theta = 0; i_theta < indexMaxTheta; ++i_theta) {
                     double theta = ((double)i_theta / (double)indexMaxTheta)
-                        *  2 * M_PI;
+                        * M_PI;
                     double rho = x * cos(theta) + y * sin(theta);
                     size_t i_rho = 0.5 + (rho / maxRho + 0.5) * indexMaxRho;
                     ++acc[i_theta + i_rho * indexMaxTheta];
@@ -42,7 +42,7 @@ t_hough hough_search_max(unsigned *acc, double maxRho,
     }
 
     double rho = (winRho / (double)indexMaxRho - 0.5) * maxRho;
-    double theta = (winTheta / (double)indexMaxTheta) * (2 * M_PI);
+    double theta = (winTheta / (double)indexMaxTheta) * M_PI;
     t_hough result = { rho, theta };
     return result;
 }
@@ -50,7 +50,7 @@ t_hough hough_search_max(unsigned *acc, double maxRho,
 double hough(t_img_desc *img)
 {
     if (img->comp != 1)
-        return -1;
+        return EXIT_FAILURE;
 
     double maxRho = sqrt(img->x * img->x + img->y * img->y);
     size_t indexMaxTheta = 360;
@@ -59,8 +59,8 @@ double hough(t_img_desc *img)
 
     hough_compute(img, acc, maxRho, indexMaxTheta, indexMaxRho);
     t_hough result = hough_search_max(acc, maxRho, indexMaxTheta, indexMaxRho);
+    //printf("\nroh: %f\ttheta: %f\n", result.rho, result.theta * 360 / (2 * M_PI));
 
-    //printf("\nroh: %f\ttheta: %f\n", result.rho, result.theta);
     free(acc);
     return result.theta;
 }
