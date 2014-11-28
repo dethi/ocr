@@ -29,4 +29,5 @@ struct coorList* getLines(t_img_desc *img);
 
 //Used for getLines
 void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j);
+
 #endif

@@ -6,11 +6,13 @@ int main(int argc, char *argv[])
     if (cmdline_parser(argc, argv, &ai) != 0)
         exit(EXIT_FAILURE);
 
+    /* XOR */
     if (ai.xor_given) {
         net_main();
         return EXIT_SUCCESS;
     }
 
+    /* Check files path */
     if (ai.inputs_num == 0) {
         cmdline_parser_print_help();
         exit(EXIT_FAILURE);
@@ -18,7 +20,9 @@ int main(int argc, char *argv[])
 
     /* Flag */
     int flag;
-    if (ai.segmentation_given)
+    if (ai.rotation_given)
+        flag = 4;
+    else if (ai.segmentation_given)
         flag = 3;
     else if (ai.binarize_given)
         flag = 2;
@@ -31,7 +35,6 @@ int main(int argc, char *argv[])
     /* Thresold */
     int th_flag = (ai.thresold_given &&
             strcmp("fixed", ai.thresold_arg) == 0) ? 0 : 1;
-    /* End thresold */
 
     /* Segmentation */
     int RLSA_x = 3;
@@ -97,6 +100,8 @@ int main(int argc, char *argv[])
         }
         if (flag > 2)
             RLSA(img, RLSA_x, RLSA_y);
+        if (flag > 3)
+            printf("\trot: %f", 360 * hough(img) / 6.283);
 
         if (flag > 0 || filter_flag) {
             sprintf(out, "out_img%i.png", i+1);

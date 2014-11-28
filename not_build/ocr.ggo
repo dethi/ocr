@@ -16,6 +16,7 @@ option "thresold" - "Select the methods used to compute the thresold"
     default="otsu"
     dependon="binarize"
     optional
+option "rotation" r "Detect and apply rotation" flag off
 option "filter" - "Apply a filter on the image"
     string typestr="methods"
     values="median", "average", "gaussien", "sharpening"

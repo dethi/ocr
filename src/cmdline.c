@@ -38,6 +38,7 @@ const char *gengetopt_args_info_help[] = {
   "  -b, --binarize          Binarize the image  (default=off)",
   "  -s, --segmentation=INT  Detect the different part of the image",
   "      --thresold=methods  Select the methods used to compute the thresold  \n                            (possible values=\"fixed\", \"otsu\" \n                            default=`otsu')",
+  "  -r, --rotation          Detect and apply rotation  (default=off)",
   "      --filter=methods    Apply a filter on the image  (possible \n                            values=\"median\", \"average\", \"gaussien\", \n                            \"sharpening\")",
   "      --xor               Neural network that can solve XOR gate  (default=off)",
     0
@@ -76,6 +77,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->binarize_given = 0 ;
   args_info->segmentation_given = 0 ;
   args_info->thresold_given = 0 ;
+  args_info->rotation_given = 0 ;
   args_info->filter_given = 0 ;
   args_info->xor_given = 0 ;
 }
@@ -90,6 +92,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->segmentation_orig = NULL;
   args_info->thresold_arg = gengetopt_strdup ("otsu");
   args_info->thresold_orig = NULL;
+  args_info->rotation_flag = 0;
   args_info->filter_arg = NULL;
   args_info->filter_orig = NULL;
   args_info->xor_flag = 0;
@@ -109,8 +112,9 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->segmentation_min = 2;
   args_info->segmentation_max = 2;
   args_info->thresold_help = gengetopt_args_info_help[5] ;
-  args_info->filter_help = gengetopt_args_info_help[6] ;
-  args_info->xor_help = gengetopt_args_info_help[7] ;
+  args_info->rotation_help = gengetopt_args_info_help[6] ;
+  args_info->filter_help = gengetopt_args_info_help[7] ;
+  args_info->xor_help = gengetopt_args_info_help[8] ;
 
 }
 
@@ -340,6 +344,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
   write_multiple_into_file(outfile, args_info->segmentation_given, "segmentation", args_info->segmentation_orig, 0);
   if (args_info->thresold_given)
     write_into_file(outfile, "thresold", args_info->thresold_orig, cmdline_parser_thresold_values);
+  if (args_info->rotation_given)
+    write_into_file(outfile, "rotation", 0, 0 );
   if (args_info->filter_given)
     write_into_file(outfile, "filter", args_info->filter_orig, cmdline_parser_filter_values);
   if (args_info->xor_given)
@@ -912,12 +918,13 @@ cmdline_parser_internal (
         { "binarize",	0, NULL, 'b' },
         { "segmentation",	1, NULL, 's' },
         { "thresold",	1, NULL, 0 },
+        { "rotation",	0, NULL, 'r' },
         { "filter",	1, NULL, 0 },
         { "xor",	0, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVgbs:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVgbs:r", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -958,6 +965,16 @@ cmdline_parser_internal (
           if (update_multiple_arg_temp(&segmentation_list,
               &(local_args_info.segmentation_given), optarg, 0, 0, ARG_INT,
               "segmentation", 's',
+              additional_error))
+            goto failure;
+
+          break;
+        case 'r':	/* Detect and apply rotation.  */
+
+
+          if (update_arg((void *)&(args_info->rotation_flag), 0, &(args_info->rotation_given),
+              &(local_args_info.rotation_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "rotation", 'r',
               additional_error))
             goto failure;
 

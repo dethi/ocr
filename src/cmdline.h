@@ -51,6 +51,8 @@ struct gengetopt_args_info
   char * thresold_arg;	/**< @brief Select the methods used to compute the thresold (default='otsu').  */
   char * thresold_orig;	/**< @brief Select the methods used to compute the thresold original value given at command line.  */
   const char *thresold_help; /**< @brief Select the methods used to compute the thresold help description.  */
+  int rotation_flag;	/**< @brief Detect and apply rotation (default=off).  */
+  const char *rotation_help; /**< @brief Detect and apply rotation help description.  */
   char * filter_arg;	/**< @brief Apply a filter on the image.  */
   char * filter_orig;	/**< @brief Apply a filter on the image original value given at command line.  */
   const char *filter_help; /**< @brief Apply a filter on the image help description.  */
@@ -63,6 +65,7 @@ struct gengetopt_args_info
   unsigned int binarize_given ;	/**< @brief Whether binarize was given.  */
   unsigned int segmentation_given ;	/**< @brief Whether segmentation was given.  */
   unsigned int thresold_given ;	/**< @brief Whether thresold was given.  */
+  unsigned int rotation_given ;	/**< @brief Whether rotation was given.  */
   unsigned int filter_given ;	/**< @brief Whether filter was given.  */
   unsigned int xor_given ;	/**< @brief Whether xor was given.  */
 

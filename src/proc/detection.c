@@ -65,7 +65,7 @@ void RLSA(t_img_desc *img, int i, int j)
         trans_RLSA(tab, img->y, j);
 
         for (int y = 0; y < img->y; ++y)
-            tmp[col + img->x * y] = (!tmp[col + img->x *y] 
+            tmp[col + img->x * y] = (!tmp[col + img->x *y]
                     && !tab[y]) ? 0 : 255;
     }
 
