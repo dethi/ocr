@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "stb_image.h"
 #include "stb_image_write.h"
 

@@ -31,14 +31,10 @@ void trans_RLSA(uchar *tab, int size, int c)
 void RLSA(t_img_desc *img, int i, int j)
 {
     uchar *tab = malloc(sizeof(char) * img->x);
-    if (!tab)
-        exit(EXIT_FAILURE);
+    assert(tab);
 
     uchar *tmp = malloc(sizeof(char) * img->x * img->y);
-    if (!tmp) {
-        free(tab);
-        exit(EXIT_FAILURE);
-    }
+    assert(tmp);
 
     for (int row = 0; row < img->y; ++row) {
         for (int x = 0; x < img->x; ++x)
@@ -49,14 +45,10 @@ void RLSA(t_img_desc *img, int i, int j)
         for (int x = 0; x < img->x; ++x)
             tmp[row * img->x + x] = tab[x];
     }
-    tab = malloc(sizeof(char) * img->y);
-    //uchar *ptr = realloc(tab, sizeof(char) * img->y);
-    //if (!ptr) {
-    //    free(tab);
-    //    free(tmp);
-    //    exit(EXIT_FAILURE);
-    //}
-    //tab = ptr;
+
+    uchar *ptr = realloc(tab, sizeof(char) * img->y);
+    assert(ptr);
+    tab = ptr;
 
     for (int col = 0; col < img->x; ++col) {
         for (int y = 0; y < img->y; ++y)

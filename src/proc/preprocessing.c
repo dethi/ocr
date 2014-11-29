@@ -83,10 +83,7 @@ void grey_scale(t_img_desc* img)
 
     // make the array shorter
     uchar *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
-    if (!tmp) {
-        free_image(img);
-        exit(EXIT_FAILURE);
-    }
+    assert(tmp);
 
     img->data = tmp;
     img->comp = 1;

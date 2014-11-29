@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "../stb_image/stb_image_ext.h"
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))

@@ -51,8 +51,7 @@ int coor(int x, int y, int i, int j, size_t n, t_img_desc *img)
 void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
 {
     uchar *tmp = malloc(sizeof(char) * img->x * img->y * img->comp);
-    if (!tmp)
-        exit(EXIT_FAILURE);
+    assert(tmp);
 
     for (int k = 0; k < img->comp; ++k) {
         for(int y = 0; y < img->y; ++y) {
@@ -96,8 +95,7 @@ void tab_sort(int *tab, int lenght)
 void filter_median(t_img_desc *img)
 {
     uchar *tmp = malloc(sizeof(char) * img->x * img->y * img->comp);
-    if(!tmp)
-        exit(EXIT_FAILURE);
+    assert(tmp);
 
     for(int k = 0; k < img->comp; ++k) {
         for(int x = 0; x < img->x; ++x) {
