@@ -6,6 +6,7 @@
 #include <math.h>
 #include <time.h>
 #include <assert.h>
+#include <string.h>
 
 struct net {
     size_t n_layer;

@@ -48,6 +48,10 @@ struct net net_load(char *filename)
     FILE *file = fopen(filename, "r");
     assert(file);
 
+    char magic_code[10];
+    fscanf(file, "%s", magic_code);
+    assert(strcmp(magic_code, "--nn--") == 0);
+
     struct net nwk;
     fscanf(file, "%lu", &nwk.n_layer);
     nwk.layers = malloc(sizeof(struct layer) * nwk.n_layer);
@@ -55,9 +59,7 @@ struct net net_load(char *filename)
 
     for (size_t i = 0; i < nwk.n_layer; ++i) {
         struct layer *l = &nwk.layers[i];
-
-        fscanf(file, "%lu", &l->n_neuron);
-        fscanf(file, "%lu", &l->w_per_neuron);
+        fscanf(file, "%lu %lu", &l->n_neuron, &l->w_per_neuron);
 
         if (l->w_per_neuron) {
             l->w = malloc(sizeof(double) * l->n_neuron * l->w_per_neuron);
@@ -69,11 +71,11 @@ struct net net_load(char *filename)
 
             for (size_t j = 0; j < l->n_neuron; ++j) {
                 for (size_t k = 0; k < l->w_per_neuron; ++k)
-                    fscanf(file, "%lf", &l->w[get_w(l, j, k)]);
+                    fscanf(file, "%la", &l->w[get_w(l, j, k)]);
             }
 
             for (size_t j = 0; j < l->n_neuron; ++j)
-                fscanf(file, "%lf", &l->bias[j]);
+                fscanf(file, "%la", &l->bias[j]);
         } else {
             l->w = NULL;
             l->bias = NULL;
@@ -94,21 +96,22 @@ void net_save(struct net nwk, char *filename)
     FILE *file = fopen(filename, "w");
     assert(file);
 
-    fprintf(file, "--nn--");
+    fprintf(file, "--nn--\n");
     fprintf(file, "%lu\n", nwk.n_layer);
 
     for (size_t i = 0; i < nwk.n_layer; ++i) {
         struct layer *l = &nwk.layers[i];
-        fprintf(file, "%lu\n", l->n_neuron);
-        fprintf(file, "%lu\n", l->w_per_neuron);
+        fprintf(file, "%lu %lu\n", l->n_neuron, l->w_per_neuron);
 
-        for (size_t j = 0; j < l->n_neuron; ++j) {
-            for (size_t k = 0; k < l->w_per_neuron; ++k)
-                fprintf(file, "%lf\n", l->w[get_w(l, j, k)]);
+        if (l->w_per_neuron) {
+            for (size_t j = 0; j < l->n_neuron; ++j) {
+                for (size_t k = 0; k < l->w_per_neuron; ++k)
+                    fprintf(file, "%a\n", l->w[get_w(l, j, k)]);
+            }
+
+            for (size_t j = 0; j < l->n_neuron; ++j)
+                fprintf(file, "%a\n", l->bias[j]);
         }
-
-        for (size_t j = 0; j < l->n_neuron; ++j)
-            fprintf(file, "%lf\n", l->bias[j]);
     }
 
     fclose(file);
@@ -133,11 +136,10 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 
         for (size_t i = 0; i < n_neuron;  ++i) {
             srand(time(NULL));
-            l->bias[i] = -1.0 * 2.0 * ((double)rand() / (double)RAND_MAX);
+            l->bias[i] = ((double)rand() / (double)RAND_MAX);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
-                l->w[get_w(l, i, j)] = -1.0 + 2.0 *
-                    ((double)rand() / (double)RAND_MAX);
+                l->w[get_w(l, i, j)] = ((double)rand() / (double)RAND_MAX);
             }
         }
 
