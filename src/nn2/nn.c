@@ -41,13 +41,15 @@ void net_compute(struct net nwk, double *inputs)
         layer_calc_output(&nwk.layers[i], nwk.layers[i-1].out);
 }
 
+void net_free(struct net nwk)
+{
+    free(nwk.layers);
+}
+
 void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 {
     l->n_neuron = n_neuron;
     l->w_per_neuron = w_per_neuron;
-
-    l->out = malloc(sizeof(double) * n_neuron);
-    assert(l->out);
 
     if (w_per_neuron) {
         l->w = malloc(sizeof(double) * w_per_neuron * n_neuron);
@@ -68,7 +70,14 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 
         l->err = calloc(sizeof(double), w_per_neuron * n_neuron);
         assert(l->err);
+    } else {
+        l->w = NULL;
+        l->bias = NULL;
+        l->err = NULL;
     }
+
+    l->out = malloc(sizeof(double) * n_neuron);
+    assert(l->out);
 }
 
 void layer_calc_output(struct layer *l, double *inputs)
@@ -81,3 +90,10 @@ void layer_calc_output(struct layer *l, double *inputs)
     }
 }
 
+void layer_free(struct layer *l)
+{
+    free(l->w);
+    free(l->bias);
+    free(l->err);
+    free(l->out);
+}
