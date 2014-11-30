@@ -17,6 +17,7 @@ struct layer {
     size_t n_neuron;
     size_t w_per_neuron; // set to 0 if input layer
     double *w; // [n_neuron * w_per_neuron] not defined if input layer
+    double *prev_dw; // [n_neuron * w_per_neuron] not defined if input layer
     double *bias; // [n_neuron] not defined if input layer
     double *err; // [n_neuron] not defined if input layer
     double *out; // [n_neuron]

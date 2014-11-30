@@ -1,5 +1,8 @@
 #include "nn.h"
 
+const double LEARNING = 0.7;
+const double MOMENTUM = 0.2;
+
 static inline
 size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
 {
@@ -72,9 +75,13 @@ void net_error(struct net nwk, double *desired)
         struct layer *l = &nwk.layers[i];
 
         for (size_t j = 0; j < l->n_neuron; ++j) {
-            l->bias[j] += l->err[j];
-            for (size_t k = 0; k < l->w_per_neuron; ++k)
-                l->w[get_w(l, j, k)] += l->err[j] * nwk.layers[i-1].out[k];
+            l->bias[j] += LEARNING * l->err[j];
+            for (size_t k = 0; k < l->w_per_neuron; ++k) {
+                double dw = LEARNING * l->err[j] * nwk.layers[i-1].out[k];
+                size_t index = get_w(l, j, k);
+                l->w[index] += dw + MOMENTUM * l->prev_dw[index];
+                l->prev_dw[index] = dw;
+            }
         }
     }
 }
@@ -102,6 +109,8 @@ struct net net_load(char *filename)
         if (l->w_per_neuron) {
             l->w = malloc(sizeof(double) * l->n_neuron * l->w_per_neuron);
             assert(l->w);
+            l->prev_dw = calloc(sizeof(double), l->n_neuron * l->w_per_neuron);
+            assert(l->prev_dw);
             l->bias = malloc(sizeof(double) * l->n_neuron);
             assert(l->bias);
             l->err = calloc(sizeof(double), l->n_neuron);
@@ -116,6 +125,7 @@ struct net net_load(char *filename)
                 fscanf(file, "%la", &l->bias[j]);
         } else {
             l->w = NULL;
+            l->prev_dw = NULL;
             l->bias = NULL;
             l->err = NULL;
         }
@@ -169,9 +179,12 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
     if (w_per_neuron) {
         l->w = malloc(sizeof(double) * n_neuron * w_per_neuron);
         assert(l->w);
-
+        l->prev_dw = calloc(sizeof(double), n_neuron * w_per_neuron);
+        assert(l->prev_dw);
         l->bias = malloc(sizeof(double) * n_neuron);
         assert(l->bias);
+        l->err = calloc(sizeof(double), n_neuron);
+        assert(l->err);
 
         for (size_t i = 0; i < n_neuron;  ++i) {
             srand(time(NULL));
@@ -181,11 +194,9 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
                 l->w[get_w(l, i, j)] = ((double)rand() / (double)RAND_MAX);
             }
         }
-
-        l->err = calloc(sizeof(double), n_neuron);
-        assert(l->err);
     } else {
         l->w = NULL;
+        l->prev_dw = NULL;
         l->bias = NULL;
         l->err = NULL;
     }
@@ -207,6 +218,7 @@ void layer_calc_output(struct layer *l, double *inputs)
 void layer_free(struct layer *l)
 {
     free(l->w);
+    free(l->prev_dw);
     free(l->bias);
     free(l->err);
     free(l->out);
