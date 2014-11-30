@@ -1,7 +1,7 @@
 #include "nn.h"
 
 static inline
-size_t get_w(layer *l, size_t i_neuron, size_t i_w)
+size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
 {
     return i_w + i_neuron * l->w_per_neuron;
 }
@@ -18,26 +18,30 @@ double df(double x)
     return x * (1.0 - x);
 }
 
-layer* net_init(size_t n_layer, size_t *n_neuron_per_layer)
+struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
 {
     assert(n_layer);
-    layer *network = malloc(sizeof(layer) * n_layer);
-    assert(network);
+    struct layer *layers = malloc(sizeof(struct layer) * n_layer);
+    assert(layers);
 
-    layer_init(&network[0], n_neuron_per_layer[0], 0);
+    layer_init(&layers[0], n_neuron_per_layer[0], 0);
     for (size_t i = 1; i < n_layer; ++i)
-        layer_init(&network[i], n_neuron_per_layer[i], n_neuron_per_layer[i-1]);
+        layer_init(&layers[i], n_neuron_per_layer[i], n_neuron_per_layer[i-1]);
 
+    struct net network = { n_layer, layers };
     return network;
 }
 
-void net_set_input(layer *network, double *inputs)
+void net_compute(struct net nwk, double *inputs)
 {
-    for (size_t i = 0; i < network[0].n_neuron; ++i)
-        network[0].out[i] = inputs[i];
+    for (size_t i = 0; i < nwk.layers[0].n_neuron; ++i)
+        nwk.layers[0].out[i] = inputs[i];
+
+    for (size_t i = 1; i < nwk.n_layer; ++i)
+        layer_calc_output(&nwk.layers[i], nwk.layers[i-1].out);
 }
 
-void layer_init(layer *l, size_t n_neuron, size_t w_per_neuron)
+void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 {
     l->n_neuron = n_neuron;
     l->w_per_neuron = w_per_neuron;
@@ -67,7 +71,7 @@ void layer_init(layer *l, size_t n_neuron, size_t w_per_neuron)
     }
 }
 
-void layer_calc_output(layer *l, double *inputs)
+void layer_calc_output(struct layer *l, double *inputs)
 {
     for (size_t i = 0; i < l->n_neuron; ++i) {
         double out = 0;
