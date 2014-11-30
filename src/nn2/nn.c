@@ -20,7 +20,7 @@ double df(double x)
 
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
 {
-    assert(n_layer);
+    assert(n_layer >= 2);
     struct layer *layers = malloc(sizeof(struct layer) * n_layer);
     assert(layers);
 
@@ -39,6 +39,44 @@ void net_compute(struct net nwk, double *inputs)
 
     for (size_t i = 1; i < nwk.n_layer; ++i)
         layer_calc_output(&nwk.layers[i], nwk.layers[i-1].out);
+}
+
+void net_error(struct net nwk, double *desired)
+{
+    /* Foreach output neuron */
+    struct layer *l = &nwk.layers[nwk.n_layer - 1];
+    for (size_t i = 0; i < l->n_neuron; ++i) {
+        /* Compute global error */
+        l->err[i] = df(l->out[i]) * (desired[i] - f(l->out[i]));
+    }
+
+    /* Foreach layers, output to input (exclude) */
+    for (size_t j = nwk.n_layer - 1; j > 1; --j) {
+        struct layer *cur_l = &nwk.layers[j-1];
+        struct layer *prev_l = &nwk.layers[j];
+
+        /* Foreach neuron in current layer */
+        for (size_t k = 0; k < cur_l->n_neuron; ++k) {
+            /* Compute propaged error */
+            double error = 0;
+            for (size_t h = 0; h < prev_l->n_neuron; ++h)
+                error += prev_l->w[get_w(prev_l, h, k)] * prev_l->err[h];
+
+            /* Compute current error */
+            cur_l->err[k] = df(cur_l->out[k]) * error;
+        }
+    }
+
+    /* Apply error */
+    for (size_t i = 1; i < nwk.n_layer; ++i) {
+        struct layer *l = &nwk.layers[i];
+
+        for (size_t j = 0; j < l->n_neuron; ++j) {
+            l->bias[j] += l->err[j];
+            for (size_t k = 0; k < l->w_per_neuron; ++k)
+                l->w[get_w(l, j, k)] += l->err[j] * nwk.layers[i-1].out[k];
+        }
+    }
 }
 
 struct net net_load(char *filename)
@@ -66,7 +104,7 @@ struct net net_load(char *filename)
             assert(l->w);
             l->bias = malloc(sizeof(double) * l->n_neuron);
             assert(l->bias);
-            l->err = calloc(sizeof(double), l->n_neuron * l->w_per_neuron);
+            l->err = calloc(sizeof(double), l->n_neuron);
             assert(l->err);
 
             for (size_t j = 0; j < l->n_neuron; ++j) {
@@ -119,6 +157,7 @@ void net_save(struct net nwk, char *filename)
 
 void net_free(struct net nwk)
 {
+    nwk.n_layer = 0;
     free(nwk.layers);
 }
 
@@ -128,7 +167,7 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
     l->w_per_neuron = w_per_neuron;
 
     if (w_per_neuron) {
-        l->w = malloc(sizeof(double) * w_per_neuron * n_neuron);
+        l->w = malloc(sizeof(double) * n_neuron * w_per_neuron);
         assert(l->w);
 
         l->bias = malloc(sizeof(double) * n_neuron);
@@ -143,7 +182,7 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
             }
         }
 
-        l->err = calloc(sizeof(double), w_per_neuron * n_neuron);
+        l->err = calloc(sizeof(double), n_neuron);
         assert(l->err);
     } else {
         l->w = NULL;
@@ -160,8 +199,8 @@ void layer_calc_output(struct layer *l, double *inputs)
     for (size_t i = 0; i < l->n_neuron; ++i) {
         double out = 0;
         for (size_t j = 0; j < l->w_per_neuron; ++j)
-            out += l->w[get_w(l, i, j)] * inputs[j];
-        l->out[i] = out + l->bias[i];
+            out += l->w[get_w(l, i, j)] * f(inputs[j]);
+        l->out[i] = out + f(l->bias[i]);
     }
 }
 

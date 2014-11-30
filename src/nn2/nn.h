@@ -18,12 +18,13 @@ struct layer {
     size_t w_per_neuron; // set to 0 if input layer
     double *w; // [n_neuron * w_per_neuron] not defined if input layer
     double *bias; // [n_neuron] not defined if input layer
-    double *err; // [n_neuron * w_per_neuron] not defined if input layer
+    double *err; // [n_neuron] not defined if input layer
     double *out; // [n_neuron]
 };
 
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer);
 void net_compute(struct net nwk, double *inputs);
+void net_error(struct net nwk, double *desired);
 struct net net_load(char *filename);
 void net_save(struct net nwk, char *filename);
 void net_free(struct net nwk);
