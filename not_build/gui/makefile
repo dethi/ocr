@@ -22,9 +22,9 @@ OUT= gui
 	$(CC) -c $< $(CFLAGS)
 
 all:$(FILES)
-	$(CC) -o $(OUT)  $(FILES) $(LDFLAGS)
+	$(CC) -o $(OUT)  $(FILES) $(LDFLAGS) 
 
 clean:
-	rm -f *.o gui *core* file.txt
+	rm -f *.o gui *core* *.txt
                   
 
