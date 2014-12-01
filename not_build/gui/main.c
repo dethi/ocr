@@ -7,19 +7,22 @@ typedef struct
 } SGlobalData;
 
 gchar *img_name;
-gchar *txt_ocr = "test";
+gchar *txt_ocr = "test\tbloblo\nbli";
 gchar *txt_saved_name;
 gchar *txt_saved_path;
 
 GtkTextView *text_view = NULL;
 GtkTextBuffer *buffer = NULL;
 GtkWidget *dialog_save = NULL;
+GtkButton *b_save = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
 void get_img (GtkFileChooserButton *wigdet, gpointer user_data);
 void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);
+void hiding_dialog_save(GtkButton *widget, GtkWidget *other_widget);
+
 
 int main(int argc, char *argv [])
 {
@@ -45,7 +48,7 @@ int main(int argc, char *argv [])
     }
 
     gtk_builder_connect_signals (data.builder, &data);
-
+    
     main_window = GTK_WIDGET(gtk_builder_get_object (data.builder, "window1"));
 
     gtk_widget_show_all (main_window);
@@ -87,12 +90,10 @@ void get_img(GtkFileChooserButton *widget, gpointer user_data)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
     SGlobalData *data = (SGlobalData*) user_data;
-    //GtkTextView *text_view = NULL;
-    //GtkTextBuffer *buffer = NULL;
 
     text_view = (GtkTextView*) ( gtk_builder_get_object( data->builder, "textview1")); 
     buffer = gtk_text_view_get_buffer ( text_view );
-
+    
     gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
 }
 
@@ -100,10 +101,13 @@ void save_dial (GtkButton *widget, gpointer user_data)
 {
     SGlobalData *data = (SGlobalData*) user_data;
 
-    dialog_save = GTK_WIDGET(gtk_builder_get_object(data->builder, "filechooserdialog1"));
-    gtk_dialog_run(GTK_DIALOG(dialog_save));
+    dialog_save = GTK_WIDGET(gtk_builder_get_object(data->builder, "dialog_save"));
+    b_save = GTK_BUTTON(gtk_builder_get_object(data->builder, "button_save"));
     
-    gtk_widget_destroy(dialog_save);
+    g_signal_connect(b_save, "clicked", hiding_dialog_save, dialog_save);
+
+    gtk_dialog_run(GTK_DIALOG(dialog_save));
+    gtk_widget_hide(dialog_save); 
 }   
 
 
@@ -122,13 +126,12 @@ void save_text (GtkButton *widget, gpointer user_data)
 
     g_print("txt name choosen: %s\ntxt path choosen: %s\n", txt_saved_name, txt_saved_path);
     
-
     GtkTextIter iter_start;
     GtkTextIter iter_end;
     
     gtk_text_buffer_get_start_iter ( buffer, &iter_start);
     gtk_text_buffer_get_end_iter ( buffer, &iter_end);
-
+    
     gchar *text2save = gtk_text_buffer_get_text( buffer, &iter_start, &iter_end, TRUE);
     
     gchar *txt_saved = (gchar*) strcat( txt_saved_path, "/");
@@ -149,8 +152,11 @@ void save_text (GtkButton *widget, gpointer user_data)
     fputs( text2save, file);
 
     fclose ( file );
+}
 
-    
+void hiding_dialog_save(GtkButton *widget, GtkWidget *other_widget)
+{
+    gtk_widget_hide(other_widget);
 }
 
 
