@@ -95,13 +95,13 @@ void ocr_text (GtkButton *widget, gpointer user_data)
 
 void save_text (GtkButton *widget, gpointer user_data)
 {
-    GtkTextIter *iter_start = NULL;
-    GtkTextIter *iter_end = NULL;
+    GtkTextIter iter_start;
+    GtkTextIter iter_end;
 
-    gtk_text_buffer_get_start_iter ( buffer, iter_start);
-    gtk_text_buffer_get_end_iter ( buffer, iter_end);
+    gtk_text_buffer_get_start_iter ( buffer, &iter_start);
+    gtk_text_buffer_get_end_iter ( buffer, &iter_end);
     
-    gchar *text2save = gtk_text_buffer_get_text( buffer, iter_start, iter_end, TRUE);
+    gchar *text2save = gtk_text_buffer_get_text( buffer, &iter_start, &iter_end, TRUE);
     
     FILE *file = NULL;
     file = fopen("file.txt", "w");
