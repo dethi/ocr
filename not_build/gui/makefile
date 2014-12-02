@@ -25,6 +25,6 @@ all:$(FILES)
 	$(CC) -o $(OUT)  $(FILES) $(LDFLAGS) 
 
 clean:
-	rm -f *.o gui *core* *.txt
+	rm -f *.o gui *core* *.txt gui.glade~
                   
 
