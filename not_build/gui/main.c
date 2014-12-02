@@ -52,13 +52,13 @@ void callback_about (GtkMenuItem *menuitem, gpointer user_data)
 }
 
 // load and print the choosen image, also get the pathname
-void get_img(GtkFileChooserButton *widget, gpointer user_data)
+void get_img(GtkFileChooser *widget, gpointer user_data)
 {
     SGlobalData *data = (SGlobalData*) user_data;
-    GtkFileChooserButton *loader = NULL;
+    GtkFileChooser *loader = NULL;
     GtkImage *image = NULL;
 
-    loader = (GtkFileChooserButton*) (gtk_builder_get_object(data->builder, "img_loader"));
+    loader = GTK_FILE_CHOOSER (gtk_builder_get_object(data->builder, "img_loader"));
     image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
 
     img_name = (gchar*) gtk_file_chooser_get_filename(  loader );
@@ -66,15 +66,12 @@ void get_img(GtkFileChooserButton *widget, gpointer user_data)
     GtkLabel *label_img = NULL;
     label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
     gtk_label_set_text(label_img, img_name);
-    //g_print("Image path: %s\n", img_name);
 
     gtk_image_set_from_file( image, (gchar*)img_name);
 }
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
-    SGlobalData *data = (SGlobalData*) user_data;
-    
     gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
 }
 
@@ -126,11 +123,11 @@ void save_text (GtkButton *widget, gpointer user_data)
     }
 
     fputs( text2save, file);
-    
+   /* 
     GtkLabel *label_txt = NULL;
     label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
     gtk_label_set_text( label_txt, txt_saved);
-    
+    */
     fclose ( file ); 
 }
 

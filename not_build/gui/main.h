@@ -2,6 +2,8 @@
 #define MAIN_H_
 
 #include <gtk/gtk.h>
+#include <string.h>
+#include <stdlib.h>
 
 typedef struct
 {
@@ -11,7 +13,7 @@ typedef struct
 
 gchar *img_name;
 gchar *txt_ocr = "test\tbloblo\nbli";
-gchar *txt_saved_name;
+const gchar *txt_saved_name;
 gchar *txt_saved_path;
 
 GtkTextView *text_view = NULL;
@@ -20,7 +22,7 @@ GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
-void get_img (GtkFileChooserButton *wigdet, gpointer user_data);
+void get_img (GtkFileChooser *wigdet, gpointer user_data);
 void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);
