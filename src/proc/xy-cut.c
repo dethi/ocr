@@ -22,3 +22,19 @@ struct xyHelper* getPos(uchar *c, size_t size)
     }
     return ans;
 }
+
+uchar* getVerticalTab(t_img_desc *img)
+{
+    uchar *ans = malloc(sizeof(uchar)*img->x*img->y);
+    int x = 0, y = 0, i = 0;
+    while(x * y < img->x*img->y) {
+        ans[i] = img->data[x + x*y];
+        ++y;
+        if (y == img->y) {
+            ++x;
+            y = 0;
+        }
+        ++i;
+    }
+    return ans;
+}

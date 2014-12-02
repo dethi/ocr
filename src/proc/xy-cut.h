@@ -11,4 +11,8 @@ struct xyHelper {
     size_t begin;
 };
 
+struct xyHelper* getPos(uchar *c, size_t size);
+
+uchar* getVerticalTab(t_img_desc *img);
+
 #endif
