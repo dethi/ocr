@@ -21,7 +21,6 @@ void get_img (GtkFileChooserButton *wigdet, gpointer user_data);
 void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);
-void hiding_dialog_save(GtkButton *widget, GtkWidget *other_widget);
 
 
 int main(int argc, char *argv [])
@@ -80,7 +79,6 @@ void get_img(GtkFileChooserButton *widget, gpointer user_data)
     loader = (GtkFileChooserButton*) (gtk_builder_get_object(data->builder, "img_loader"));
     image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
 
-    g_print("loading image...\n");
     img_name = (gchar*) gtk_file_chooser_get_filename(  loader );
     g_print("Image path: %s\n", img_name);
 
@@ -104,7 +102,7 @@ void save_dial (GtkButton *widget, gpointer user_data)
     dialog_save = GTK_WIDGET(gtk_builder_get_object(data->builder, "dialog_save"));
     b_save = GTK_BUTTON(gtk_builder_get_object(data->builder, "button_save"));
     
-    g_signal_connect(b_save, "clicked", hiding_dialog_save, dialog_save);
+    g_signal_connect_swapped (b_save, "clicked", (GCallback) gtk_widget_hide, dialog_save);
 
     gtk_dialog_run(GTK_DIALOG(dialog_save));
     gtk_widget_hide(dialog_save); 
@@ -123,8 +121,6 @@ void save_text (GtkButton *widget, gpointer user_data)
     buffer_entry = gtk_entry_get_buffer(entry);
     txt_saved_name = gtk_entry_buffer_get_text(buffer_entry);
     txt_saved_path = gtk_file_chooser_get_current_folder(chooser);
-
-    g_print("txt name choosen: %s\ntxt path choosen: %s\n", txt_saved_name, txt_saved_path);
     
     GtkTextIter iter_start;
     GtkTextIter iter_end;
@@ -147,18 +143,15 @@ void save_text (GtkButton *widget, gpointer user_data)
         g_print("Error in opening .txt file !\n");
         exit(1);
     }
-    g_print(".txt saving...\n");
 
     fputs( text2save, file);
 
     fclose ( file );
-}
 
-void hiding_dialog_save(GtkButton *widget, GtkWidget *other_widget)
-{
-    gtk_widget_hide(other_widget);
-}
+    g_print("Text saved !");
 
+   
+}
 
 
 
