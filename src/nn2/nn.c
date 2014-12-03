@@ -1,7 +1,7 @@
 #include "nn.h"
 
 const double LEARNING = 0.7;
-const double MOMENTUM = 0.2;
+const double MOMENTUM = 0.;
 
 static inline
 size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
@@ -21,6 +21,19 @@ double df(double x)
     return x * (1.0 - x);
 }
 
+static
+void cpyresult(double *dst, const double *src, size_t n, double th)
+{
+    assert(dst);
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        //printf("%f \t", f(src[i]));
+        dst[i] = (f(src[i]) > th) ? 1. : 0.;
+    }
+    //printf("\n");
+}
+
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
 {
     assert(n_layer >= 2);
@@ -33,6 +46,53 @@ struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
 
     struct net network = { n_layer, layers };
     return network;
+}
+
+void net_train(struct net nwk)
+{
+    double sets[] = {
+        0, 0, 0,
+        0, 1, 1,
+        1, 0, 1,
+        1, 1, 0
+    };
+
+    size_t n_sets = 4;
+    size_t n_input = 2;
+    size_t n_result = 1;
+    unsigned epoch = 300;
+
+    double *results = malloc(sizeof(double) * n_result);
+    assert(results);
+
+    while (epoch) {
+        unsigned error = 0;
+
+        for (size_t i = 0; i < n_sets; ++i) {
+            net_compute(nwk, &sets[i * (n_input + n_result)]);
+
+            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.5);
+            error += abs(memcmp(results, &sets[n_input + i * (n_input + n_result)],
+                    sizeof(double) * n_result));
+
+            net_error(nwk, &sets[n_input + i * (n_input + n_result)]);
+
+            printf("In: ");
+            for (size_t j = 0; j < n_input; ++j)
+                printf("%.2f ", sets[j + i * (n_input + n_result)]);
+            printf("\nOut: ");
+            for (size_t j = 0; j < n_result; ++j)
+                printf("%.2f ", results[j]);
+            printf("\n---\n");
+        }
+
+        printf("[err: %d]\n\n", error);
+
+        //if (!error)
+            --epoch;
+    }
+
+    free(results);
 }
 
 void net_compute(struct net nwk, double *inputs)
@@ -188,10 +248,11 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 
         for (size_t i = 0; i < n_neuron;  ++i) {
             srand(time(NULL));
-            l->bias[i] = ((double)rand() / (double)RAND_MAX);
+            l->bias[i] = -1. + 2. * ((double)rand() / (double)RAND_MAX);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
-                l->w[get_w(l, i, j)] = ((double)rand() / (double)RAND_MAX);
+                l->w[get_w(l, i, j)] = -1. + 2. *
+                    ((double)rand() / (double)RAND_MAX);
             }
         }
     } else {

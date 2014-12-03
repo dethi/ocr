@@ -24,6 +24,7 @@ struct layer {
 };
 
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer);
+void net_train(struct net nwk);
 void net_compute(struct net nwk, double *inputs);
 void net_error(struct net nwk, double *desired);
 struct net net_load(char *filename);
