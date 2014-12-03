@@ -12,7 +12,7 @@ struct xyHelper {
 };
 
 struct xyHelper* getPos(uchar *c, size_t size);
-uchar* getVerticalTab(uchar *tab, size_t length, size_t Y);
+uchar* getTab(uchar *tab, char vert, size_t X, size_t Y);
 void XYCut(uchar *tab, char vert, size_t length, size_t X, size_t Y);
 
 #endif
