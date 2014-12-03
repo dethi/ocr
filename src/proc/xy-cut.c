@@ -52,15 +52,21 @@ uchar* getTab(uchar *tab, char vert, size_t X, size_t Y)
     return ans;
 }
 
-void XYCut(uchar *tab, char vert, size_t length, size_t X, size_t Y)
+void XYCut(uchar *tab, char vert, size_t X, size_t Y)
 {
-    ++X; //Sinon il rale
-    ++Y; //Sinon il rale
-    //Si on doit le traiter en vertical
-    struct xyHelper *help;
-    if(vert)
-        help = getPos(tab, length);
-    help = getPos(tab, length);
-    help->length += 1; //Sinon il rale
-    //Faire appel vers les deux parties
+    uchar *tmp = getTab(tab, vert, X, Y);
+    uchar max = 0;
+    size_t aux = 0, i;
+    for (i = 0; i < (vert ? Y : X); ++i) {
+        if (tmp[i] > max)
+            max = tmp[i];
+    }
+    i = 0;
+    while (aux < (vert ? Y : X) && i < (vert ? Y : X)) {
+        if (tmp[i] == max) {
+            //XYCut(tab de aux a i, !vert, X, Y);
+            aux = i;
+        }
+        ++i;
+    }
 }
