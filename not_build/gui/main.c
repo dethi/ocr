@@ -57,17 +57,21 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
     SGlobalData *data = (SGlobalData*) user_data;
     GtkFileChooser *loader = NULL;
     GtkImage *image = NULL;
+    GdkPixbuf *pixbuf = NULL;
 
     loader = GTK_FILE_CHOOSER (gtk_builder_get_object(data->builder, "img_loader"));
     image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
 
     img_name = (gchar*) gtk_file_chooser_get_filename(  loader );
     
+
     GtkLabel *label_img = NULL;
     label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
     gtk_label_set_text(label_img, img_name);
 
-    gtk_image_set_from_file( image, (gchar*)img_name);
+    pixbuf = gdk_pixbuf_new_from_file_at_size( img_name, 680, 500, NULL);
+    gtk_image_set_from_pixbuf( image, pixbuf);
+    //gtk_image_set_from_file( image, (gchar*)img_name);
 }
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
