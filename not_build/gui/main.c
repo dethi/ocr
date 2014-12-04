@@ -9,15 +9,12 @@ int main(int argc, char *argv [])
     gchar *filename = NULL;
 
     gtk_init(&argc, &argv);
-
     data.builder = gtk_builder_new();
 
     filename =  g_build_filename ("gui.glade", NULL);
-
     gtk_builder_add_from_file (data.builder, filename, &error);
     g_free (filename);
-    if (error)
-    {
+    if (error) {
         gint code = error->code;
         g_printerr("%s\n", error->message);
         g_error_free (error);
@@ -25,18 +22,17 @@ int main(int argc, char *argv [])
     }
 
     gtk_builder_connect_signals (data.builder, &data);
-    
     main_window = GTK_WIDGET(gtk_builder_get_object (data.builder, "window1"));
-
     gtk_widget_show_all (main_window);
 
     text_view = (GtkTextView*) (gtk_builder_get_object(data.builder, "textview1"));
     buffer = gtk_text_view_get_buffer (text_view);
     gtk_text_buffer_set_text(buffer, "", strlen(""));
     
-    GtkSpellChecker* spell = gtk_spell_checker_new();
-    gtk_spell_checker_set_language(spell, "en_US", NULL);
-    gtk_spell_checker_attach(GTK_TEXT_VIEW(text_view));
+    //spell_eng = gtk_spell_checker_new();
+    spell_fr = gtk_spell_checker_new();
+    gtk_spell_checker_attach( spell_fr, text_view);
+    gtk_spell_checker_set_language( spell_fr, "fr", NULL);
 
     gtk_main();
 
@@ -127,11 +123,11 @@ void save_text (GtkButton *widget, gpointer user_data)
     }
 
     fputs( text2save, file);
-   /* 
+    
     GtkLabel *label_txt = NULL;
     label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
     gtk_label_set_text( label_txt, txt_saved);
-    */
+    
     fclose ( file ); 
 }
 
@@ -143,16 +139,20 @@ void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
 
     gtk_text_buffer_delete(buffer, &start, &end);
 }
+/*
+void spell_checker_eng (GtkMenuItem *menuitem, gpointer user_data)
+{
 
+    gtk_spell_checker_detach( spell_fr );
+    gtk_spell_checker_attach( spell_eng, text_view);
+}
 
-
-
-
-
-
-
-
-
+void spell_checker_fr(GtkMenuItem *menuitem, gpointer user_data)
+{
+    gtk_spell_checker_detach( spell_eng);
+    gtk_spell_checker_attach( spell_fr, text_view);
+}
+*/
 
 
 

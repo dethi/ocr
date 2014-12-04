@@ -21,6 +21,8 @@ GtkTextView *text_view = NULL;
 GtkTextBuffer *buffer = NULL;
 GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
+GtkSpellChecker *spell_eng = NULL;
+GtkSpellChecker *spell_fr = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
 void get_img (GtkFileChooser *wigdet, gpointer user_data);
@@ -28,6 +30,7 @@ void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);
 void empty_buffer(GtkMenuItem *menuitem, gpointer user_data);
-
+void spell_checker_eng(GtkMenuItem *menuitem, gpointer user_data);
+void spell_checker_fr(GtkMenuItem *menuitem, gpointer user_data);
 
 #endif
