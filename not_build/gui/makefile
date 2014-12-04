@@ -8,6 +8,7 @@ CFLAGS  += -DGDK_PIXBUF_DISABLE_DEPRECATED -DG_DISABLE_DEPRECATED
 CFLAGS  += -DGTK_MULTIHEAD_SAFE=1 -DGTK_MULTIDEVICE_SAFE=1
 
 CFLAGS  += `pkg-config gtk+-3.0 --cflags`
+CFLAGS  += `pkg-config gtkspell-3.0 --cflags`
 
 CFLAGS  += -std=c99
 

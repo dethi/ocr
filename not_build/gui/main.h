@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
+#include <gtkspell/gtkspell.h>
 
 typedef struct
 {

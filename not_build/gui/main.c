@@ -33,6 +33,10 @@ int main(int argc, char *argv [])
     text_view = (GtkTextView*) (gtk_builder_get_object(data.builder, "textview1"));
     buffer = gtk_text_view_get_buffer (text_view);
     gtk_text_buffer_set_text(buffer, "", strlen(""));
+    
+    GtkSpellChecker* spell = gtk_spell_checker_new();
+    gtk_spell_checker_set_language(spell, "en_US", NULL);
+    gtk_spell_checker_attach(GTK_TEXT_VIEW(text_view));
 
     gtk_main();
 
