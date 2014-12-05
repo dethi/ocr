@@ -1,7 +1,7 @@
 #include "nn.h"
 
-const double LEARNING = 0.7;
-const double MOMENTUM = 0.;
+const double LEARNING = 0.3;
+const double MOMENTUM = 0;
 
 static inline
 size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
@@ -25,13 +25,13 @@ static
 void cpyresult(double *dst, const double *src, size_t n, double th)
 {
     assert(dst);
-
+    printf("brut out: ");
     for (size_t i = 0; i < n; ++i)
     {
-        //printf("%f \t", f(src[i]));
+        printf("%f \t", f(src[i]));
         dst[i] = (f(src[i]) > th) ? 1. : 0.;
     }
-    //printf("\n");
+    printf("\n");
 }
 
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
@@ -40,6 +40,7 @@ struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
     struct layer *layers = malloc(sizeof(struct layer) * n_layer);
     assert(layers);
 
+    srand(time(NULL));
     layer_init(&layers[0], n_neuron_per_layer[0], 0);
     for (size_t i = 1; i < n_layer; ++i)
         layer_init(&layers[i], n_neuron_per_layer[i], n_neuron_per_layer[i-1]);
@@ -60,7 +61,7 @@ void net_train(struct net nwk)
     size_t n_sets = 4;
     size_t n_input = 2;
     size_t n_result = 1;
-    unsigned epoch = 300;
+    unsigned epoch = 100000;
 
     double *results = malloc(sizeof(double) * n_result);
     assert(results);
@@ -71,7 +72,7 @@ void net_train(struct net nwk)
         for (size_t i = 0; i < n_sets; ++i) {
             net_compute(nwk, &sets[i * (n_input + n_result)]);
 
-            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.5);
+            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.6);
             error += abs(memcmp(results, &sets[n_input + i * (n_input + n_result)],
                     sizeof(double) * n_result));
 
@@ -86,7 +87,7 @@ void net_train(struct net nwk)
             printf("\n---\n");
         }
 
-        printf("[err: %d]\n\n", error);
+        printf("[err: %d]\n\n\n", error);
 
         //if (!error)
             --epoch;
@@ -106,38 +107,84 @@ void net_compute(struct net nwk, double *inputs)
 
 void net_error(struct net nwk, double *desired)
 {
-    /* Foreach output neuron */
-    struct layer *l = &nwk.layers[nwk.n_layer - 1];
-    for (size_t i = 0; i < l->n_neuron; ++i) {
-        /* Compute global error */
-        l->err[i] = df(l->out[i]) * (desired[i] - f(l->out[i]));
-    }
+    /* Output layer */
+    struct layer *l_out = &nwk.layers[nwk.n_layer-1];
+    for (size_t i = 0; i < l_out->n_neuron; ++i)
+        l_out->err[i] = desired[i] - l_out->out[i];
 
-    /* Foreach layers, output to input (exclude) */
-    for (size_t j = nwk.n_layer - 1; j > 1; --j) {
-        struct layer *cur_l = &nwk.layers[j-1];
-        struct layer *prev_l = &nwk.layers[j];
+    /* Foreach layer, output to input (exclude) */
+    for (size_t layer = nwk.n_layer - 2; layer > 0; --layer) {
+        struct layer *cur = &nwk.layers[layer];
+        struct layer *next = &nwk.layers[layer+1];
 
-        /* Foreach neuron in current layer */
-        for (size_t k = 0; k < cur_l->n_neuron; ++k) {
-            /* Compute propaged error */
-            double error = 0;
-            for (size_t h = 0; h < prev_l->n_neuron; ++h)
-                error += prev_l->w[get_w(prev_l, h, k)] * prev_l->err[h];
+        /* Foreach neuron in the current layer */
+        for (size_t c = 0; c < cur->n_neuron; ++c) {
+            cur->err[c] = 0;
 
-            /* Compute current error */
-            cur_l->err[k] = df(cur_l->out[k]) * error;
+            /* Foreach neuron in the next layer */
+            for (size_t n = 0; n < next->n_neuron; ++n) {
+                cur->err[c] += next->w[get_w(next, n, c)] * next->err[n];
+            }
+
+            cur->err[c] *= df(cur->out[c]);
         }
     }
 
-    /* Apply error */
+    for (size_t layer = 1; layer < nwk.n_layer; ++layer) {
+        struct layer *cur = &nwk.layers[layer];
+        struct layer *prev = &nwk.layers[layer-1];
+
+        for (size_t c = 0; c < cur->n_neuron; ++c) {
+            cur->bias[c] += LEARNING * cur->err[c];
+
+            for (size_t p = 0; p < prev->n_neuron; ++p) {
+                size_t index = get_w(cur, c, p);
+                double dw = LEARNING * cur->err[c] * prev->out[c];
+                cur->w[index] = dw + MOMENTUM * cur->prev_dw[index];
+                cur->prev_dw[index] = dw;
+
+                //printf("%f\t", dw);
+            }
+            //printf("\n");
+        }
+        //printf("===\n");
+    }
+}
+
+/*
+void net_error(struct net nwk, double *desired)
+{
+    // Foreach output neuron
+    struct layer *l = &nwk.layers[nwk.n_layer - 1];
+    for (size_t i = 0; i < l->n_neuron; ++i)
+        l->err[i] = (l->out[i] - desired[i]);
+
+    // Foreach layers, output to input (exclude)
+    for (size_t i = nwk.n_layer - 2; i > 0; --i) {
+        l = &nwk.layers[i];
+        struct layer *next = &nwk.layers[i+1];
+
+        // Foreach neuron in current layer
+        for (size_t j = 0; j < l->n_neuron; ++j) {
+            // Compute propaged error
+            double error = 0;
+            for (size_t k = 0; k < next->n_neuron; ++k)
+                error += next->w[get_w(next, k, j)] * next->err[k];
+
+            // Compute current error
+            l->err[j] = df(l->out[j]) * error;
+        }
+    }
+
+    // Apply error
     for (size_t i = 1; i < nwk.n_layer; ++i) {
-        struct layer *l = &nwk.layers[i];
+        l = &nwk.layers[i];
 
         for (size_t j = 0; j < l->n_neuron; ++j) {
-            l->bias[j] += LEARNING * l->err[j];
+            l->bias[j] += -LEARNING * l->err[j];
+
             for (size_t k = 0; k < l->w_per_neuron; ++k) {
-                double dw = LEARNING * l->err[j] * nwk.layers[i-1].out[k];
+                double dw = -LEARNING * l->err[j] * nwk.layers[i-1].out[k];
                 size_t index = get_w(l, j, k);
                 l->w[index] += dw + MOMENTUM * l->prev_dw[index];
                 l->prev_dw[index] = dw;
@@ -145,6 +192,7 @@ void net_error(struct net nwk, double *desired)
         }
     }
 }
+*/
 
 struct net net_load(char *filename)
 {
@@ -247,13 +295,14 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
         assert(l->err);
 
         for (size_t i = 0; i < n_neuron;  ++i) {
-            srand(time(NULL));
-            l->bias[i] = -1. + 2. * ((double)rand() / (double)RAND_MAX);
+            l->bias[i] = -1. + 2. * ((double)rand() / RAND_MAX);
+            //printf("bias: %f\tw:", l->bias[i]);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
-                l->w[get_w(l, i, j)] = -1. + 2. *
-                    ((double)rand() / (double)RAND_MAX);
+                l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / RAND_MAX);
+                //printf("%f ", l->w[get_w(l,i,j)]);
             }
+            //printf("\n");
         }
     } else {
         l->w = NULL;
@@ -269,10 +318,10 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 void layer_calc_output(struct layer *l, double *inputs)
 {
     for (size_t i = 0; i < l->n_neuron; ++i) {
-        double out = 0;
+        double sigma = 0;
         for (size_t j = 0; j < l->w_per_neuron; ++j)
-            out += l->w[get_w(l, i, j)] * f(inputs[j]);
-        l->out[i] = out + f(l->bias[i]);
+            sigma += l->w[get_w(l, i, j)] * inputs[j];
+        l->out[i] = f(sigma + l->bias[i]);
     }
 }
 
