@@ -9,8 +9,7 @@
 struct coorList {
     size_t X;
     size_t Y;
-    size_t length;
-    size_t height;
+    uchar *data;
     struct coorList *next;
 };
 
