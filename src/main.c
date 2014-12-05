@@ -156,13 +156,3 @@ void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
 
     gtk_text_buffer_delete(buffer, &start, &end);
 }
-
-
-
-
-
-
-
-
-
-

@@ -50,7 +50,8 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
     }
     return ans;
 }
-void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, size_t y, struct coorList *helper)
+void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
+        size_t y, struct coorList *helper)
 {
     if (X <= min && Y <= min) {
         uchar *data = malloc(sizeof(uchar) * X * Y);
@@ -68,7 +69,8 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, size
         while (aux < foo && tmp[aux] != 255 * foo)
             ++aux;
         if (aux != i)
-            XYCut(tab, !vert, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), min, (vert ? x : x+i), (vert ? y+i : y), helper);
+            XYCut(tab, !vert, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), \
+                    min, (vert ? x : x+i), (vert ? y+i : y), helper);
         i = aux + 1;
     }
 }
