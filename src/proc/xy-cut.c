@@ -53,7 +53,10 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, size_t y, struct coorList *helper)
 {
     if (X <= min && Y <= min) {
-        helperAdd(helper, x, y, X, Y);
+        uchar *data = malloc(sizeof(uchar) * X * Y);
+        for (size_t i = 0; i < X * Y; ++i)
+            data[i] = tab[i + x + x * y];
+        helperAdd(helper, x, y, data);
         return;
     }
     size_t *tmp = getTab(tab, vert, X, Y, x, y);
@@ -70,14 +73,13 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, size
     }
 }
 
-void helperAdd(struct coorList *f, size_t x, size_t y, size_t X, size_t Y)
+void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
 {
     while(f->next != NULL)
         f = f->next;
     f->next = malloc(sizeof(struct coorList));
     f->X = x;
     f->Y = y;
-    f->length = X;
-    f->height = Y;
+    f->data = tab;
     f->next = NULL;
 }
