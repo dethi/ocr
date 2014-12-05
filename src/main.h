@@ -9,6 +9,7 @@
 #include "proc/detection.h"
 #include "proc/rotation.h"
 #include "proc/filter.h"
+#include "proc/xy-cut.h"
 //#include "nn/xor.h"
 
 #include <gtk/gtk.h>
