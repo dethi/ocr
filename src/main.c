@@ -82,7 +82,7 @@ void ocr_text (GtkButton *widget, gpointer user_data)
      * txt_ocr = text that have to be processed
      */
 
-    t_img_desc *img = load_image(img_name, 0);
+    t_img_desc *img = load_image(img_name, 3);
     printf("%s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
     filter_median(img);
     grey_scale(img);

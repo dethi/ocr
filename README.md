@@ -1,10 +1,15 @@
 [![Build Status](https://magnum.travis-ci.com/dethi/ocr.svg?token=x9iDKPK5fQNGphzep8jS&branch=develop)](https://magnum.travis-ci.com/dethi/ocr)
 
-Compilation :
+Requirements:
+    - libgtk-3-dev
+    - libgtkspell3-3-dev
+    - aspell-fr (for French spelling checker)
+
+Compilation:
     ```> make
     ```
 
-Launch the application and view the built-in help :
+Launch the application:
     ```> ./ocr
     ```
 
