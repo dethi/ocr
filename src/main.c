@@ -87,10 +87,12 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     filter_median(img);
     grey_scale(img);
     binarize_otsu(img);
-    struct coorList *l = malloc(sizeof(struct coorList));
-    XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    l = l->next;
-    img->data = l->data;
+
+    //struct coorList *l = malloc(sizeof(struct coorList));
+    //XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
+    //l = l->next;
+    //img->data = l->data;
+
     write_image("out_img.png", img);
     free_image(img);
 
@@ -142,6 +144,7 @@ void save_text (GtkButton *widget, gpointer user_data)
     }
 
     fputs(text2save, file);
+    fputc('\n', file);
 
     GtkLabel *label_txt = NULL;
     label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
