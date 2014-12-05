@@ -5,7 +5,3 @@ compiler:
     - gcc
 
 script: "make CC=$CC"
-
-notifications:
-    email:
-        - thibault.deutsch@epita.fr
