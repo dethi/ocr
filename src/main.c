@@ -11,8 +11,9 @@ int main(int argc, char *argv [])
     data.builder = gtk_builder_new();
 
     filename =  g_build_filename ("gui.glade", NULL);
-    gtk_builder_add_from_file (data.builder, filename, &error);
-    g_free (filename);
+    gtk_builder_add_from_file(data.builder, filename, &error);
+    g_free(filename);
+
     if (error) {
         gint code = error->code;
         g_printerr("%s\n", error->message);
@@ -62,8 +63,7 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
     loader = GTK_FILE_CHOOSER (gtk_builder_get_object(data->builder, "img_loader"));
     image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
 
-    img_name = (gchar*) gtk_file_chooser_get_filename(  loader );
-
+    img_name = (gchar*) gtk_file_chooser_get_filename(loader);
 
     GtkLabel *label_img = NULL;
     label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
@@ -73,6 +73,7 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
     gtk_image_set_from_pixbuf( image, pixbuf);
     //gtk_image_set_from_file( image, (gchar*)img_name);
 }
+
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
@@ -87,10 +88,11 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     grey_scale(img);
     binarize_otsu(img);
     write_image("out_img.png", img);
+    free_image(img);
 
     /* End process image */
 
-    gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
+    gtk_text_buffer_set_text (buffer, txt_ocr, strlen(txt_ocr));
 }
 
 void save_dial (GtkButton *widget, gpointer user_data)
@@ -100,7 +102,7 @@ void save_dial (GtkButton *widget, gpointer user_data)
     dialog_save = GTK_WIDGET(gtk_builder_get_object(data->builder, "dialog_save"));
     b_save = GTK_BUTTON(gtk_builder_get_object(data->builder, "button_save"));
 
-    g_signal_connect_swapped (b_save, "clicked", (GCallback) gtk_widget_hide, dialog_save);
+    g_signal_connect_swapped(b_save, "clicked", (GCallback) gtk_widget_hide, dialog_save);
 
     gtk_dialog_run(GTK_DIALOG(dialog_save));
     gtk_widget_hide(dialog_save);
@@ -112,41 +114,37 @@ void save_text (GtkButton *widget, gpointer user_data)
     SGlobalData *data = (SGlobalData*) user_data;
     GtkFileChooser *chooser = NULL;
     chooser = GTK_FILE_CHOOSER(dialog_save);
-    GtkEntry *entry = NULL;
-    entry = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry1"));
-    GtkEntryBuffer *buffer_entry = NULL;
+    GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry1"));
 
-    buffer_entry = gtk_entry_get_buffer(entry);
-    txt_saved_name = gtk_entry_buffer_get_text(buffer_entry);
+    txt_saved_name = gtk_entry_get_text(entry);
     txt_saved_path = gtk_file_chooser_get_current_folder(chooser);
-    
+
     GtkTextIter iter_start, iter_end;
 
-    gtk_text_buffer_get_start_iter ( buffer, &iter_start);
-    gtk_text_buffer_get_end_iter ( buffer, &iter_end);
+    gtk_text_buffer_get_start_iter(buffer, &iter_start);
+    gtk_text_buffer_get_end_iter(buffer, &iter_end);
 
-    gchar *text2save = gtk_text_buffer_get_text( buffer, &iter_start, &iter_end, TRUE);
-    
-    gchar *txt_saved = (gchar*) strcat( txt_saved_path, "/");
-    txt_saved = (gchar*) strcat( txt_saved, txt_saved_name);
-    txt_saved = (gchar*) strcat( txt_saved, ".txt");
+    gchar *text2save = gtk_text_buffer_get_text(buffer, &iter_start, &iter_end, TRUE);
 
-    FILE *file = NULL;
-    file = fopen( txt_saved, "w");
+    gchar *txt_saved = (gchar*) strcat(txt_saved_path, "/");
+    txt_saved = (gchar*) strcat(txt_saved, txt_saved_name);
+    txt_saved = (gchar*) strcat(txt_saved, ".txt");
 
-    if ( file == NULL ) {
-        g_print("Error in opening .txt file !\n");
-        exit(1);
+    FILE *file = fopen(txt_saved, "w");
+
+    if (file == NULL) {
+        g_print("Error when writing .txt file !\n");
+        return;
     }
-    fputs( text2save, file);
+
+    fputs(text2save, file);
 
     GtkLabel *label_txt = NULL;
     label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
-    gtk_label_set_text( label_txt, txt_saved);
-    
-    fclose ( file );
-}
+    gtk_label_set_text(label_txt, txt_saved);
 
+    fclose(file);
+}
 
 void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
 {
