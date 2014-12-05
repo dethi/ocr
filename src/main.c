@@ -87,6 +87,10 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     filter_median(img);
     grey_scale(img);
     binarize_otsu(img);
+    struct coorList *l = malloc(sizeof(struct coorList));
+    XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
+    l = l->next;
+    img->data = l->data;
     write_image("out_img.png", img);
     free_image(img);
 
