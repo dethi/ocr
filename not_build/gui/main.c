@@ -29,11 +29,12 @@ int main(int argc, char *argv [])
     buffer = gtk_text_view_get_buffer (text_view);
     gtk_text_buffer_set_text(buffer, "", strlen(""));
     
-    //spell_eng = gtk_spell_checker_new();
     spell_fr = gtk_spell_checker_new();
     gtk_spell_checker_attach( spell_fr, text_view);
     gtk_spell_checker_set_language( spell_fr, "fr", NULL);
 
+    gtk_window_set_title (GTK_WINDOW(main_window), "OhCaSert by (Neurone)*");
+ 
     gtk_main();
 
     return 0;
@@ -76,6 +77,7 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
+
     gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
 }
 
@@ -116,7 +118,6 @@ void save_text (GtkButton *widget, gpointer user_data)
     gchar *txt_saved = (gchar*) strcat( txt_saved_path, "/");
     txt_saved = (gchar*) strcat( txt_saved, txt_saved_name);
     txt_saved = (gchar*) strcat( txt_saved, ".txt");
-    
 
     FILE *file = NULL;
     file = fopen( txt_saved, "w");
@@ -124,7 +125,7 @@ void save_text (GtkButton *widget, gpointer user_data)
     if ( file == NULL ) {
         g_print("Error in opening .txt file !\n");
         exit(1);
-    }
+    } 
 
     fputs( text2save, file);
     
@@ -143,20 +144,6 @@ void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
 
     gtk_text_buffer_delete(buffer, &start, &end);
 }
-/*
-void spell_checker_eng (GtkMenuItem *menuitem, gpointer user_data)
-{
-
-    gtk_spell_checker_detach( spell_fr );
-    gtk_spell_checker_attach( spell_eng, text_view);
-}
-
-void spell_checker_fr(GtkMenuItem *menuitem, gpointer user_data)
-{
-    gtk_spell_checker_detach( spell_eng);
-    gtk_spell_checker_attach( spell_fr, text_view);
-}
-*/
 
 
 

@@ -30,7 +30,5 @@ void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);
 void empty_buffer(GtkMenuItem *menuitem, gpointer user_data);
-void spell_checker_eng(GtkMenuItem *menuitem, gpointer user_data);
-void spell_checker_fr(GtkMenuItem *menuitem, gpointer user_data);
 
 #endif
