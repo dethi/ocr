@@ -23,12 +23,11 @@ struct xyHelper* getPos(uchar *c, size_t size)
     return ans;
 }
 
-uchar* getTab(uchar *tab, char vert, size_t X, size_t Y)
+size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 {
-    size_t x = 0, y = 0;
-    uchar *ans;
+    size_t *ans;
     if (vert) {
-        ans = calloc(Y, sizeof(uchar));
+        ans = calloc(Y, sizeof(size_t));
         while (y < Y) {
             x = 0;
             while (x < X) {
@@ -51,22 +50,34 @@ uchar* getTab(uchar *tab, char vert, size_t X, size_t Y)
     }
     return ans;
 }
-
-void XYCut(uchar *tab, char vert, size_t X, size_t Y)
+void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, size_t y, struct coorList *helper)
 {
-    uchar *tmp = getTab(tab, vert, X, Y);
-    uchar max = 0;
-    size_t aux = 0, i;
-    for (i = 0; i < (vert ? Y : X); ++i) {
-        if (tmp[i] > max)
-            max = tmp[i];
+    if (X <= min && Y <= min) {
+        helperAdd(helper, x, y, X, Y);
+        return;
     }
-    i = 0;
-    while (aux < (vert ? Y : X) && i < (vert ? Y : X)) {
-        if (tmp[i] == max) {
-            //XYCut(tab de aux a i, !vert, X, Y);
-            aux = i;
-        }
-        ++i;
+    size_t *tmp = getTab(tab, vert, X, Y, x, y);
+    size_t foo = (vert ? Y : X), i = (vert ? y : x), aux = 0;
+    while (i < foo) { 
+        while (i < foo && tmp[i] == 255 * foo)
+            ++i;
+        aux = i;
+        while (aux < foo && tmp[aux] != 255 * foo)
+            ++aux;
+        if (aux != i)
+            XYCut(tab, !vert, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), min, (vert ? x : x+i), (vert ? y+i : y), helper);
+        i = aux + 1;
     }
+}
+
+void helperAdd(struct coorList *f, size_t x, size_t y, size_t X, size_t Y)
+{
+    while(f->next != NULL)
+        f = f->next;
+    f->next = malloc(sizeof(struct coorList));
+    f->X = x;
+    f->Y = y;
+    f->length = X;
+    f->height = Y;
+    f->next = NULL;
 }
