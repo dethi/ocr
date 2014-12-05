@@ -111,5 +111,8 @@
 # xindy
 *.xdy
 
+/*.txt
+gui.glade~
 out_img*
 ocr
+/.vagrant/
