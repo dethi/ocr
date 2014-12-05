@@ -21,7 +21,7 @@ typedef struct
 } SGlobalData;
 
 gchar *img_name;
-gchar *txt_ocr = "You won't anything you little bastard, you didn't connect me to the neural network ! >:D";
+gchar *txt_ocr = "You won't get anything you little bastard, you didn't connect me to the neural network ! >:D";
 const gchar *txt_saved_name;
 gchar *txt_saved_path;
 
@@ -30,7 +30,6 @@ GtkTextBuffer *buffer = NULL;
 GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
 GtkSpellChecker *spell_eng = NULL;
-GtkSpellChecker *spell_fr = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
 void get_img (GtkFileChooser *wigdet, gpointer user_data);

@@ -30,7 +30,7 @@ int main(int argc, char *argv [])
 
     spell_fr = gtk_spell_checker_new();
     gtk_spell_checker_attach( spell_fr, text_view);
-    gtk_spell_checker_set_language( spell_fr, "fr", NULL);
+    gtk_spell_checker_set_language( spell_eng, "en_US", NULL);
 
     gtk_window_set_title (GTK_WINDOW(main_window), "OhCaSert by (Neurone)*");
 
@@ -76,6 +76,7 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
+    //SGlobalData *data = (SGlobalData*) user_data;
     /* Process image
      * img_name = path to image
      * txt_ocr = text that have to be processed
@@ -83,14 +84,24 @@ void ocr_text (GtkButton *widget, gpointer user_data)
 
     t_img_desc *img = load_image(img_name, 0);
     printf("%s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+    /*
     filter_median(img);
     grey_scale(img);
     binarize_otsu(img);
     write_image("out_img.png", img);
-
+    */
     /* End process image */
-
+    GThread *t_fm = g_thread_new("t_fm", filter_median(img), data);
+    g_thread_join(t_fm);
+    GThread *t_gc = g_thread_new("t_gc", grey_scale(img), data);
+    g_thread_join(t_gc);
+    GThread *t_bo = g_thread_new("t_bo", binarize_otsu(img), data);
+    g_thread_join(t_bo
+    GThread *t_wi = g_thread_new("t_wi", write_image("out_img.png"), img);
+    
     gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
+
+    
 }
 
 void save_dial (GtkButton *widget, gpointer user_data)
