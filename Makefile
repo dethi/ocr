@@ -1,6 +1,6 @@
 CC=gcc
 LD=$(CC)
-CFLAGS=-std=c99 -Wall -Wextra -Werror -O3
+CFLAGS=-std=c99 -Wall -Wextra -Werror -Wno-unused-parameter -O3
 LDLIBS=-lm
 
 # GTK

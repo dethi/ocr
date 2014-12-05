@@ -81,8 +81,8 @@ void ocr_text (GtkButton *widget, gpointer user_data)
      * txt_ocr = text that have to be processed
      */
 
-    t_img_desc *img = load_image(img_name);
-    printf("%s ( %ix%i -- %i)\n", img_name, img->x img->y, img->comp);
+    t_img_desc *img = load_image(img_name, 0);
+    printf("%s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
     filter_median(img);
     grey_scale(img);
     binarize_otsu(img);
@@ -119,14 +119,14 @@ void save_text (GtkButton *widget, gpointer user_data)
     buffer_entry = gtk_entry_get_buffer(entry);
     txt_saved_name = gtk_entry_buffer_get_text(buffer_entry);
     txt_saved_path = gtk_file_chooser_get_current_folder(chooser);
-
+    
     GtkTextIter iter_start, iter_end;
 
     gtk_text_buffer_get_start_iter ( buffer, &iter_start);
     gtk_text_buffer_get_end_iter ( buffer, &iter_end);
 
     gchar *text2save = gtk_text_buffer_get_text( buffer, &iter_start, &iter_end, TRUE);
-
+    
     gchar *txt_saved = (gchar*) strcat( txt_saved_path, "/");
     txt_saved = (gchar*) strcat( txt_saved, txt_saved_name);
     txt_saved = (gchar*) strcat( txt_saved, ".txt");
@@ -138,15 +138,15 @@ void save_text (GtkButton *widget, gpointer user_data)
         g_print("Error in opening .txt file !\n");
         exit(1);
     }
-
     fputs( text2save, file);
 
     GtkLabel *label_txt = NULL;
     label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
     gtk_label_set_text( label_txt, txt_saved);
-
+    
     fclose ( file );
 }
+
 
 void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
 {

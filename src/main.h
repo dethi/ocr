@@ -21,7 +21,7 @@ typedef struct
 } SGlobalData;
 
 gchar *img_name;
-gchar *txt_ocr = "test\tbloblo\nbli";
+gchar *txt_ocr = "You won't anything you little bastard, you didn't connect me to the neural network ! >:D";
 const gchar *txt_saved_name;
 gchar *txt_saved_path;
 
