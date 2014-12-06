@@ -30,8 +30,8 @@ int main(int argc, char *argv [])
     gtk_text_buffer_set_text(buffer, "", strlen(""));
 
     spell = gtk_spell_checker_new();
-    gtk_spell_checker_attach(spell, text_view);
-    gtk_spell_checker_set_language(spell, "fr", NULL);
+    gtk_spell_checker_attach( spell, text_view);
+    gtk_spell_checker_set_language( spell, "fr", NULL);
 
     gtk_window_set_title (GTK_WINDOW(main_window), "OhCaSert by (Neurone)*");
 
@@ -44,36 +44,28 @@ int main(int argc, char *argv [])
 void callback_about (GtkMenuItem *menuitem, gpointer user_data)
 {
     SGlobalData *data = (SGlobalData*) user_data;
-    GtkWidget *dialog = NULL;
-
-    dialog =  GTK_WIDGET (gtk_builder_get_object (data->builder, "AboutWindow"));
-    gtk_dialog_run (GTK_DIALOG (dialog));
-
-    gtk_widget_hide (dialog);
+    GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object (data->builder, "AboutWindow"));
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_hide(dialog);
 }
 
 // load and print the choosen image, also get the pathname
 void get_img(GtkFileChooser *widget, gpointer user_data)
 {
     SGlobalData *data = (SGlobalData*) user_data;
-    GtkFileChooser *loader = NULL;
-    GtkImage *image = NULL;
-    GdkPixbuf *pixbuf = NULL;
-
-    loader = GTK_FILE_CHOOSER (gtk_builder_get_object(data->builder, "img_loader"));
-    image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
+    GtkFileChooser *loader = GTK_FILE_CHOOSER(gtk_builder_get_object(data->builder, "img_loader"));
+    GtkImage *image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
 
     img_name = (gchar*) gtk_file_chooser_get_filename(loader);
 
-    GtkLabel *label_img = NULL;
-    label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
+    GtkLabel *label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
     gtk_label_set_text(label_img, img_name);
 
-    pixbuf = gdk_pixbuf_new_from_file_at_size( img_name, 680, 500, NULL);
-    gtk_image_set_from_pixbuf( image, pixbuf);
-    //gtk_image_set_from_file( image, (gchar*)img_name);
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(img_name, 680, 500, NULL);
+    gtk_image_set_from_pixbuf(image, pixbuf);
 }
 
+// image processing in a different thread
 void* thread_processing(void *arg)
 {
     t_img_desc *img = load_image(img_name, 3);
@@ -101,22 +93,20 @@ void ocr_text (GtkButton *widget, gpointer user_data)
      */
 
     t_img_desc *img = load_image(img_name, 3);
-
     printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
 
     grey_scale(img);
     filter_median(img);
     binarize_otsu(img);
 
+    /*
     struct coorList *l = malloc(sizeof(struct coorList));
+    printf("[INFO] Launching XYCut\n");
     XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    l = l->next;
     free(img);
     img->data = l->data;
     img->x = l->X;
     img->y = l->Y;
-    write_image("out_img.png", img);
-    printf("[INFO] Write img_out.png\n");
     struct coorList *aux = NULL;
     while (l->next != NULL) {
         aux = l->next;
@@ -124,6 +114,10 @@ void ocr_text (GtkButton *widget, gpointer user_data)
         l = aux;
     }
     free(aux);
+    */
+
+    write_image("out_img.png", img);
+    printf("[INFO] Write img_out.png\n");
     free_image(img);
 
     /* End process image */
