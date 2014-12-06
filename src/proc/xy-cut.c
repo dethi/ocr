@@ -3,7 +3,7 @@
 size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 {
     size_t *ans;
-    printf("[INFO] GetTab STARTING\n");
+    printf("[INFO] GetTab call %d : %d\n", (int)x, (int)y);
     if (vert) {
         ans = calloc(Y, sizeof(size_t));
         while (y < Y) {
@@ -26,14 +26,14 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
             ++x;
         }
     }
+    printf("%d : %d : %d\n", (int)ans[0], (int)ans[1], (int)ans[2]);
     return ans;
 }
 
 void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         size_t y, struct coorList *helper)
 {
-    vert = (vert % 2) - 1;
-    printf("[INFO] XYCut launching DONE\n");
+    //printf("[INFO] Starting XYCut\n");
     if (X <= min && Y <= min) {
         uchar *data = malloc(sizeof(uchar) * X * Y);
         for (size_t i = 0; i+x+x*y < X * Y; ++i)
@@ -42,16 +42,23 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         return;
     }
     size_t *tmp = getTab(tab, vert, X, Y, x, y);
-    size_t foo = (vert ? Y : X), i = (vert ? y : x), aux = 0;
+    size_t foo, i, aux = 0;
+    if (vert) { foo = X; i = y;}
+    else { foo = Y; i = x;}
     while (i < foo) { 
         while (i < foo && tmp[i] == 255 * foo)
-            ++i;
+        {++i;}
         aux = i;
+        printf("[INFO] %d\n", (int)i);
         while (aux < foo && tmp[aux] != 255 * foo)
             ++aux;
-        if (aux != i)
-            XYCut(tab, vert+1, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), \
-                    min, (vert ? x : x+i), (vert ? y+i : y), helper);
+        if (aux != i) {
+            if (vert == 0)
+                XYCut(tab, 1, (aux - i), Y, min, x+i, y, helper);
+            else {
+                XYCut(tab, 0, X, (aux - i), min, x, y+i, helper);
+            }
+        }
         i = aux + 1;
     }
 }
