@@ -98,7 +98,7 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     grey_scale(img);
     filter_median(img);
     binarize_otsu(img);
-/*
+    
     struct coorList *l = malloc(sizeof(struct coorList));
     XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
     free(img);
@@ -112,7 +112,7 @@ void ocr_text (GtkButton *widget, gpointer user_data)
         l = aux;
     }
     free(aux);
-*/
+    
     write_image("out_img.png", img);
     printf("[INFO] Write img_out.png\n");
     free_image(img);

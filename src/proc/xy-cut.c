@@ -95,3 +95,5 @@ void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
     f->next = NULL;
     */
 }
+
+
