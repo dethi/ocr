@@ -17,16 +17,15 @@
 #include <pthread.h>
 #include <unistd.h>
 
-typedef struct
-{
+typedef struct {
     GtkBuilder *builder;
     gpointer user_data;
 } SGlobalData;
 
-gchar *img_name;
-gchar *txt_ocr = "You won't get anything you little bastard, you didn't connect me to the neural network ! >:D";
-const gchar *txt_saved_name;
-gchar *txt_saved_path;
+gchar txt_ocr[] =
+    "You won't get anything you little bastard, you didn't connect me to the neural network ! >:D";
+gchar txt_saved[2048];
+gchar img_name[2048];
 
 GtkTextView *text_view = NULL;
 GtkTextBuffer *buffer = NULL;
@@ -34,12 +33,12 @@ GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
 GtkSpellChecker *spell = NULL;
 
-void callback_about (GtkMenuItem *menuitem, gpointer user_data);
-void get_img (GtkFileChooser *wigdet, gpointer user_data);
-void* thread_processing(void *arg);
-void ocr_text (GtkButton *widget, gpointer user_data);
-void save_text( GtkButton *widget, gpointer user_data);
-void save_dial (GtkButton *widget, gpointer user_data);
-void empty_buffer(GtkMenuItem *menuitem, gpointer user_data);
+void callback_about(GtkMenuItem * menuitem, gpointer user_data);
+void get_img(GtkFileChooser * wigdet, gpointer user_data);
+void *thread_processing(void *arg);
+void ocr_text(GtkButton * widget, gpointer user_data);
+void save_text(GtkButton * widget, gpointer user_data);
+void save_dial(GtkButton * widget, gpointer user_data);
+void empty_buffer(GtkMenuItem * menuitem, gpointer user_data);
 
 #endif
