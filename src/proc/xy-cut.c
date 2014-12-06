@@ -26,14 +26,14 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
             ++x;
         }
     }
-    printf("%d : %d : %d\n", (int)ans[0], (int)ans[1], (int)ans[2]);
+    printf("%d : %d : %d\n", (int)ans[0], (int)ans[1], (int)ans[355]);
     return ans;
 }
 
 void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         size_t y, struct coorList *helper)
 {
-    //printf("[INFO] Starting XYCut\n");
+    printf("[INFO] Starting XYCut\n");
     if (X <= min && Y <= min) {
         uchar *data = malloc(sizeof(uchar) * X * Y);
         for (size_t i = 0; i+x+x*y < X * Y; ++i)
@@ -53,14 +53,18 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         while (aux < foo && tmp[aux] != 255 * foo)
             ++aux;
         if (aux != i) {
-            if (vert == 0)
+            if (vert == 0) {
+                printf("[INFO] vert == 0\n");
                 XYCut(tab, 1, (aux - i), Y, min, x+i, y, helper);
+            }
             else {
+                printf("[INFO] vert == 1\n");
                 XYCut(tab, 0, X, (aux - i), min, x, y+i, helper);
             }
         }
         i = aux + 1;
     }
+    free(tmp);
 }
 
 void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
@@ -95,5 +99,3 @@ void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
     f->next = NULL;
     */
 }
-
-
