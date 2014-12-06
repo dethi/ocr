@@ -5,7 +5,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
     size_t *ans;
     printf("[INFO] GetTab call %d : %d\n", (int)x, (int)y);
     if (vert) {
-        ans = calloc(Y, sizeof(char));
+        ans = calloc(Y, sizeof(size_t));
         while (y < Y) {
             x = 0;
             while (x < X) {
@@ -16,7 +16,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
         }
     }
     else {
-        ans = calloc(X, sizeof(char));
+        ans = calloc(X, sizeof(size_t));
         while (x < X) {
             y = 0;
             while (y < Y) {
@@ -26,7 +26,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
             ++x;
         }
     }
-    printf("%d : %d : %d\n", (int)ans[0], (int)ans[1], (int)ans[355]);
+    printf("[INFO][SOME VALUES] %d : %d : %d\n", (int)ans[0], (int)ans[1], (int)ans[355]);
     return ans;
 }
 
