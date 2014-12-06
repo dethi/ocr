@@ -1,28 +1,5 @@
 #include "xy-cut.h"
 
-struct xyHelper* getPos(uchar *c, size_t size)
-{
-    size_t i = 0, aux = 0;
-    struct xyHelper *ans = malloc(sizeof(struct xyHelper));
-    ans->length = 0;
-    ans->begin = 0;
-    while (i < size) {
-        if (c[i] == 0)
-            ++i;
-        else {
-            aux = i + 1;
-            while (aux < size && c[aux] == 255)
-                ++aux;
-            if (aux - i > ans->length) {
-                ans->length = aux - i;
-                ans->begin = i;
-            }
-            i = aux;
-        }
-    }
-    return ans;
-}
-
 size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 {
     size_t *ans;
@@ -50,6 +27,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
     }
     return ans;
 }
+
 void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         size_t y, struct coorList *helper)
 {
@@ -77,11 +55,21 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
 
 void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
 {
+    /* Partie eventuellement a refaire...
     while(f->next != NULL)
         f = f->next;
     f->next = malloc(sizeof(struct coorList));
+    f = f->next;
     f->X = x;
     f->Y = y;
     f->data = tab;
     f->next = NULL;
+    */
+    struct coorList *tmp = f->next;
+    struct coorList *aux = malloc(sizeof(struct coorList));
+    f->next = aux;
+    aux->data = tab;
+    aux->X = x;
+    aux->Y = y;
+    aux->next = tmp;
 }

@@ -31,7 +31,7 @@ int main(int argc, char *argv [])
 
     spell_fr = gtk_spell_checker_new();
     gtk_spell_checker_attach( spell_fr, text_view);
-    gtk_spell_checker_set_language( spell_eng, "en_US", NULL);
+    gtk_spell_checker_set_language( spell_fr, "fr", NULL);
 
     gtk_window_set_title (GTK_WINDOW(main_window), "OhCaSert by (Neurone)*");
 
@@ -74,6 +74,24 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
     //gtk_image_set_from_file( image, (gchar*)img_name);
 }
 
+void* thread_processing(void *arg)
+{
+    t_img_desc *img = load_image(img_name, 3);
+
+    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+
+    grey_scale(img);
+    filter_median(img);
+    binarize_otsu(img);
+
+    write_image("out_img.png", img);
+    printf("[INFO] Write img_out.png\n");
+
+    free_image(img);
+
+    pthread_exit(NULL);
+}
+
 // print the text produce by the ocr (actually just print "test" for now)
 void ocr_text (GtkButton *widget, gpointer user_data)
 {
@@ -87,36 +105,41 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     printf("%s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
     /*
     filter_median(img);
+
+    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+
     grey_scale(img);
+    filter_median(img);
     binarize_otsu(img);
 
-    //struct coorList *l = malloc(sizeof(struct coorList));
-    //XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    //l = l->next;
-    //img->data = l->data;
-
+    struct coorList *l = malloc(sizeof(struct coorList));
+    XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
+    l = l->next;
+    free(img);
+    img->data = l->data;
+    img->x = l->X;
+    img->y = l->Y;
     write_image("out_img.png", img);
-<<<<<<< HEAD
     */
     /* End process image */
-    GThread *t_fm = g_thread_new("t_fm", filter_median(img), data);
-    g_thread_join(t_fm);
-    GThread *t_gc = g_thread_new("t_gc", grey_scale(img), data);
-    g_thread_join(t_gc);
-    GThread *t_bo = g_thread_new("t_bo", binarize_otsu(img), data);
-    g_thread_join(t_bo
-    GThread *t_wi = g_thread_new("t_wi", write_image("out_img.png"), img);
     
-    gtk_text_buffer_set_text ( buffer, txt_ocr, strlen(txt_ocr) );
-
-    
-=======
+    printf("[INFO] Write img_out.png\n");
+    struct coorList *aux = NULL;
+    while (l->next != NULL) {
+        aux = l->next;
+        free(l);
+        l = aux;
+    }
+    free(aux);
     free_image(img);
 
     /* End process image */
 
+    // Multithreading, not used yet.
+    //pthread_t thread;
+    //pthread_create(&thread, NULL, thread_processing, NULL);
+
     gtk_text_buffer_set_text (buffer, txt_ocr, strlen(txt_ocr));
->>>>>>> 40a01ccfe184a94464fbebef00c0a0cc1cbbfc31
 }
 
 void save_dial (GtkButton *widget, gpointer user_data)
@@ -131,7 +154,6 @@ void save_dial (GtkButton *widget, gpointer user_data)
     gtk_dialog_run(GTK_DIALOG(dialog_save));
     gtk_widget_hide(dialog_save);
 }
-
 
 void save_text (GtkButton *widget, gpointer user_data)
 {

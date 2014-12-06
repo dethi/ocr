@@ -14,6 +14,8 @@
 
 #include <gtk/gtk.h>
 #include <gtkspell/gtkspell.h>
+#include <pthread.h>
+#include <unistd.h>
 
 typedef struct
 {
@@ -30,10 +32,12 @@ GtkTextView *text_view = NULL;
 GtkTextBuffer *buffer = NULL;
 GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
-GtkSpellChecker *spell_eng = NULL;
+GtkSpellChecker *spell_fr = NULL;
+GtkSpellChecker *spell = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
 void get_img (GtkFileChooser *wigdet, gpointer user_data);
+void* thread_processing(void *arg);
 void ocr_text (GtkButton *widget, gpointer user_data);
 void save_text( GtkButton *widget, gpointer user_data);
 void save_dial (GtkButton *widget, gpointer user_data);

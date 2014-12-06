@@ -101,7 +101,7 @@ void filter_median(t_img_desc *img)
         for(int x = 0; x < img->x; ++x) {
             for(int y = 0; y < img->y; ++y) {
                 int med;
-                int *tab = malloc(9 * sizeof(int));
+                int tab[9];
 
                 for(int i = 0; i < 3; ++i) {
                     for( int j = 0; j < 3; ++j) {
