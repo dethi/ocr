@@ -73,7 +73,7 @@ void get_img(GtkFileChooser *widget, gpointer user_data)
     gtk_image_set_from_pixbuf( image, pixbuf);
     //gtk_image_set_from_file( image, (gchar*)img_name);
 }
-
+// image processing in a different thread
 void* thread_processing(void *arg)
 {
     t_img_desc *img = load_image(img_name, 3);
@@ -120,8 +120,7 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     img->x = l->X;
     img->y = l->Y;
     write_image("out_img.png", img);
-    */
-    /* End process image */
+    
     
     printf("[INFO] Write img_out.png\n");
     struct coorList *aux = NULL;
@@ -130,9 +129,9 @@ void ocr_text (GtkButton *widget, gpointer user_data)
         free(l);
         l = aux;
     }
-    free(aux);
+    free(aux); */
     free_image(img);
-
+    
     /* End process image */
 
     // Multithreading, not used yet.
