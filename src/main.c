@@ -2,16 +2,6 @@
 
 int main(int argc, char *argv [])
 {
-    if (argc > 1) {
-        img_name = argv[1];
-
-        pthread_t thread;
-        pthread_create(&thread, NULL, thread_processing, NULL);
-        pthread_join(thread, NULL);
-
-        return EXIT_SUCCESS;
-    }
-
     GtkWidget *main_window = NULL;
     SGlobalData data;
     GError *error = NULL;
@@ -110,15 +100,31 @@ void ocr_text (GtkButton *widget, gpointer user_data)
      * txt_ocr = text that have to be processed
      */
 
+    t_img_desc *img = load_image(img_name, 3);
+
+    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+
+    grey_scale(img);
+    filter_median(img);
+    binarize_otsu(img);
+
+    // TODO: adjust img->x and img->y in order to not segfault
     //struct coorList *l = malloc(sizeof(struct coorList));
     //XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
     //l = l->next;
     //img->data = l->data;
 
+    write_image("out_img.png", img);
+    printf("[INFO] Write img_out.png\n");
+
+    free_image(img);
+
     /* End process image */
 
-    pthread_t thread;
-    pthread_create(&thread, NULL, thread_processing, NULL);
+    // Multithreading, not used yet.
+    //pthread_t thread;
+    //pthread_create(&thread, NULL, thread_processing, NULL);
+
     gtk_text_buffer_set_text (buffer, txt_ocr, strlen(txt_ocr));
 }
 
