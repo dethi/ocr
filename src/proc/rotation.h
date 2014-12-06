@@ -15,4 +15,10 @@ typedef struct {
 /* Return the rotation angle in radians */
 double hough(t_img_desc *img);
 
+/* Take an angle in radians */
+void rotate(t_img_desc *img, double theta);
+
+/* Automatic function, return the rotation applied in degrees */
+double rotate_img(t_img_desc *img);
+
 #endif

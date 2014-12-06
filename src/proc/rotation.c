@@ -49,18 +49,81 @@ t_hough hough_search_max(unsigned *acc, double maxRho,
 
 double hough(t_img_desc *img)
 {
-    if (img->comp != 1)
-        return EXIT_FAILURE;
+    assert(img->comp == 1);
 
     double maxRho = sqrt(img->x * img->x + img->y * img->y);
-    size_t indexMaxTheta = 360;
+    size_t indexMaxTheta = 180;
     size_t indexMaxRho = (size_t)(1 + maxRho);
     unsigned *acc = calloc(indexMaxTheta * indexMaxRho, sizeof(unsigned*));
 
     hough_compute(img, acc, maxRho, indexMaxTheta, indexMaxRho);
     t_hough result = hough_search_max(acc, maxRho, indexMaxTheta, indexMaxRho);
-    //printf("\nroh: %f\ttheta: %f\n", result.rho, result.theta * 360 / (2 * M_PI));
 
     free(acc);
     return result.theta;
+}
+
+static inline
+int valid_rot(t_img_desc *img, int x, int y)
+{
+    return ((0 <= x && x < img->x) && (0 <= y && y <= img->y));
+}
+
+void rotate(t_img_desc *img, double theta)
+{
+    assert(img->comp == 1);
+
+    int x_center = img->x / 2;
+    int y_center = img->y / 2;
+
+    int new_x = 0;
+    int new_y = 0;
+
+    if (fmod(theta, M_PI) < (M_PI / 2.)) {
+        new_x = abs(ceil(2 * (((img->x - 1) - x_center) * cos(theta) +
+                        (y_center) * sin(theta))));
+        new_y = abs(ceil(2 * (((img->x - 1) - x_center) * sin(theta) +
+                        ((img->y - 1) - y_center) * cos(theta))));
+    } else {
+        new_x = abs(ceil(2 * (((img->x - 1)- x_center) * cos(theta) -
+                        ((img->y - 1) - y_center) * cos(theta))));
+        new_y = abs(ceil(2 * (((img->x - 1) - x_center) * sin(theta) -
+                        (y_center) * cos(theta))));
+    }
+
+    uchar *tmp = malloc(sizeof(char) * new_x * new_y);
+
+    int new_x_center = new_x / 2;
+    int new_y_center = new_y / 2;
+
+    for (int y = 0; y < new_y; ++y) {
+        for (int x = 0; x < new_x; ++x) {
+            int rot_x = ceil(((x - new_x_center) * cos(theta) -
+                        (y - new_y_center) * sin(theta)) + x_center);
+            int rot_y = ceil(((x - new_x_center) * sin(theta) +
+                        (y - new_y_center) * cos(theta)) + y_center);
+
+            int c = 255;
+            if (valid_rot(img, rot_x, rot_y))
+                c = img->data[xytoi(rot_x, rot_y, img)];
+
+            tmp[x + (new_x * y)] = c;
+        }
+    }
+
+    free(img->data);
+    img->data = tmp;
+    img->x = new_x;
+    img->y = new_y;
+}
+
+double rotate_img(t_img_desc *img)
+{
+    double theta = hough(img) - (M_PI / 2);
+
+    /* Don't apply rotation if angle < 1 degree */
+    if (fabs(theta) > 0.017)
+        rotate(img, theta);
+
+    return theta * (360 / (2 * M_PI));
 }

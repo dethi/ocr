@@ -93,10 +93,12 @@ void ocr_text (GtkButton *widget, gpointer user_data)
      */
 
     t_img_desc *img = load_image(img_name, 3);
-    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+    printf("[INFO] Load %s (%ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
 
     grey_scale(img);
-    filter_median(img);
+    binarize_otsu(img);
+
+    printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     binarize_otsu(img);
 
     /*
