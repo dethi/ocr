@@ -53,15 +53,15 @@ void net_train(struct net nwk)
 {
     double sets[] = {
         0, 0, 0,
-        0, 1, 1,
-        1, 0, 1,
-        1, 1, 0
+        0, 1, 0,
+        1, 0, 0,
+        1, 1, 1
     };
 
     size_t n_sets = 4;
     size_t n_input = 2;
     size_t n_result = 1;
-    unsigned epoch = 100000;
+    unsigned epoch = 600;
 
     double *results = malloc(sizeof(double) * n_result);
     assert(results);
@@ -299,7 +299,7 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
             //printf("bias: %f\tw:", l->bias[i]);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
-                l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / RAND_MAX);
+                l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / (RAND_MAX+1));
                 //printf("%f ", l->w[get_w(l,i,j)]);
             }
             //printf("\n");

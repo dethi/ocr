@@ -1,6 +1,7 @@
 CC=clang
 LD=$(CC)
 CFLAGS=-std=c99 -Wall -Wextra -O0 -g
+LDLIBS=-lm
 
 EXEC=testing
 SRC=$(wildcard *.c)
