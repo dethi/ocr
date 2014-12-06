@@ -108,15 +108,22 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     filter_median(img);
     binarize_otsu(img);
 
-    // TODO: adjust img->x and img->y in order to not segfault
-    //struct coorList *l = malloc(sizeof(struct coorList));
-    //XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    //l = l->next;
-    //img->data = l->data;
-
+    struct coorList *l = malloc(sizeof(struct coorList));
+    XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
+    l = l->next;
+    free(img);
+    img->data = l->data;
+    img->x = l->X;
+    img->y = l->Y;
     write_image("out_img.png", img);
     printf("[INFO] Write img_out.png\n");
-
+    struct coorList *aux = NULL;
+    while (l->next != NULL) {
+        aux = l->next;
+        free(l);
+        l = aux;
+    }
+    free(aux);
     free_image(img);
 
     /* End process image */
