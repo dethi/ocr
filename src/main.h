@@ -32,7 +32,6 @@ GtkTextView *text_view = NULL;
 GtkTextBuffer *buffer = NULL;
 GtkWidget *dialog_save = NULL;
 GtkButton *b_save = NULL;
-GtkSpellChecker *spell_fr = NULL;
 GtkSpellChecker *spell = NULL;
 
 void callback_about (GtkMenuItem *menuitem, gpointer user_data);
