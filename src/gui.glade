@@ -11,7 +11,7 @@
     <property name="program_name">OhCaSert</property>
     <property name="version">1.0</property>
     <property name="comments" translatable="yes">OCR made for EPITA
-free feel to share.</property>
+Feel free to share</property>
     <property name="website">http://www.ohcasert.ovh/</property>
     <property name="website_label" translatable="yes">www.ohcasert.ovh</property>
     <property name="authors">deutsc_t
