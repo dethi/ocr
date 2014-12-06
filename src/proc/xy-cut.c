@@ -3,6 +3,7 @@
 size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 {
     size_t *ans;
+    printf("[INFO] GetTab STARTING\n");
     if (vert) {
         ans = calloc(Y, sizeof(size_t));
         while (y < Y) {
@@ -31,9 +32,11 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
 void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         size_t y, struct coorList *helper)
 {
+    vert = (vert % 2) - 1;
+    printf("[INFO] XYCut launching DONE\n");
     if (X <= min && Y <= min) {
         uchar *data = malloc(sizeof(uchar) * X * Y);
-        for (size_t i = 0; i < X * Y; ++i)
+        for (size_t i = 0; i+x+x*y < X * Y; ++i)
             data[i] = tab[i + x + x * y];
         helperAdd(helper, x, y, data);
         return;
@@ -47,7 +50,7 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
         while (aux < foo && tmp[aux] != 255 * foo)
             ++aux;
         if (aux != i)
-            XYCut(tab, !vert, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), \
+            XYCut(tab, vert+1, (vert ? X : (aux - i)), (vert ? (aux - i) : Y), \
                     min, (vert ? x : x+i), (vert ? y+i : y), helper);
         i = aux + 1;
     }
@@ -55,7 +58,8 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
 
 void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
 {
-    /* Partie eventuellement a refaire...
+    /*
+     * Partie eventuellement a refaire...
     while(f->next != NULL)
         f = f->next;
     f->next = malloc(sizeof(struct coorList));
@@ -66,10 +70,21 @@ void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab)
     f->next = NULL;
     */
     struct coorList *tmp = f->next;
+    printf("[INFO] Helping...\n");
     struct coorList *aux = malloc(sizeof(struct coorList));
     f->next = aux;
     aux->data = tab;
     aux->X = x;
     aux->Y = y;
     aux->next = tmp;
+    /*
+     * Pour tester, ce n'est pas le probleme
+    f->data[0] = 255;
+    f->data[1] = 0;
+    f->data[2] = 255;
+    f->data[3] = 0;
+    f->X = 4;
+    f->Y = 1;
+    f->next = NULL;
+    */
 }

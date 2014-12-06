@@ -107,10 +107,9 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     grey_scale(img);
     filter_median(img);
     binarize_otsu(img);
-
     struct coorList *l = malloc(sizeof(struct coorList));
+    printf("[INFO] Launching XYCut\n");
     XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    l = l->next;
     free(img);
     img->data = l->data;
     img->x = l->X;
