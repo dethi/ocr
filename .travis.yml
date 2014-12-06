@@ -7,5 +7,4 @@ compiler:
 script: "make CC=$CC"
 
 notifications:
-    email:
-        - thibault.deutsch@epita.fr
+    email: false

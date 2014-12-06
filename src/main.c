@@ -1,124 +1,196 @@
 #include "main.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
-    struct gengetopt_args_info ai;
-    if (cmdline_parser(argc, argv, &ai) != 0)
-        exit(EXIT_FAILURE);
+    GtkWidget *main_window = NULL;
+    SGlobalData data;
+    GError *error = NULL;
+    gchar *filename = NULL;
 
-    /* XOR */
-    if (ai.xor_given) {
-        net_main();
-        return EXIT_SUCCESS;
+    gtk_init(&argc, &argv);
+    data.builder = gtk_builder_new();
+
+    filename =  g_build_filename ("gui.glade", NULL);
+    gtk_builder_add_from_file(data.builder, filename, &error);
+    g_free(filename);
+
+    if (error) {
+        gint code = error->code;
+        g_printerr("%s\n", error->message);
+        g_error_free (error);
+        return code;
     }
 
-    /* Check files path */
-    if (ai.inputs_num == 0) {
-        cmdline_parser_print_help();
-        exit(EXIT_FAILURE);
-    }
+    gtk_builder_connect_signals (data.builder, &data);
+    main_window = GTK_WIDGET(gtk_builder_get_object (data.builder, "window1"));
+    gtk_widget_show_all (main_window);
 
-    /* Flag */
-    int flag;
-    if (ai.rotation_given)
-        flag = 4;
-    else if (ai.segmentation_given)
-        flag = 3;
-    else if (ai.binarize_given)
-        flag = 2;
-    else if (ai.grey_given)
-        flag = 1;
-    else
-        flag = 0;
-    /* End flag */
+    text_view = (GtkTextView*) (gtk_builder_get_object(data.builder, "textview1"));
+    buffer = gtk_text_view_get_buffer (text_view);
+    gtk_text_buffer_set_text(buffer, "", strlen(""));
 
-    /* Thresold */
-    int th_flag = (ai.thresold_given &&
-            strcmp("fixed", ai.thresold_arg) == 0) ? 0 : 1;
+    spell = gtk_spell_checker_new();
+    gtk_spell_checker_attach(spell, text_view);
+    gtk_spell_checker_set_language(spell, "fr", NULL);
 
-    /* Segmentation */
-    int RLSA_x = 3;
-    int RLSA_y = 3;
+    gtk_window_set_title (GTK_WINDOW(main_window), "OhCaSert by (Neurone)*");
 
-    if (ai.segmentation_given) {
-        RLSA_x = ai.segmentation_arg[0];
-        RLSA_y = ai.segmentation_arg[1];
-    }
-    /* End segmenation */
+    gtk_main();
 
-    /* Filter */
-    int filter_flag = ai.filter_given;
-    int filter_median_flag = 0;
-    const char *mask = NULL;
-    int div = 0;
-    int size = 0;
-
-    if (filter_flag) {
-        if (strcmp("average", ai.filter_arg) == 0) {
-            extern const char mask_avg[];
-            mask = mask_avg;
-            div = 9;
-            size = 3;
-        } else if (strcmp("gaussien", ai.filter_arg) == 0) {
-            extern const char mask_gaussien[];
-            mask = mask_gaussien;
-            div = 273;
-            size = 5;
-        } else if (strcmp("sharpening", ai.filter_arg) == 0) {
-            extern const char mask_sharpening[];
-            mask = mask_sharpening;
-            div = 9;
-            size = 3;
-        } else if (strcmp("median", ai.filter_arg) == 0) {
-            filter_median_flag = 1;
-        }
-    }
-    /* End filter */
-
-    char out[1000];
-    //printf("flag: %i\n", flag);
-
-    for (unsigned i = 0; i < ai.inputs_num; ++i)
-    {
-        t_img_desc *img = load_image(ai.inputs[i], 3);
-        printf("%s (%ix%i -- %i)", ai.inputs[i], img->x, img->y, img->comp);
-
-        if (filter_flag) {
-            if (filter_median_flag)
-                filter_median(img);
-            else
-                filter_mask(img, mask, div, size);
-        }
-
-        if (flag > 0)
-            grey_scale(img);
-        if (flag > 1) {
-            if (th_flag)
-                binarize_otsu(img);
-            else
-                binarize_basic(img);
-        }
-        if (flag > 2)
-            RLSA(img, RLSA_x, RLSA_y);
-        if (flag > 3)
-            printf("\trot: %f", 360 * hough(img) / 6.283);
-
-        if (flag > 0 || filter_flag) {
-            sprintf(out, "out_img%i.png", i+1);
-            printf("\t\t--> %s", out);
-            if (!write_image(out, img))
-                writing_error();
-        }
-
-        printf("\n");
-        free_image(img);
-    }
-
-    return EXIT_SUCCESS;
+    return 0;
 }
 
-void writing_error()
+// about window + credits window
+void callback_about (GtkMenuItem *menuitem, gpointer user_data)
 {
-    printf("ERROR: failed to write image\n");
-    exit(EXIT_FAILURE);
+    SGlobalData *data = (SGlobalData*) user_data;
+    GtkWidget *dialog = NULL;
+
+    dialog =  GTK_WIDGET (gtk_builder_get_object (data->builder, "AboutWindow"));
+    gtk_dialog_run (GTK_DIALOG (dialog));
+
+    gtk_widget_hide (dialog);
+}
+
+// load and print the choosen image, also get the pathname
+void get_img(GtkFileChooser *widget, gpointer user_data)
+{
+    SGlobalData *data = (SGlobalData*) user_data;
+    GtkFileChooser *loader = NULL;
+    GtkImage *image = NULL;
+    GdkPixbuf *pixbuf = NULL;
+
+    loader = GTK_FILE_CHOOSER (gtk_builder_get_object(data->builder, "img_loader"));
+    image = (GtkImage*) (gtk_builder_get_object(data->builder, "image1"));
+
+    img_name = (gchar*) gtk_file_chooser_get_filename(loader);
+
+    GtkLabel *label_img = NULL;
+    label_img = GTK_LABEL(gtk_builder_get_object(data->builder, "label3"));
+    gtk_label_set_text(label_img, img_name);
+
+    pixbuf = gdk_pixbuf_new_from_file_at_size( img_name, 680, 500, NULL);
+    gtk_image_set_from_pixbuf( image, pixbuf);
+    //gtk_image_set_from_file( image, (gchar*)img_name);
+}
+
+void* thread_processing(void *arg)
+{
+    t_img_desc *img = load_image(img_name, 3);
+
+    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+
+    grey_scale(img);
+    filter_median(img);
+    binarize_otsu(img);
+
+    write_image("out_img.png", img);
+    printf("[INFO] Write img_out.png\n");
+
+    free_image(img);
+
+    pthread_exit(NULL);
+}
+
+// print the text produce by the ocr (actually just print "test" for now)
+void ocr_text (GtkButton *widget, gpointer user_data)
+{
+    /* Process image
+     * img_name = path to image
+     * txt_ocr = text that have to be processed
+     */
+
+    t_img_desc *img = load_image(img_name, 3);
+
+    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y, img->comp);
+
+    grey_scale(img);
+    filter_median(img);
+    binarize_otsu(img);
+
+    struct coorList *l = malloc(sizeof(struct coorList));
+    XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
+    l = l->next;
+    free(img);
+    img->data = l->data;
+    img->x = l->X;
+    img->y = l->Y;
+    write_image("out_img.png", img);
+    printf("[INFO] Write img_out.png\n");
+    struct coorList *aux = NULL;
+    while (l->next != NULL) {
+        aux = l->next;
+        free(l);
+        l = aux;
+    }
+    free(aux);
+    free_image(img);
+
+    /* End process image */
+
+    // Multithreading, not used yet.
+    //pthread_t thread;
+    //pthread_create(&thread, NULL, thread_processing, NULL);
+
+    gtk_text_buffer_set_text (buffer, txt_ocr, strlen(txt_ocr));
+}
+
+void save_dial (GtkButton *widget, gpointer user_data)
+{
+    SGlobalData *data = (SGlobalData*) user_data;
+
+    dialog_save = GTK_WIDGET(gtk_builder_get_object(data->builder, "dialog_save"));
+    b_save = GTK_BUTTON(gtk_builder_get_object(data->builder, "button_save"));
+
+    g_signal_connect_swapped(b_save, "clicked", (GCallback) gtk_widget_hide, dialog_save);
+
+    gtk_dialog_run(GTK_DIALOG(dialog_save));
+    gtk_widget_hide(dialog_save);
+}
+
+void save_text (GtkButton *widget, gpointer user_data)
+{
+    SGlobalData *data = (SGlobalData*) user_data;
+    GtkFileChooser *chooser = NULL;
+    chooser = GTK_FILE_CHOOSER(dialog_save);
+    GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry1"));
+
+    txt_saved_name = gtk_entry_get_text(entry);
+    txt_saved_path = gtk_file_chooser_get_current_folder(chooser);
+
+    GtkTextIter iter_start, iter_end;
+
+    gtk_text_buffer_get_start_iter(buffer, &iter_start);
+    gtk_text_buffer_get_end_iter(buffer, &iter_end);
+
+    gchar *text2save = gtk_text_buffer_get_text(buffer, &iter_start, &iter_end, TRUE);
+
+    gchar *txt_saved = (gchar*) strcat(txt_saved_path, "/");
+    txt_saved = (gchar*) strcat(txt_saved, txt_saved_name);
+    txt_saved = (gchar*) strcat(txt_saved, ".txt");
+
+    FILE *file = fopen(txt_saved, "w");
+
+    if (file == NULL) {
+        g_print("Error when writing .txt file !\n");
+        return;
+    }
+
+    fputs(text2save, file);
+    fputc('\n', file);
+
+    GtkLabel *label_txt = NULL;
+    label_txt = GTK_LABEL(gtk_builder_get_object(data->builder, "label4"));
+    gtk_label_set_text(label_txt, txt_saved);
+
+    fclose(file);
+}
+
+void empty_buffer( GtkMenuItem *menuitem, gpointer user_data)
+{
+    GtkTextIter start, end;
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    gtk_text_buffer_get_end_iter(buffer, &end);
+
+    gtk_text_buffer_delete(buffer, &start, &end);
 }
