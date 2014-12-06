@@ -99,9 +99,9 @@ void ocr_text (GtkButton *widget, gpointer user_data)
     binarize_otsu(img);
 
     printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
-    binarize_otsu(img);
-   /* 
-    struct coorList *l = malloc(sizeof(struct coorList));
+    filter_median(img);
+
+    /*struct coorList *l = malloc(sizeof(struct coorList));
     XYCut(img->data, (char)0, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
     free(img);
     img->data = l->data;
@@ -113,8 +113,8 @@ void ocr_text (GtkButton *widget, gpointer user_data)
         free(l);
         l = aux;
     }
-    free(aux);
-    */
+    free(aux);*/
+
     write_image("out_img.png", img);
     printf("[INFO] Write img_out.png\n");
     free_image(img);

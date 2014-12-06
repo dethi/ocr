@@ -5,7 +5,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
     size_t *ans;
     printf("[INFO] GetTab call %d : %d\n", (int)x, (int)y);
     if (vert) {
-        ans = calloc(Y, sizeof(size_t));
+        ans = calloc(Y, sizeof(char));
         while (y < Y) {
             x = 0;
             while (x < X) {
@@ -16,7 +16,7 @@ size_t* getTab(uchar *tab, char vert, size_t X, size_t Y, size_t x, size_t y)
         }
     }
     else {
-        ans = calloc(X, sizeof(uchar));
+        ans = calloc(X, sizeof(char));
         while (x < X) {
             y = 0;
             while (y < Y) {
@@ -45,7 +45,7 @@ void XYCut(uchar *tab, char vert, size_t X, size_t Y, size_t min, size_t x, \
     size_t foo, i, aux = 0;
     if (vert) { foo = X; i = y;}
     else { foo = Y; i = x;}
-    while (i < foo) { 
+    while (i < foo) {
         while (i < foo && tmp[i] == 255 * foo)
         {++i;}
         aux = i;
