@@ -33,7 +33,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         if (aux > i) {
             VXYCut(data, X, aux - i, min, x, i, l);
         }
-        ++i;
+        i = aux;
     }
     free(tmp);
 }
@@ -71,7 +71,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         if (aux > i) {
             HXYCut(data, aux - i, Y, min, i, y, l);
         }
-        ++i;
+        i = aux;
     }
     free(tmp);
 }
@@ -79,8 +79,6 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 {
     printf("[INFO] listAdd()\n");
-    while(l != NULL)
-        l = l->next;
     l = malloc(sizeof(struct coorList));
     l = l->next;
     l->data = data;
