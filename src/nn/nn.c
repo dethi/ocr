@@ -18,18 +18,17 @@ double f(double x)
 static inline
 double df(double x)
 {
-    return x * (1.0 - x);
+    return (1.0 - x) * x;
 }
 
 static
 void cpyresult(double *dst, const double *src, size_t n, double th)
 {
-    assert(dst);
     printf("brut out: ");
     for (size_t i = 0; i < n; ++i)
     {
-        printf("%f \t", f(src[i]));
-        dst[i] = (f(src[i]) > th) ? 1. : 0.;
+        printf("%f \t", src[i]);
+        dst[i] = (src[i] > th) ? 1 : 0;
     }
     printf("\n");
 }
@@ -53,29 +52,24 @@ void net_train(struct net nwk)
 {
     double sets[] = {
         0, 0, 0,
-        0, 1, 0,
-        1, 0, 0,
-        1, 1, 1
+        0, 1, 1,
+        1, 0, 1,
+        1, 1, 0
     };
 
     size_t n_sets = 4;
     size_t n_input = 2;
     size_t n_result = 1;
-    unsigned epoch = 600;
+    unsigned epoch = 6000;
 
     double *results = malloc(sizeof(double) * n_result);
     assert(results);
 
     while (epoch) {
-        unsigned error = 0;
-
         for (size_t i = 0; i < n_sets; ++i) {
             net_compute(nwk, &sets[i * (n_input + n_result)]);
 
-            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.6);
-            error += abs(memcmp(results, &sets[n_input + i * (n_input + n_result)],
-                    sizeof(double) * n_result));
-
+            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.5);
             net_error(nwk, &sets[n_input + i * (n_input + n_result)]);
 
             printf("In: ");
@@ -84,13 +78,14 @@ void net_train(struct net nwk)
             printf("\nOut: ");
             for (size_t j = 0; j < n_result; ++j)
                 printf("%.2f ", results[j]);
+            printf("\nDesired: ");
+            for (size_t j = 0; j < n_result; j++)
+                printf("%0.2f ", sets[(j + n_input) + i * (n_input + n_result)]);
             printf("\n---\n");
         }
 
-        printf("[err: %d]\n\n\n", error);
-
-        //if (!error)
-            --epoch;
+        printf("******************************************\n");
+        --epoch;
     }
 
     free(results);
@@ -110,7 +105,7 @@ void net_error(struct net nwk, double *desired)
     /* Output layer */
     struct layer *l_out = &nwk.layers[nwk.n_layer-1];
     for (size_t i = 0; i < l_out->n_neuron; ++i)
-        l_out->err[i] = desired[i] - l_out->out[i];
+        l_out->err[i] = df(l_out->out[i]) * (desired[i] - l_out->out[i]);
 
     /* Foreach layer, output to input (exclude) */
     for (size_t layer = nwk.n_layer - 2; layer > 0; --layer) {
@@ -119,14 +114,13 @@ void net_error(struct net nwk, double *desired)
 
         /* Foreach neuron in the current layer */
         for (size_t c = 0; c < cur->n_neuron; ++c) {
-            cur->err[c] = 0;
+            double sum = 0;
 
             /* Foreach neuron in the next layer */
-            for (size_t n = 0; n < next->n_neuron; ++n) {
-                cur->err[c] += next->w[get_w(next, n, c)] * next->err[n];
-            }
+            for (size_t n = 0; n < next->n_neuron; ++n)
+                sum += next->err[n] * next->w[get_w(next, n, c)];
 
-            cur->err[c] *= df(cur->out[c]);
+            cur->err[c] = df(cur->out[c]) * sum;
         }
     }
 
@@ -134,65 +128,24 @@ void net_error(struct net nwk, double *desired)
         struct layer *cur = &nwk.layers[layer];
         struct layer *prev = &nwk.layers[layer-1];
 
+        //printf("-[dw %lu]-\n", layer);
+
         for (size_t c = 0; c < cur->n_neuron; ++c) {
             cur->bias[c] += LEARNING * cur->err[c];
 
             for (size_t p = 0; p < prev->n_neuron; ++p) {
                 size_t index = get_w(cur, c, p);
-                double dw = LEARNING * cur->err[c] * prev->out[c];
-                cur->w[index] = dw + MOMENTUM * cur->prev_dw[index];
+                double dw = LEARNING * cur->err[c] * prev->out[p];
+                cur->w[index] += dw + MOMENTUM * cur->prev_dw[index];
                 cur->prev_dw[index] = dw;
 
-                //printf("%f\t", dw);
+                //printf("%f ", dw);
             }
             //printf("\n");
         }
-        //printf("===\n");
+        //printf("-[END %lu]-\n", layer);
     }
 }
-
-/*
-void net_error(struct net nwk, double *desired)
-{
-    // Foreach output neuron
-    struct layer *l = &nwk.layers[nwk.n_layer - 1];
-    for (size_t i = 0; i < l->n_neuron; ++i)
-        l->err[i] = (l->out[i] - desired[i]);
-
-    // Foreach layers, output to input (exclude)
-    for (size_t i = nwk.n_layer - 2; i > 0; --i) {
-        l = &nwk.layers[i];
-        struct layer *next = &nwk.layers[i+1];
-
-        // Foreach neuron in current layer
-        for (size_t j = 0; j < l->n_neuron; ++j) {
-            // Compute propaged error
-            double error = 0;
-            for (size_t k = 0; k < next->n_neuron; ++k)
-                error += next->w[get_w(next, k, j)] * next->err[k];
-
-            // Compute current error
-            l->err[j] = df(l->out[j]) * error;
-        }
-    }
-
-    // Apply error
-    for (size_t i = 1; i < nwk.n_layer; ++i) {
-        l = &nwk.layers[i];
-
-        for (size_t j = 0; j < l->n_neuron; ++j) {
-            l->bias[j] += -LEARNING * l->err[j];
-
-            for (size_t k = 0; k < l->w_per_neuron; ++k) {
-                double dw = -LEARNING * l->err[j] * nwk.layers[i-1].out[k];
-                size_t index = get_w(l, j, k);
-                l->w[index] += dw + MOMENTUM * l->prev_dw[index];
-                l->prev_dw[index] = dw;
-            }
-        }
-    }
-}
-*/
 
 struct net net_load(char *filename)
 {
@@ -296,13 +249,13 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 
         for (size_t i = 0; i < n_neuron;  ++i) {
             l->bias[i] = -1. + 2. * ((double)rand() / RAND_MAX);
-            //printf("bias: %f\tw:", l->bias[i]);
+            printf("bias: %f\tw:", l->bias[i]);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
-                l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / (RAND_MAX+1));
-                //printf("%f ", l->w[get_w(l,i,j)]);
+                l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / RAND_MAX);
+                printf("%f ", l->w[get_w(l,i,j)]);
             }
-            //printf("\n");
+            printf("\n");
         }
     } else {
         l->w = NULL;
