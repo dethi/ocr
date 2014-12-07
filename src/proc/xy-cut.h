@@ -18,6 +18,6 @@ void VXYCut(uchar *tab, size_t X, size_t Y, size_t min, size_t x, size_t y, \
         struct coorList *helper);
 void HXYCut(uchar *tab, size_t X, size_t Y, size_t min, size_t x, size_t y, \
         struct coorList *helper);
-void helperAdd(struct coorList *f, size_t x, size_t y, uchar *tab);
+void listAdd(struct coorList *f, uchar *data, size_t x, size_t y);
 
 #endif
