@@ -86,11 +86,12 @@ void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 
 size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
         size_t *tmp) {
-    uchar* aux = malloc(sizeof(uchar) * X * Y);
+    uchar aux [X][Y];
     size_t i = 0, j = 0;
     while (i < X-1 || j < Y-1) {
-        aux[i+i*j] = img[(x+i) + (x+i)*(y+j)];
-        if (i++ == X) {
+        aux[i][j] = img[(x+i) + (x+i)*(y+j)];
+        i++;
+        if (i == X) {
             i = 0;
             ++j;
         }
@@ -98,13 +99,13 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
     if (vert) {
         for (i = 0; i < X; ++i) {
             for (j = 0; j < Y; ++j)
-                tmp[i] += (size_t)aux[i+i*j];
+                tmp[i] += (size_t)aux[i][j];
         }
     }
     else {
         for (j = 0; j < Y; ++j) {
             for (i = 0; i < X; ++i)
-                tmp[j] += (size_t)aux[i+i*j];
+                tmp[j] += (size_t)aux[i][j];
         }
     }
     /* if (!vert) {
@@ -121,7 +122,6 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
             }
         }
     }*/
-    free(aux);
     for (i = 0; i < Y; ++i)
         printf("[INFO] tmp[%zu] == %zu\n", i, tmp[i]);
     return tmp;
