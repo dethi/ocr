@@ -1,6 +1,6 @@
 #include "xy-cut.h"
 
-void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y\
+void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
     if ( X < min && Y < min) {
@@ -36,7 +36,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y\
     free(tmp);
 }
 
-void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y\
+void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
     if ( X < min && Y < min) {
@@ -80,3 +80,24 @@ void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
     l->X = X;
     l->Y = Y;
 }
+
+size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y) {
+     //Vertical : 1, Horizontal : 0, X: largeur cadre, Y: hauteur ""
+     //(x,y) : origin
+     size_t *tmp;
+     if(vert) {
+         tmp = calloc(Y, sizeof(size_t));
+ 
+         for(size_t u = 0; u < X; ++u)
+             tmp[u] += img[x + u*y]; //tmp[u] += img[x, y+u]   
+     }
+ 
+     else {
+         tmp = calloc(X, sizeof(size_t));
+ 
+         for(size_t u = 0; u < Y; ++u)
+             tmp[u] += img[x*u + y]; //tmp[u] += img[x+u, y]
+     }
+     return tmp;
+ }
+
