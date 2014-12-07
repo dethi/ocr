@@ -1,7 +1,7 @@
 #include "nn.h"
 
 const double LEARNING = 0.3;
-const double MOMENTUM = 0;
+const double MOMENTUM = 0.01;
 
 static inline
 size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
@@ -77,11 +77,12 @@ void net_train(struct net nwk, struct training t)
             printf("\n---\n");
         }
 
+        error *= (1. / (double)t.n_set);
         printf("ERROR: %f\n", error);
         printf("******************************************\n");
 
         ++epoch;
-    } while(error > 0.00001);
+    } while(error > 0.0001);
 
     printf("EPOCH: %d\n", epoch);
     free(results);
@@ -98,16 +99,15 @@ void net_compute(struct net nwk, double *inputs)
 
 double net_error(struct net nwk, double *desired)
 {
-    double error = 0;
+    double global_error = 0;
 
     /* Output layer */
     struct layer *l_out = &nwk.layers[nwk.n_layer-1];
     for (size_t i = 0; i < l_out->n_neuron; ++i) {
         l_out->err[i] = df(l_out->out[i]) * (desired[i] - l_out->out[i]);
-        error += pow(l_out->err[i], 2);
+        global_error += pow(l_out->err[i], 2);
     }
-
-    error *= 0.5;
+    global_error *= 0.5;
 
     /* Foreach layer, output to input (exclude) */
     for (size_t layer = nwk.n_layer - 2; layer > 0; --layer) {
@@ -148,7 +148,7 @@ double net_error(struct net nwk, double *desired)
         //printf("-[END %lu]-\n", layer);
     }
 
-    return error;
+    return global_error;
 }
 
 struct net net_load(char *filename)
