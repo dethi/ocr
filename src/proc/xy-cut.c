@@ -19,7 +19,8 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         listAdd(l, carac, X, Y);
         return;
     }
-    size_t *tmp = getTab(data, (char)0, X, Y, x, y);
+    size_t *tmp = getTab(data, (char)0, X, Y, x, y, calloc(Y, sizeof(size_t)));
+    printf("Hello World!\n");
     size_t i = y, aux;
     while (i < y+Y) {
         //Goes to the first line with at least 1 black pixel
@@ -39,6 +40,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
 void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
+    printf("[INFO] VXYCut launched\n");
     if ( X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -55,7 +57,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         listAdd(l, carac, X, Y);
         return;
     }
-    size_t *tmp = getTab(data, (char)1, X, Y, x, y);
+    size_t *tmp = getTab(data, (char)1, X, Y, x, y, calloc(X, sizeof(size_t)));
     size_t i = x, aux;
     while (i < x+X) {
         //Goes to the first column with at least 1 black pixel
@@ -82,14 +84,12 @@ void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
     l->Y = Y;
 }
 
-size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y) {
+size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
+        size_t *tmp) {
      //Vertical : 1, Horizontal : 0, X: largeur cadre, Y: hauteur ""
      //(x,y) : origin
-     size_t *tmp;
      printf("[INFO] getTab()\n");
      if(vert) {
-         tmp = calloc(X, sizeof(size_t));
- 
          for(size_t u = 0; u < X; ++u) { 
              for(size_t v = y; v < Y+y; ++v) {
                 tmp[u] += img[x + x * v]; //tmp[u] += img[x, y+u] 
@@ -97,8 +97,6 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y) {
          }
      }
      else {
-         tmp = calloc(Y, sizeof(size_t));
- 
          for(size_t u = 0; u < Y; ++u) {
              for(size_t v = x; v < X+x; v++) {
                 tmp[u] += img[(u+v) + (u+v)*y]; //tmp[u] += img[x+u, y]

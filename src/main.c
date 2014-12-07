@@ -106,9 +106,6 @@ void ocr_text(GtkButton * widget, gpointer user_data)
 
     //printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     filter_median(img);
-    size_t* tmp =getTab(img->data, (char)0, img->x, img->y, 0, 0);
-    free(tmp);
-    /*
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
     HXYCut(img->data, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
@@ -122,7 +119,7 @@ void ocr_text(GtkButton * widget, gpointer user_data)
         free(l);
         l = aux;
     }
-    free(aux);*/
+    free(aux);
 
     write_image("out_img.png", img);
     printf("[INFO] Write img_out.png\n");
