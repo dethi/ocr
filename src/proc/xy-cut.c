@@ -26,6 +26,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the first line with at least 1 black pixel
         while (i < y+Y && tmp[i] == 255 * X)
             ++i;
+        printf("%zu\n", i);
         aux = i;
         //Goes to the last line with at least 1 black pixel
         while (aux+1 < y+Y && tmp[aux+1] < 255 * X)
@@ -103,6 +104,6 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
              }
          }
      }
-     printf("[INFO] tmp[0] = %zu\n", tmp[0]);
+     printf("[INFO] tmp[41] = %zu\n", tmp[41]);
      return tmp;
 }
