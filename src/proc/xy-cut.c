@@ -92,17 +92,17 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
      if(vert) {
          for(size_t u = 0; u < X; ++u) { 
              for(size_t v = y; v < Y+y; ++v) {
-                tmp[u] += img[x + x * v]; //tmp[u] += img[x, y+u] 
+                tmp[u] += img[(x+u) + (x+u) * v]; //tmp[u] += img[x, y+u] 
              }
          }
      }
      else {
          for(size_t u = 0; u < Y; ++u) {
              for(size_t v = x; v < X+x; v++) {
-                tmp[u] += img[(u+v) + (u+v)*y]; //tmp[u] += img[x+u, y]
+                tmp[u] += img[v + v * (y+u)]; //tmp[u] += img[x+u, y]
              }
          }
      }
-     printf("[INFO] tmp[0] = %zu\n", tmp[0]);
+     printf("[INFO] tmp[41] = %zu\n", tmp[41]);
      return tmp;
 }
