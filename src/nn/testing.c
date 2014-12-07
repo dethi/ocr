@@ -6,13 +6,28 @@ int main()
 {
     size_t n = 3;
     size_t desc_layers[] = { 2, 2, 1 };
-    double inputs[] = { 1, 0 };
 
+    struct training t = { NULL, 4, 2, 1 };
+    double sets[] = {
+        0, 0, 0,
+        0, 1, 1,
+        1, 0, 1,
+        1, 1, 0
+    };
+    t.sets = sets;
+
+    /* Test training */
     struct net nwk = net_init(n, desc_layers);
-    net_compute(nwk, inputs);
-    printf("Result: %f\n", nwk.layers[nwk.n_layer-1].out[0]);
+    net_train(nwk, t);
+    net_save(nwk, "xor.saved");
+    net_free(nwk);
 
-    net_train(nwk);
+    /* Test loading file */
+    nwk = net_load("xor.saved");
+    double inputs[] = { 0, 1 };
+    net_compute(nwk, inputs);
+    printf("\n\nRESULT: %.2f xor %.2f = %.2f\n", inputs[0], inputs[1],
+            nwk.layers[nwk.n_layer-1].out[0]);
     net_free(nwk);
 
     return EXIT_SUCCESS;

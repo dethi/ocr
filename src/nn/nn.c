@@ -48,46 +48,42 @@ struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
     return network;
 }
 
-void net_train(struct net nwk)
+void net_train(struct net nwk, struct training t)
 {
-    double sets[] = {
-        0, 0, 0,
-        0, 1, 1,
-        1, 0, 1,
-        1, 1, 0
-    };
+    unsigned epoch = 0;
+    double error;
 
-    size_t n_sets = 4;
-    size_t n_input = 2;
-    size_t n_result = 1;
-    unsigned epoch = 6000;
-
-    double *results = malloc(sizeof(double) * n_result);
+    double *results = malloc(sizeof(double) * t.n_out);
     assert(results);
 
-    while (epoch) {
-        for (size_t i = 0; i < n_sets; ++i) {
-            net_compute(nwk, &sets[i * (n_input + n_result)]);
+    do {
+        error = 0;
 
-            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, n_result, 0.5);
-            net_error(nwk, &sets[n_input + i * (n_input + n_result)]);
+        for (size_t i = 0; i < t.n_set; ++i) {
+            net_compute(nwk, &t.sets[i * (t.n_in + t.n_out)]);
+
+            cpyresult(results, nwk.layers[nwk.n_layer - 1].out, t.n_out, 0.5);
+            error += net_error(nwk, &t.sets[t.n_in + i * (t.n_in + t.n_out)]);
 
             printf("In: ");
-            for (size_t j = 0; j < n_input; ++j)
-                printf("%.2f ", sets[j + i * (n_input + n_result)]);
+            for (size_t j = 0; j < t.n_in; ++j)
+                printf("%.2f ", t.sets[j + i * (t.n_in + t.n_out)]);
             printf("\nOut: ");
-            for (size_t j = 0; j < n_result; ++j)
+            for (size_t j = 0; j < t.n_out; ++j)
                 printf("%.2f ", results[j]);
             printf("\nDesired: ");
-            for (size_t j = 0; j < n_result; j++)
-                printf("%0.2f ", sets[(j + n_input) + i * (n_input + n_result)]);
+            for (size_t j = 0; j < t.n_out; j++)
+                printf("%0.2f ", t.sets[(j + t.n_in) + i * (t.n_in + t.n_out)]);
             printf("\n---\n");
         }
 
+        printf("ERROR: %f\n", error);
         printf("******************************************\n");
-        --epoch;
-    }
 
+        ++epoch;
+    } while(error > 0.00001);
+
+    printf("EPOCH: %d\n", epoch);
     free(results);
 }
 
@@ -100,12 +96,18 @@ void net_compute(struct net nwk, double *inputs)
         layer_calc_output(&nwk.layers[i], nwk.layers[i-1].out);
 }
 
-void net_error(struct net nwk, double *desired)
+double net_error(struct net nwk, double *desired)
 {
+    double error = 0;
+
     /* Output layer */
     struct layer *l_out = &nwk.layers[nwk.n_layer-1];
-    for (size_t i = 0; i < l_out->n_neuron; ++i)
+    for (size_t i = 0; i < l_out->n_neuron; ++i) {
         l_out->err[i] = df(l_out->out[i]) * (desired[i] - l_out->out[i]);
+        error += pow(l_out->err[i], 2);
+    }
+
+    error *= 0.5;
 
     /* Foreach layer, output to input (exclude) */
     for (size_t layer = nwk.n_layer - 2; layer > 0; --layer) {
@@ -145,6 +147,8 @@ void net_error(struct net nwk, double *desired)
         }
         //printf("-[END %lu]-\n", layer);
     }
+
+    return error;
 }
 
 struct net net_load(char *filename)

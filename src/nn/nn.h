@@ -23,10 +23,17 @@ struct layer {
     double *out; // [n_neuron]
 };
 
+struct training {
+    double *sets;
+    size_t n_set;
+    size_t n_in;
+    size_t n_out;
+};
+
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer);
-void net_train(struct net nwk);
+void net_train(struct net nwk, struct training t);
 void net_compute(struct net nwk, double *inputs);
-void net_error(struct net nwk, double *desired);
+double net_error(struct net nwk, double *desired);
 struct net net_load(char *filename);
 void net_save(struct net nwk, char *filename);
 void net_free(struct net nwk);
