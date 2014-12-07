@@ -13,6 +13,20 @@ struct coorList {
     struct coorList *next;
 };
 
+typedef struct s_List List;
+struct s_List {
+    List *next;
+    void *data;
+};
+
+struct list new_list(void *data) {
+    List *list = malloc(sizeof(list));
+    if(list) {
+        list->data = data;
+        list->next = NULL;
+    }
+}
+
 struct Cara {
     size_t x;
     size_t y;
@@ -25,7 +39,7 @@ struct Line {
     size_t y;
     size_t height;
     size_t width;
-    Cara* lcara;
+    struct List *Cara lcara;
 };
 
 struct Bloc {
@@ -33,7 +47,7 @@ struct Bloc {
     size_t y;
     size_t height;
     size_t widthi;
-    Line* lline;
+    struct List *Line lline;
 }
 
 struct Cara new_cara() {
