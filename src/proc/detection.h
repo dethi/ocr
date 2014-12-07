@@ -12,7 +12,7 @@ struct coorList {
     uchar *data;
     struct coorList *next;
 };
-
+/*
 typedef struct s_List List;
 struct s_List {
     List *next;
@@ -76,4 +76,5 @@ struct Bloc new_bloc() {
     bloc->height = 0;
     bloc->lline = NULL;
 }
+*/
 #endif
