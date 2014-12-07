@@ -104,9 +104,10 @@ void ocr_text(GtkButton * widget, gpointer user_data)
     grey_scale(img);
     binarize_otsu(img);
 
-    printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
+    //printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     filter_median(img);
 
+    printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
     HXYCut(img->data, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
     free(img);
