@@ -89,7 +89,7 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
     uchar aux [X][Y];
     size_t i = 0, j = 0;
     while (i < X-1 || j < Y-1) {
-        aux[i][j] = img[(x+i) + (x+i)*(y+j)];
+        aux[i][j] = img[(x+i) + X*(y+j)];
         i++;
         if (i == X) {
             i = 0;
