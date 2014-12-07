@@ -26,13 +26,14 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the first line with at least 1 black pixel
         while (i < y+Y && tmp[i] == 255 * Y)
             ++i;
-        aux = i++;
+        aux = i;
         //Goes to the last line with at least 1 black pixel
         while (aux < y+Y && tmp[aux] < 255 * Y)
             ++aux;
         if (aux > i) {
             VXYCut(data, X, aux - i, min, x, i, l);
         }
+        ++i;
     }
     free(tmp);
 }
@@ -63,13 +64,14 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the first column with at least 1 black pixel
         while (i < x+X && tmp[i] == 255 * X)
             ++i;
-        aux = i++;
+        aux = i;
         //Goes to the last column with at least 1 black pixel
         while (aux < x+X && tmp[aux] < 255 * X)
             ++aux;
         if (aux > i) {
             HXYCut(data, aux - i, Y, min, i, y, l);
         }
+        ++i;
     }
     free(tmp);
 }
@@ -77,8 +79,10 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 {
     printf("[INFO] listAdd()\n");
-    while(l->next != NULL)
+    while(l != NULL)
         l = l->next;
+    l = malloc(sizeof(struct coorList));
+    l = l->next;
     l->data = data;
     l->X = X;
     l->Y = Y;
@@ -108,19 +112,5 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
                 tmp[j] += (size_t)aux[i][j];
         }
     }
-    /* if (!vert) {
-        for (size_t j = y; j < Y+y; ++j) {
-            for (size_t i = i; i < X+x; ++i) {
-                tmp[j - y] += img[i+i*j];
-            }
-        }
-    }
-    else {
-        for (size_t i = x; i < X+x; ++i) {
-            for (size_t j = y; j < Y+y; ++j) {
-                tmp[i - x] += img[i+i*j];
-            }
-        }
-    }*/
     return tmp;
 }

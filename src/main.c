@@ -108,8 +108,9 @@ void ocr_text(GtkButton * widget, gpointer user_data)
     filter_median(img);
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
-    VXYCut(img->data, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    free(img);
+    VXYCut(img->data, (size_t)img->x, (size_t)img->y, 15, 0, 0, l);
+    printf("[INFO] Detection passed");
+    free(img->data);
     img->data = l->data;
     img->x = l->X;
     img->y = l->Y;
