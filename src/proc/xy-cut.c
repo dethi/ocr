@@ -3,6 +3,7 @@
 void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
+    printf("[INFO] HXYCut()\n");
     if ( X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -20,7 +21,6 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         return;
     }
     size_t *tmp = getTab(data, (char)0, X, Y, x, y, calloc(Y, sizeof(size_t)));
-    printf("Hello World!\n");
     size_t i = y, aux;
     while (i < y+Y) {
         //Goes to the first line with at least 1 black pixel
@@ -69,7 +69,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         while (aux < x+X && tmp[aux] < 255 * Y)
             ++aux;
         if (aux > i) {
-            VXYCut(data, aux - i, Y, min, i, y, l);
+            HXYCut(data, aux - i, Y, min, i, y, l);
         }
     }
     free(tmp);
@@ -87,23 +87,20 @@ void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 
 size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
         size_t *tmp) {
-     //Vertical : 1, Horizontal : 0, X: largeur cadre, Y: hauteur ""
-     //(x,y) : origin
-     printf("[INFO] getTab()\n");
-     if(vert) {
-         for(size_t u = 0; u < X; ++u) { 
-             for(size_t v = y; v < Y+y; ++v) {
-                tmp[u] += img[(x+u) + (x+u) * v]; //tmp[u] += img[x, y+u] 
-             }
-         }
-     }
-     else {
-         for(size_t u = 0; u < Y; ++u) {
-             for(size_t v = x; v < X+x; v++) {
-                tmp[u] += img[v + v * (y+u)]; //tmp[u] += img[x+u, y]
-             }
-         }
-     }
-     printf("[INFO] tmp[41] = %zu\n", tmp[41]);
-     return tmp;
+    if (!vert) {
+        for (size_t j = y; j < Y+y; ++j) {
+            for (size_t i = i; i < X+x; ++i) {
+                tmp[j - y] += img[i+i*j];
+            }
+        }
+    }
+    else {
+        for (size_t i = x; i < X+x; ++i) {
+            for (size_t j = y; j < Y+y; ++j) {
+                tmp[i - x] += img[i+i*j];
+            }
+        }
+    }
+    printf("[INFO] tmp[44] == %zu\n", tmp[44]);
+    return tmp;
 }
