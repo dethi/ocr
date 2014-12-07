@@ -90,14 +90,21 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y) {
      if(vert) {
          tmp = calloc(X, sizeof(size_t));
  
-         for(size_t u = 0; u < X; ++u)
-             tmp[u] += img[u + u*(u+y)]; //tmp[u] += img[x, y+u]   
+         for(size_t u = 0; u < X; ++u) { 
+             for(size_t v = y; v < Y+y; ++v) {
+                tmp[u] += img[x + x * v]; //tmp[u] += img[x, y+u] 
+             }
+         }
      }
      else {
          tmp = calloc(Y, sizeof(size_t));
  
-         for(size_t u = 0; u < Y; ++u)
-             tmp[u] += img[(u+x) + (u+x)*y]; //tmp[u] += img[x+u, y]
+         for(size_t u = 0; u < Y; ++u) {
+             for(size_t v = x; v < X+x; v++) {
+                tmp[u] += img[(u+v) + (u+v)*y]; //tmp[u] += img[x+u, y]
+             }
+         }
      }
+     printf("[INFO] tmp[0] = %zu\n", tmp[0]);
      return tmp;
 }
