@@ -26,7 +26,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the first line with at least 1 black pixel
         while (i < y+Y && tmp[i] == 255 * Y)
             ++i;
-        aux = i;
+        aux = i++;
         //Goes to the last line with at least 1 black pixel
         while (aux < y+Y && tmp[aux] < 255 * Y)
             ++aux;
@@ -63,7 +63,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the first column with at least 1 black pixel
         while (i < x+X && tmp[i] == 255 * X)
             ++i;
-        aux = i;
+        aux = i++;
         //Goes to the last column with at least 1 black pixel
         while (aux < x+X && tmp[aux] < 255 * X)
             ++aux;
@@ -96,7 +96,7 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
             ++j;
         }
     }
-    if (vert) {
+    if (!vert) {
         for (i = 0; i < X; ++i) {
             for (j = 0; j < Y; ++j)
                 tmp[i] += (size_t)aux[i][j];
