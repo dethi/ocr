@@ -7,16 +7,14 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
     //printf("[INFO] HXYCut params %zu : %zu\n", x, y);
 
     if ( X < min && Y < min) {
-        uchar *carac = malloc(sizeof(uchar) * X * Y);
+        uchar *carac = calloc(X*Y, sizeof(uchar));
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
             carac[i + X*j] = data[(x+i) + X*(y+j)];
+            ++i;
             if (i == X) {
                 ++j;
                 i = 0;
-            }
-            else {
-                ++i;
             }
         }
         listAdd(l, carac, X, Y);
@@ -49,16 +47,14 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
     //printf("[INFO] VXYCut params %zu : %zu\n", x, y);
 
     if (X < min && Y < min) {
-        uchar *carac = malloc(sizeof(uchar) * X * Y);
+        uchar *carac = calloc(X*Y, sizeof(uchar));
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
             carac[i + X*j] = data[(x+i) + X*(y+j)];
+            ++i;
             if (i == X) {
                 ++j;
                 i = 0;
-            }
-            else {
-                ++i;
             }
         }
         listAdd(l, carac, X, Y);
