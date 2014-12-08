@@ -18,7 +18,7 @@ typedef struct {
     int y_max;
 } coor;
 
-coor *detect(t_img_desc * img);
+coor *detect(t_img_desc * img, size_t * length);
 t_img_desc *get_data(t_img_desc * img, coor c);
 
 #endif

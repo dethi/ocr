@@ -83,6 +83,7 @@ void processing()
     printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     //filter_median(img);
 
+    /*
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = listInit();
     HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l, (size_t)img->x);
@@ -94,37 +95,29 @@ void processing()
             printf("%zu:", (size_t)l->next->data[i + (l->next->X)*j]);
         printf("\n");
     }
+    */
 
     write_image("/tmp/out_img.png", img);
     printf("[INFO] Write /tmp/img_out.png\n");
-    free_image(img);
 
-    text_recognisation(l);
-    listFree(l);
+    size_t length = 0;
+    coor *t_coor = detect(img, &length);
+    text_recognisation(img, t_coor, length);
+    free_image(img);
 }
 
-void text_recognisation(struct coorList *l)
+void text_recognisation(t_img_desc *img, coor *t_coor, size_t len)
 {
-    int len = listLen(l);
-    if (!len)
-        return;
-
-    listReverse(l);
-
     char *buffer = malloc(sizeof(char) * (len + 10)); // safety
     assert(buffer);
 
-    t_img_desc img;
+    t_img_desc *block;
     struct net nwk = net_load("nn.saved");
     int i = 0;
 
-    for (struct coorList *ptr = l->next; ptr->next; ptr = ptr->next) {
-        img.data = ptr->data;
-        img.x = ptr->X;
-        img.y = ptr->Y;
-        img.comp = 1;
-
-        char c = ask_nn(nwk, &img);
+    for (size_t j = 0; j < len; ++j) {
+        block = get_data(img, t_coor[i]);
+        char c = ask_nn(nwk, block);
         buffer[i++] = (c) ? c : ' ';
     }
 

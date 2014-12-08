@@ -137,7 +137,7 @@ void set_char(t_img_desc * img)
     }
 }
 
-coor *detect(t_img_desc * img)
+coor *detect(t_img_desc * img, size_t *length)
 {
     init_hist(img);
     make_hist_y(img);
@@ -150,6 +150,7 @@ coor *detect(t_img_desc * img)
     printf("There is %d lines and %d characts detected\n",
             number_of_lines, charact_length);
 
+    *length = charact_length;
     return charact;
 }
 
