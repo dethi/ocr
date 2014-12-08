@@ -58,7 +58,7 @@ struct training load_pattern(char *dir)
     if (*(--dir) != '/')
         strcat(path, "/");
 
-    const size_t n_font = 1;
+    const size_t n_font = 7;
     const size_t n_letter = 52;
     const size_t n_set = n_letter * n_font;
     const size_t size_in = 400;
@@ -114,34 +114,43 @@ struct training load_pattern(char *dir)
 void train_nn(struct net nwk, struct training t)
 {
     unsigned epoch = 0;
-    unsigned freq = 100;
+    unsigned freq = 500;
+    unsigned limit = 5000;
 
     do {
-        double error = 0;
+        unsigned error = 0;
 
         for (size_t i = 0; i < t.n_set; ++i) {
             net_compute(nwk, get_in(&t, i));
-            error += net_error(nwk, get_out(&t, i));
+            net_error(nwk, get_out(&t, i));
 
             if (epoch % freq == 0) {
                 char c = convert_output(get_out(&t, i), 52);
-                printf("In: %c\t", c);
-                c = convert_output(net_output(nwk), 52);
-                printf("Out: %c\n", c);
+                char rst = convert_output(net_output(nwk), 52);
+                if (c != rst) {
+                    printf("In: %c\t", c);
+                    printf("Out: %c\n", rst);
+                    ++error;
+                }
             }
         }
 
-        error *= (1. / (double)t.n_set);
-
         if (epoch % freq == 0) {
-            printf("ERROR: %f\n", error);
-            printf("****************\n");
+            printf("[%d] ERROR: %d\n", epoch, error);
+            printf("******************\n");
         }
 
         ++epoch;
-    } while(epoch < 1000);
 
-    printf("EPOCH: %d\n", epoch);
+        if (epoch == limit) {
+            printf("Continue? ");
+            char b;
+            scanf("%c", &b);
+            if (b == 'y')
+                epoch = 0;
+        }
+
+    } while(epoch < limit);
 }
 
 char ask_nn(struct net nwk, t_img_desc *img)
@@ -157,7 +166,7 @@ char ask_nn(struct net nwk, t_img_desc *img)
 
 void make_nn(char *path_pattern, char *saved_name)
 {
-    size_t desc_layers[] = { 400, 165, 52 };
+    size_t desc_layers[] = { 400, 210, 52 };
     struct net nwk = net_init(3, desc_layers);
     struct training t = load_pattern(path_pattern);
 

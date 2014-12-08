@@ -1,7 +1,7 @@
 #include "nn.h"
 
-const double LEARNING = 0.3;
-const double MOMENTUM = 0.01;
+const double LEARNING = 0.4;
+const double MOMENTUM = 0.1;
 
 static inline
 size_t get_w(struct layer *l, size_t i_neuron, size_t i_w)
