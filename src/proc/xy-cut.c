@@ -9,7 +9,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
-            carac[i + i*j] = data[(x+i) + X*(y+j)];
+            carac[i + X*j] = data[(x+i) + X*(y+j)];
             if (i == X) {
                 ++j;
                 i = 0;
@@ -49,7 +49,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
-            carac[i + i*j] = data[(x+i) + X*(y+j)];
+            carac[i + X*j] = data[(x+i) + X*(y+j)];
             if (i == X) {
                 ++j;
                 i = 0;
