@@ -144,9 +144,9 @@ void train_nn(struct net nwk, struct training t)
 
         if (epoch == limit) {
             printf("Continue? ");
-            char b;
-            scanf("%c", &b);
-            if (b == 'y')
+            int b = 0;
+            scanf("%d", &b);
+            if (b)
                 epoch = 0;
         }
 
