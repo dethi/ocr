@@ -114,6 +114,7 @@
 ocr
 gui.glade~
 
+/*.saved
 /out_img*
 /*.txt
 /.vagrant

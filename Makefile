@@ -32,10 +32,11 @@ $(BUILD_DIR)/%.o: src/%.c | $(BUILD_DIR)
 ocr: $(OBJ) | $(BUILD_DIR)
 	$(LD) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 	cp src/gui.glade .
+	cp src/nn.saved .
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 .PHONY: clean
 clean:
-	rm -rf ocr out_img* *.txt gui.glade $(BUILD_DIR)
+	rm -rf ocr out_img* *.txt gui.glade *.saved $(BUILD_DIR)
