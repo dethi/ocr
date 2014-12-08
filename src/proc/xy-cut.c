@@ -1,6 +1,6 @@
 #include "xy-cut.h"
 
-void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
+void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         struct coorList *l)
 {
     printf("[INFO] HXYCut launched %zu : %zu\n", X, Y);
@@ -40,7 +40,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
     free(tmp);
 }
 
-void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
+void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         struct coorList *l)
 {
     printf("[INFO] VXYCut launched %zu : %zu\n", X, Y);
@@ -79,20 +79,9 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
     free(tmp);
 }
 
-void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
+size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,
+        size_t *tmp)
 {
-    printf("[INFO] listAdd()\n");
-    struct coorList *aux = malloc(sizeof(struct coorList));
-    aux->next = l->next;
-    l->next = aux;
-    l = l->next;
-    l->data = data;
-    l->X = X;
-    l->Y = Y;
-}
-
-size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
-        size_t *tmp) {
     uchar aux [X][Y];
     size_t i = 0, j = 0;
     while (i < X-1 || j < Y-1) {
