@@ -85,19 +85,19 @@ void processing()
 
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
-    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 15, 0, 0, l);
+    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l);
     printf("[INFO] Detection passed\n");
     free(img->data);
     img->data = l->data;
     img->x = l->X;
     img->y = l->Y;
-    struct coorList *aux = NULL;
+    /*struct coorList *aux = NULL;
     while (l->next != NULL) {
         aux = l->next;
         free(l);
         l = aux;
     }
-    free(aux);
+    free(aux);*/
 
     write_image("/tmp/out_img.png", img);
     printf("[INFO] Write /tmp/img_out.png\n");
