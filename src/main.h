@@ -9,7 +9,8 @@
 #include "proc/rotation.h"
 #include "proc/filter.h"
 #include "proc/xy-cut.h"
-//#include "nn/xor.h"
+#include "proc/list.h"
+#include "nn/pattern.h"
 
 #include <gtk/gtk.h>
 #include <gtkspell/gtkspell.h>
@@ -21,7 +22,7 @@ typedef struct {
     gpointer user_data;
 } SGlobalData;
 
-gchar txt_ocr[] = "Nothing.";
+gchar *txt_ocr = NULL;
 gchar txt_saved[2048];
 gchar img_name[2048];
 
@@ -34,6 +35,7 @@ GtkSpellChecker *spell = NULL;
 void callback_about(GtkMenuItem * menuitem, gpointer user_data);
 void get_img(GtkFileChooser * wigdet, gpointer user_data);
 void processing();
+void text_recognisation(struct coorList *l);
 void ocr_text(GtkButton * widget, gpointer user_data);
 void save_text(GtkButton * widget, gpointer user_data);
 void save_dial(GtkButton * widget, gpointer user_data);

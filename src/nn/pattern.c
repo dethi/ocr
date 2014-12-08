@@ -161,8 +161,6 @@ char ask_nn(struct net nwk, t_img_desc *img)
         uchar *ptr = malloc(sizeof(char) * 20 * 20);
         stbir_resize_uint8(img->data, img->x, img->y, 0, ptr, 20, 20, 0, 1);
 
-        free(img->data);
-
         img->data = ptr;
         img->x = 20;
         img->y = 20;

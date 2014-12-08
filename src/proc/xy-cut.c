@@ -3,8 +3,9 @@
 void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         struct coorList *l)
 {
-    printf("[INFO] HXYCut launched %zu : %zu\n", X, Y);
-    printf("[INFO] HXYCut params %zu : %zu\n", x, y);
+    //printf("[INFO] HXYCut launched %zu : %zu\n", X, Y);
+    //printf("[INFO] HXYCut params %zu : %zu\n", x, y);
+
     if ( X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -44,8 +45,9 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
 void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         struct coorList *l)
 {
-    printf("[INFO] VXYCut launched %zu : %zu\n", X, Y);
-    printf("[INFO] VXYCut params %zu : %zu\n", x, y);
+    //printf("[INFO] VXYCut launched %zu : %zu\n", X, Y);
+    //printf("[INFO] VXYCut params %zu : %zu\n", x, y);
+
     if (X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -63,7 +65,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         return;
     }
 
-    size_t *tmp = getTab(data, (char)1, X, Y, x, y, calloc(X, sizeof(size_t)));
+    size_t *tmp = getTab(data, 1, X, Y, x, y, calloc(X, sizeof(size_t)));
     size_t i = x, aux;
     while (i < x+X) {
         //Goes to the first column with at least 1 black pixel
@@ -84,7 +86,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
 size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,
         size_t *tmp)
 {
-    uchar aux [X][Y];
+    uchar aux[X][Y];
     size_t i = 0, j = 0;
     while (i < X-1 || j < Y-1) {
         aux[i][j] = img[(x+i) + X*(y+j)];

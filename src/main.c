@@ -81,28 +81,49 @@ void processing()
     grey_scale(img);
     binarize_otsu(img);
     printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
-    filter_median(img);
+    //filter_median(img);
 
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = listInit();
     HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l);
     printf("[INFO] Detection passed\n");
-    printf("[INFO] (Before) List len: %d\n", listLen(l));
-    listReverse(l);
-    printf("[INFO] (After) List len: %d\n", listLen(l));
-    //listFree(l);
-    //printf("[INFO] Free\n");
-
-    t_img_desc *new = malloc(sizeof(t_img_desc));
-    new->data = l->next->data;
-    new->x = l->next->X;
-    new->y = l->next->Y;
-    new->comp = 1;
-    write_image("out_img.png", new);
 
     write_image("/tmp/out_img.png", img);
     printf("[INFO] Write /tmp/img_out.png\n");
     free_image(img);
+
+    text_recognisation(l);
+    listFree(l);
+}
+
+void text_recognisation(struct coorList *l)
+{
+    int len = listLen(l);
+    if (!len)
+        return;
+
+    listReverse(l);
+
+    char *buffer = malloc(sizeof(char) * (len + 10)); // safety
+    assert(buffer);
+
+    t_img_desc img;
+    struct net nwk = net_load("nn.saved");
+    int i = 0;
+
+    for (struct coorList *ptr = l->next; ptr->next; ptr = ptr->next) {
+        img.data = ptr->data;
+        img.x = ptr->X;
+        img.y = ptr->Y;
+        img.comp = 1;
+
+        char c = ask_nn(nwk, &img);
+        buffer[i++] = (c) ? c : ' ';
+    }
+
+    free(txt_ocr);
+    buffer[i] = '\0';
+    txt_ocr = buffer;
 }
 
 // print the text produce by the ocr (actually just print "test" for now)
