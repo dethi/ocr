@@ -4,31 +4,29 @@ void gen_input(t_img_desc *img, double *dst)
 {
     assert(img->comp == 1);
 
-    for (size_t i = 0; i < img->x * img->y; ++i)
+    for (int i = 0; i < img->x * img->y; ++i)
         dst[i] = img->data[i];
 }
 
 void gen_output(double *dst, size_t n, char c)
 {
-    assert(n == 26);
+    assert(n == 52);
     for (size_t i = 0; i < n; ++i)
         dst[i] = 0;
 
     if ('a' <= c && c <= 'z')
-        dst['a'-c] = 1;
+        dst[c-'a'] = 1;
     else if ('A' <= c && c <= 'Z')
-        dst[26+'A'-c] = 1;
+        dst[26+c-'A'] = 1;
 }
 
 char convert_output(double *src, size_t n)
 {
     assert(n == 52);
 
-    int i = 0;
-    while (i < n && *src != 1) {
+    size_t i = 0;
+    while (i < n && src[i] != 1)
         ++i;
-        ++src;
-    }
 
     if (i < 26)
         return 'a' + i;
@@ -41,18 +39,11 @@ char convert_output(double *src, size_t n)
 void process_pattern(t_img_desc *img, int inversed)
 {
     assert(img->comp == 1);
-
-    uchar *ptr = img->data;
-    if (inversed) {
-        while(ptr) {
-            *ptr = (*ptr > 127) ? 1 : 0;
-            ++ptr;
-        }
-    } else {
-        while (ptr) {
-            *ptr = (*ptr > 127) ? 0 : 1;
-            ++ptr;
-        }
+    for (int i = 0; i < img->x * img->y; ++i) {
+        if (inversed)
+            img->data[i] = (img->data[i] > 127) ? 1 : 0;
+        else
+            img->data[i] = (img->data[i] > 127) ? 0 : 1;
     }
 }
 
@@ -120,6 +111,39 @@ struct training load_pattern(char *dir)
     return t;
 }
 
+void train_nn(struct net nwk, struct training t)
+{
+    unsigned epoch = 0;
+    unsigned freq = 100;
+
+    do {
+        double error = 0;
+
+        for (size_t i = 0; i < t.n_set; ++i) {
+            net_compute(nwk, get_in(&t, i));
+            error += net_error(nwk, get_out(&t, i));
+
+            if (epoch % freq == 0) {
+                char c = convert_output(get_out(&t, i), 52);
+                printf("In: %c\t", c);
+                c = convert_output(net_output(nwk), 52);
+                printf("Out: %c\n", c);
+            }
+        }
+
+        error *= (1. / (double)t.n_set);
+
+        if (epoch % freq == 0) {
+            printf("ERROR: %f\n", error);
+            printf("****************\n");
+        }
+
+        ++epoch;
+    } while(epoch < 1000);
+
+    printf("EPOCH: %d\n", epoch);
+}
+
 char ask_nn(struct net nwk, t_img_desc *img)
 {
     assert(img->comp == 1);
@@ -137,7 +161,7 @@ void make_nn(char *path_pattern, char *saved_name)
     struct net nwk = net_init(3, desc_layers);
     struct training t = load_pattern(path_pattern);
 
-    net_train(nwk, t);
+    train_nn(nwk, t);
     net_save(nwk, saved_name);
     net_free(nwk);
 }

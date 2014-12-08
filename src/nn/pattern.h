@@ -14,6 +14,7 @@ void process_pattern(t_img_desc *img, int inversed);
 struct training load_pattern(char *dir);
 
 char ask_nn(struct net nwk, t_img_desc *img);
+void train_nn(struct net nwk, struct training t);
 void make_nn(char *path_pattern, char *saved_name);
 
 #endif

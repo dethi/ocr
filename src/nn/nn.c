@@ -24,13 +24,13 @@ double df(double x)
 static
 void cpyresult(double *dst, const double *src, size_t n, double th)
 {
-    printf("brut out: ");
+    //printf("brut out: ");
     for (size_t i = 0; i < n; ++i)
     {
-        printf("%f ", src[i]);
+        //printf("%f ", src[i]);
         dst[i] = (src[i] > th) ? 1 : 0;
     }
-    printf("\n");
+    //printf("\n");
 }
 
 struct net net_init(size_t n_layer, size_t *n_neuron_per_layer)
@@ -140,8 +140,6 @@ double net_error(struct net nwk, double *desired)
         struct layer *cur = &nwk.layers[layer];
         struct layer *prev = &nwk.layers[layer-1];
 
-        //printf("-[dw %lu]-\n", layer);
-
         for (size_t c = 0; c < cur->n_neuron; ++c) {
             cur->bias[c] += LEARNING * cur->err[c];
 
@@ -150,12 +148,8 @@ double net_error(struct net nwk, double *desired)
                 double dw = LEARNING * cur->err[c] * prev->out[p];
                 cur->w[index] += dw + MOMENTUM * cur->prev_dw[index];
                 cur->prev_dw[index] = dw;
-
-                //printf("%f ", dw);
             }
-            //printf("\n");
         }
-        //printf("-[END %lu]-\n", layer);
     }
 
     return global_error;
@@ -263,13 +257,13 @@ void layer_init(struct layer *l, size_t n_neuron, size_t w_per_neuron)
 
         for (size_t i = 0; i < n_neuron;  ++i) {
             l->bias[i] = -1. + 2. * ((double)rand() / RAND_MAX);
-            printf("bias: %f\tw:", l->bias[i]);
+            //printf("bias: %f\tw:", l->bias[i]);
 
             for (size_t j = 0; j < w_per_neuron; ++j) {
                 l->w[get_w(l, i, j)] = -1. + 2. * ((double)rand() / RAND_MAX);
-                printf("%f ", l->w[get_w(l,i,j)]);
+                //printf("%f ", l->w[get_w(l,i,j)]);
             }
-            printf("\n");
+            //printf("\n");
         }
     } else {
         l->w = NULL;
