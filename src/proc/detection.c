@@ -1,75 +1,182 @@
 #include "detection.h"
 
-static
-void trans_RLSA(uchar *tab, int size, int c)
+vect y_line;
+vect hist_y;
+vect hist_x;
+coor *charact;
+int charact_length = 0;
+int number_of_lines = 0;
+
+static inline int get_x(t_img_desc * img, int index)
 {
-    int count;
-    for (int i = 0; i < size; ++i) {
-        if (tab[i] == 0) {
-            count = 1;
+    return (index % (img->x));
+}
 
-            while(i+count < size && tab[i+count] == 0)
-                ++count;
+static
+void init_hist(t_img_desc * img)
+{
+    hist_x.length = img->x;
+    hist_y.length = img->y;
+    hist_x.element = calloc(hist_x.length, sizeof(int));
+    assert(hist_x.element);
+    hist_y.element = calloc(hist_y.length, sizeof(int));
+    assert(hist_y.element);
 
-            if (count > c) {
-                while (count >= 0) {
-                    tab[i+count] = 0;
-                    --count;
-                }
+    y_line.length = img->y;
+    y_line.element = calloc(y_line.length, sizeof(int));
+    assert(y_line.element);
+}
+
+static
+void init_coordinate(t_img_desc * img)
+{
+    charact = malloc(sizeof(coor) * (y_line.length / 2) * img->x);
+    assert(charact);
+}
+
+static
+void make_hist_y(t_img_desc * img)
+{
+    for (int i = 0; i < img->x * img->y; i++) {
+        if (img->data[i] == 0) {
+            hist_y.element[i / img->x] += 1;
+        }
+    }
+}
+
+static
+void get_y_line()
+{
+    int i = 0, j = 0;
+
+    while (i < hist_y.length) {
+        if (hist_y.element[i] > 0) {
+            y_line.element[j] = i;
+            j++;
+            number_of_lines++;
+            while (hist_y.element[i] > 0) {
+                i++;
             }
-            else {
-                while (count >= 0) {
-                    tab[i+count] = 255;
-                    --count;
-                }
+            y_line.element[j] = i - 1;
+            j++;
+        }
+        i++;
+    }
+    y_line.length = j;
+}
+
+static
+void set_line(t_img_desc * img)
+{
+    for (int i = 0; i < img->x * img->y; i++) {
+        for (int j = 0; j < (y_line.length); j++) {
+            if (y_line.element[j] == i / img->x)
+                img->data[i] = 200;
+        }
+    }
+}
+
+static
+void make_hist_x(t_img_desc * img)
+{
+    int x = img->x;
+    hist_x.length = y_line.length * img->x;
+    hist_x.element = calloc(hist_x.length, sizeof(int));
+    assert(hist_x.element);
+
+    for (int i = 0; i < img->x * img->y; i++) {
+        for (int j = 0; j < (y_line.length); j += 2) {
+            if (i / img->x >= y_line.element[j] &&
+                    i / img->x <= y_line.element[j + 1]) {
+                if (img->data[i] == 0)
+                    hist_x.element[(j * x) + i - ((i / x) * x)] += 1;
             }
         }
     }
 }
 
-//Function that discriminates text and blocks of img
-void RLSA(t_img_desc *img, int i, int j)
+static
+void get_coordinate(t_img_desc * img)
 {
-    uchar *tab = malloc(sizeof(char) * img->x);
-    if (!tab)
-        exit(EXIT_FAILURE);
+    int i = 0, j = 0, x = img->x, y_min, y_max;
 
-    uchar *tmp = malloc(sizeof(char) * img->x * img->y);
-    if (!tmp) {
-        free(tab);
-        exit(EXIT_FAILURE);
+    while (i < hist_x.length) {
+        if (hist_x.element[i] > 0) {
+            y_min = i / x;
+            y_max = y_min + 1;
+            charact[j].x_min = get_x(img, i);
+            charact[j].y_min = y_line.element[y_min];
+            charact[j].y_max = y_line.element[y_max];
+            while (hist_x.element[i] > 0) {
+                i++;
+            }
+            charact[j].x_max = get_x(img, i - 1);
+            j++;
+        }
+        i++;
+    }
+    charact_length = j;
+}
+
+static
+void set_char(t_img_desc * img)
+{
+    int x_min, y_min, x_max, y_max, start, end;
+    for (int i = 0; i < charact_length; i++) {
+        x_min = charact[i].x_min;
+        x_max = charact[i].x_max;
+        y_min = charact[i].y_min;
+        y_max = charact[i].y_max;
+
+        for (; y_min < y_max; y_min++) {
+            start = xytoi(x_min, y_min, img);
+            end = xytoi(x_max, y_min, img);
+            img->data[start] = 200;
+            img->data[end] = 200;
+        }
+    }
+}
+
+coor *detect(t_img_desc * img, size_t *length)
+{
+    init_hist(img);
+    make_hist_y(img);
+    get_y_line();
+    set_line(img);
+    make_hist_x(img);
+    init_coordinate(img);
+    get_coordinate(img);
+    set_char(img);
+    printf("There is %d lines and %d characts detected\n",
+            number_of_lines, charact_length);
+
+    *length = charact_length;
+    return charact;
+}
+
+t_img_desc *get_data(t_img_desc * img, coor c)
+{
+    assert(img->comp == 1);
+
+    int w = c.x_max - c.x_min;
+    int h = c.y_max - c.y_min;
+
+    t_img_desc *new = malloc(sizeof(t_img_desc));
+    assert(new);
+
+    new->x = w;
+    new->y = h;
+    new->comp = 1;
+
+    new->data = malloc(sizeof(char) * new->x * new->y);
+    assert(new->data);
+
+    for (int i = 0; i < new->x; ++i) {
+        for (int j = 0; j < new->y; ++j) {
+            new->data[xytoi(i, j, new)] =
+                img->data[xytoi(c.x_min + i, c.y_min + j, img)];
+        }
     }
 
-    for (int row = 0; row < img->y; ++row) {
-        for (int x = 0; x < img->x; ++x)
-            tab[x] = img->data[row * img->x + x];
-
-        trans_RLSA(tab, img->x, i);
-
-        for (int x = 0; x < img->x; ++x)
-            tmp[row * img->x + x] = tab[x];
-    }
-    tab = malloc(sizeof(char) * img->y);
-    //uchar *ptr = realloc(tab, sizeof(char) * img->y);
-    //if (!ptr) {
-    //    free(tab);
-    //    free(tmp);
-    //    exit(EXIT_FAILURE);
-    //}
-    //tab = ptr;
-
-    for (int col = 0; col < img->x; ++col) {
-        for (int y = 0; y < img->y; ++y)
-            tab[y] = img->data[col + img->x * y];
-
-        trans_RLSA(tab, img->y, j);
-
-        for (int y = 0; y < img->y; ++y)
-            tmp[col + img->x * y] = (!tmp[col + img->x *y] 
-                    && !tab[y]) ? 0 : 255;
-    }
-
-    free(tab);
-    free(img->data);
-    img->data = tmp;
+    return new;
 }

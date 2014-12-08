@@ -10,8 +10,7 @@ const t_img_desc T_IMG_DESC_DEFAULT = {
 t_img_desc* load_image(char* filename, int comp)
 {
     t_img_desc *img = malloc(sizeof(t_img_desc));
-    if (!img)
-        exit(EXIT_FAILURE);
+    assert(img);
 
     *img = T_IMG_DESC_DEFAULT;
     img->data = stbi_load(filename, &(img->x), &(img->y), &(img->comp), comp);
@@ -43,8 +42,7 @@ int grey2RGB(t_img_desc* img)
         return EXIT_FAILURE;
 
     uchar *ptr = realloc(img->data, sizeof(char) * img->x * img->y * 3);
-    if (!ptr)
-        return EXIT_FAILURE;
+    assert(ptr);
 
     for (size_t i = (img->x * img->y) - 1; i != 0; --i) {
         ptr[3 * i] = ptr[i];
@@ -60,10 +58,7 @@ int grey2RGB(t_img_desc* img)
 uint* histogram(t_img_desc* img)
 {
     uint *h = calloc(256, sizeof(int));
-    if (!h) {
-        free_image(img);
-        exit(EXIT_FAILURE);
-    }
+    assert(h);
 
     uchar *ptr = img->data;
     const uchar *end = &img->data[(img->x * img->y * img->comp) - 1];
@@ -79,10 +74,7 @@ uint* histogram(t_img_desc* img)
 uint* histogram_fast(t_img_desc* img)
 {
     uint *h = malloc(sizeof(int) * 256);
-    if (!h) {
-        free_image(img);
-        exit(EXIT_FAILURE);
-    }
+    assert(h);
 
     uchar *ptr = img->data;
     const uchar *end = &img->data[(img->x * img->y * img->comp) - 1];

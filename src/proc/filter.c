@@ -1,7 +1,7 @@
 #include "filter.h"
 
 // Div: 9
-const char mask_median[] =
+const char mask_avg[] =
 {
     1, 1, 1,
     1, 1, 1,
@@ -25,18 +25,6 @@ const char mask_sharpening[] =
     -1, 17, -1,
     -1, -1, -1
 };
-
-static inline
-int min(int a, int b)
-{
-    return (a < b) ? a : b;
-}
-
-static inline
-int max(int a, int b)
-{
-    return (a > b) ? a : b;
-}
 
 static
 int coor(int x, int y, int i, int j, size_t n, t_img_desc *img)
@@ -62,9 +50,8 @@ int coor(int x, int y, int i, int j, size_t n, t_img_desc *img)
 
 void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
 {
-    uchar *tmp = calloc(img->x * img->y * img->comp, sizeof(char));
-    if (!tmp)
-        exit(EXIT_FAILURE);
+    uchar *tmp = malloc(sizeof(char) * img->x * img->y * img->comp);
+    assert(tmp);
 
     for (int k = 0; k < img->comp; ++k) {
         for(int y = 0; y < img->y; ++y) {
@@ -79,6 +66,52 @@ void filter_mask(t_img_desc *img, const char *mask, int sum_mask, int n)
                 }
 
                 tmp[xytoi(x, y, img) + k] = max(0, min(255, sum / sum_mask));
+            }
+        }
+    }
+
+    free(img->data);
+    img->data = tmp;
+}
+
+static
+void tab_sort(int *tab, int lenght)
+{
+    int x, j;
+
+    for(int i = 0; i < lenght; ++i) {
+        x = tab[i];
+        j = i;
+
+        while(j > 0 && tab[j -1] > x) {
+            tab[j] = tab[j - 1];
+            j = j - 1;
+        }
+
+        tab[j] = x;
+    }
+}
+
+void filter_median(t_img_desc *img)
+{
+    uchar *tmp = malloc(sizeof(char) * img->x * img->y * img->comp);
+    assert(tmp);
+
+    for(int k = 0; k < img->comp; ++k) {
+        for(int x = 0; x < img->x; ++x) {
+            for(int y = 0; y < img->y; ++y) {
+                int med;
+                int tab[9];
+
+                for(int i = 0; i < 3; ++i) {
+                    for( int j = 0; j < 3; ++j) {
+                        tab[i+3*j] = img->data[coor(x, y, i, j, 3, img) + k];
+                    }
+                }
+
+                tab_sort(tab, 9);
+                med = tab[4];
+                tmp[xytoi(x, y, img) + k] = med;
             }
         }
     }

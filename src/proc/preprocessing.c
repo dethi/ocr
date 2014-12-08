@@ -71,20 +71,19 @@ int thresold(uint *h, size_t size)
 
 void grey_scale(t_img_desc* img)
 {
-    if (img->comp != 3)
+    if (img->comp < 3)
         return;
 
-    for (int i = 0; i < img->x * img->y; i++) {
-        img->data[i] = grey(img->data[(i * 3)], img->data[(i * 3) + 1],
+    // (i*3) because img->comp suck with BMP img
+    for (int i = 0; i < img->x * img->y; ++i) {
+        img->data[i] = grey(img->data[(i * 3)],
+                img->data[(i * 3) + 1],
                 img->data[(i * 3) + 2]);
     }
 
     // make the array shorter
     uchar *tmp = realloc(img->data, sizeof(char) * img->x * img->y);
-    if (!tmp) {
-        free_image(img);
-        exit(EXIT_FAILURE);
-    }
+    assert(tmp);
 
     img->data = tmp;
     img->comp = 1;

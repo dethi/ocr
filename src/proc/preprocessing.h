@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
+#include <assert.h>
 #include "../stb_image/stb_image_ext.h"
 
 void grey_scale(t_img_desc* tab);
