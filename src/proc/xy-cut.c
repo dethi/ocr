@@ -32,7 +32,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the last line with at least 1 black pixel
         while (aux < y+Y && tmp[aux - y] < 255 * X)
             ++aux;
-        if (aux > i) {
+        if (aux > i && aux < y+Y) {
             VXYCut(data, X, aux - i, min, x, i, l);
         }
         i = aux;
@@ -71,7 +71,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         //Goes to the last column with at least 1 black pixel
         while (aux < x+X && tmp[aux - x] < 255 * Y)
             ++aux;
-        if (aux > i) {
+        if (aux > i && aux < x+X) {
             HXYCut(data, aux - i, Y, min, i, y, l);
         }
         i = aux;
