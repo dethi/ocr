@@ -22,8 +22,7 @@ typedef struct {
     gpointer user_data;
 } SGlobalData;
 
-gchar txt_ocr[] =
-    "You won't get anything you little bastard, you didn't connect me to the neural network ! >:D";
+gchar txt_ocr[] = "Nothing.";
 gchar txt_saved[2048];
 gchar img_name[2048];
 
@@ -35,7 +34,7 @@ GtkSpellChecker *spell = NULL;
 
 void callback_about(GtkMenuItem * menuitem, gpointer user_data);
 void get_img(GtkFileChooser * wigdet, gpointer user_data);
-void *thread_processing(void *arg);
+void processing();
 void ocr_text(GtkButton * widget, gpointer user_data);
 void save_text(GtkButton * widget, gpointer user_data);
 void save_dial(GtkButton * widget, gpointer user_data);
