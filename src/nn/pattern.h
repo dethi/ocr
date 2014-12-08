@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "../stb_image/stb_image_ext.h"
+#include "../stb_image/stb_image_resize.h"
 #include "nn.h"
 
 void gen_input(t_img_desc *img, double *dst);

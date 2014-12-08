@@ -1,6 +1,6 @@
-CC=gcc
+CC=clang
 LD=$(CC)
-CFLAGS=-std=c99 -Wall -Wextra -Werror -O0 -g
+CFLAGS=-std=c99 -Wall -Wextra -Werror -Wno-unused-parameter -O0 -g
 LDLIBS=-lm
 
 ifndef

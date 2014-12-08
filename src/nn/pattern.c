@@ -156,6 +156,19 @@ void train_nn(struct net nwk, struct training t)
 char ask_nn(struct net nwk, t_img_desc *img)
 {
     assert(img->comp == 1);
+
+    if (img->x != 20 || img->y != 20) {
+        uchar *ptr = malloc(sizeof(char) * 20 * 20);
+        stbir_resize_uint8(img->data, img->x, img->y, 0, ptr, 20, 20, 0, 1);
+
+        free(img->data);
+
+        img->data = ptr;
+        img->x = 20;
+        img->y = 20;
+        img->comp = 1;
+    }
+
     double in[400];
     gen_input(img, in);
 
