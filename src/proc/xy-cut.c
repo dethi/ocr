@@ -24,7 +24,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
     size_t *tmp = getTab(data, (char)0, X, Y, x, y, calloc(Y, sizeof(size_t)));
     size_t i = y, aux;
     while (i < y+Y) {
-        //printf("[INFO] ENtering while loop #%zu\n", tmp[i-y]);
+        //printf("[INFO] Entering while loop #%zu\n", tmp[i-y]);
         //Goes to the first line with at least 1 black pixel
         while (i < y+Y && tmp[i - y] == 255 * X)
             ++i;
@@ -82,7 +82,8 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 {
     printf("[INFO] listAdd()\n");
-    l = malloc(sizeof(struct coorList));
+    struct coorList *aux = malloc(sizeof(struct coorList));
+    l->next = aux;
     l = l->next;
     l->data = data;
     l->X = X;

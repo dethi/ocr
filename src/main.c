@@ -83,10 +83,9 @@ void processing()
     printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     filter_median(img);
 
-    /*
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
-    VXYCut(img->data, (size_t)img->x, (size_t)img->y, 15, 0, 0, l);
+    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 15, 0, 0, l);
     printf("[INFO] Detection passed");
     free(img->data);
     img->data = l->data;
@@ -99,7 +98,6 @@ void processing()
         l = aux;
     }
     free(aux);
-    */
 
     write_image("/tmp/out_img.png", img);
     printf("[INFO] Write /tmp/img_out.png\n");
