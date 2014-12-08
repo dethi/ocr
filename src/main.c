@@ -85,7 +85,7 @@ void processing()
 
     printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = listInit();
-    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l);
+    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l, (size_t)img->x);
     printf("[INFO] Detection passed\n");
     printf("[INFO] %zu : %zu\n", l->next->X, l->next->Y);
     for (size_t i = 0; i < l->next->X; ++i) {
