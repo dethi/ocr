@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-typedef unsigned char uchar;
+#include "../stb_image/stb_image_ext.h"
 
 struct coorList {
     size_t X;
@@ -14,5 +13,6 @@ struct coorList {
 };
 
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y);
+void reverse(struct coorList *f);
 
 #endif

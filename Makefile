@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 LD=$(CC)
 CFLAGS=-std=c99 -Wall -Wextra -Werror -O3
 LDLIBS=-lm -lpthread

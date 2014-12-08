@@ -11,3 +11,22 @@ void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
     l->X = X;
     l->Y = Y;
 }
+
+void reverse(struct coorList *l)
+{
+    struct coorList *aux = malloc(sizeof(struct coorList));
+    struct coorList *tmp = aux;
+    struct coorList *h = l;
+    while (h->next != NULL) {
+        while (h->next != NULL) {
+            h = h->next;
+        }
+        if (h->X != 0 && h->Y != 0) {
+            aux->next = h;
+            aux = aux->next;
+        }
+        free(h);
+        h = l;
+    }
+    l->next = tmp;
+}
