@@ -4,6 +4,7 @@ struct coorList* listInit()
 {
     struct coorList *l = malloc(sizeof(struct coorList));
     l->next = NULL;
+    l->data = NULL;
     return l;
 }
 
@@ -26,7 +27,7 @@ void listReverse(struct coorList *l)
     while (l->next != NULL) {
         l = l->next;
 
-        if (l->X == 0 || l->Y == 0) {
+        if (l->X < 3 || l->Y < 3) {
             struct coorList *tmp = l;
             l = l->next;
             free(tmp->data);
