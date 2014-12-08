@@ -7,14 +7,16 @@ int main()
     size_t n = 3;
     size_t desc_layers[] = { 2, 2, 1 };
 
-    struct training t = { NULL, 4, 2, 1 };
-    double sets[] = {
-        0, 0, 0,
-        0, 1, 1,
-        1, 0, 1,
-        1, 1, 0
+    struct training t = { NULL, NULL, 4, 2, 1 };
+    double in[] = {
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
     };
-    t.sets = sets;
+    double out[] = { 0, 1, 1, 0 };
+    t.in = in;
+    t.out = out;
 
     /* Test training */
     struct net nwk = net_init(n, desc_layers);

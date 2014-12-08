@@ -27,7 +27,7 @@ void cpyresult(double *dst, const double *src, size_t n, double th)
     printf("brut out: ");
     for (size_t i = 0; i < n; ++i)
     {
-        printf("%f \t", src[i]);
+        printf("%f ", src[i]);
         dst[i] = (src[i] > th) ? 1 : 0;
     }
     printf("\n");
@@ -60,20 +60,22 @@ void net_train(struct net nwk, struct training t)
         error = 0;
 
         for (size_t i = 0; i < t.n_set; ++i) {
-            net_compute(nwk, &t.sets[i * (t.n_in + t.n_out)]);
+            net_compute(nwk, get_in(&t, i));
 
             cpyresult(results, nwk.layers[nwk.n_layer - 1].out, t.n_out, 0.5);
-            error += net_error(nwk, &t.sets[t.n_in + i * (t.n_in + t.n_out)]);
+            error += net_error(nwk, get_out(&t, i));
 
             printf("In: ");
+            double *ptr = get_in(&t, i);
             for (size_t j = 0; j < t.n_in; ++j)
-                printf("%.2f ", t.sets[j + i * (t.n_in + t.n_out)]);
+                printf("%.2f ", ptr[j]);
             printf("\nOut: ");
             for (size_t j = 0; j < t.n_out; ++j)
                 printf("%.2f ", results[j]);
             printf("\nDesired: ");
+            ptr = get_out(&t, i);
             for (size_t j = 0; j < t.n_out; j++)
-                printf("%0.2f ", t.sets[(j + t.n_in) + i * (t.n_in + t.n_out)]);
+                printf("%0.2f ", ptr[j]);
             printf("\n---\n");
         }
 
@@ -95,6 +97,14 @@ void net_compute(struct net nwk, double *inputs)
 
     for (size_t i = 1; i < nwk.n_layer; ++i)
         layer_calc_output(&nwk.layers[i], nwk.layers[i-1].out);
+}
+
+double* net_output(struct net nwk)
+{
+    struct layer *l = &nwk.layers[nwk.n_layer-1];
+    for (size_t i = 0; i < l->n_neuron; ++i)
+        l->out[i] = (l->out[i] > 0.5) ? 1 : 0;
+    return l->out;
 }
 
 double net_error(struct net nwk, double *desired)
@@ -289,4 +299,13 @@ void layer_free(struct layer *l)
     free(l->bias);
     free(l->err);
     free(l->out);
+}
+
+void training_free(struct training t)
+{
+    free(t.in);
+    free(t.out);
+    t.n_set = 0;
+    t.n_in = 0;
+    t.n_out = 0;
 }
