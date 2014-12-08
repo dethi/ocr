@@ -4,6 +4,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
     printf("[INFO] HXYCut launched %zu : %zu\n", X, Y);
+    printf("[INFO] HXYCut params %zu : %zu\n", x, y);
     if ( X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -23,12 +24,13 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
     size_t *tmp = getTab(data, (char)0, X, Y, x, y, calloc(Y, sizeof(size_t)));
     size_t i = y, aux;
     while (i < y+Y) {
+        //printf("[INFO] ENtering while loop #%zu\n", tmp[i-y]);
         //Goes to the first line with at least 1 black pixel
-        while (i < y+Y && tmp[i] == 255 * Y)
+        while (i < y+Y && tmp[i - y] == 255 * X)
             ++i;
         aux = i;
         //Goes to the last line with at least 1 black pixel
-        while (aux < y+Y && tmp[aux] < 255 * Y)
+        while (aux < y+Y && tmp[aux - y] < 255 * X)
             ++aux;
         if (aux > i) {
             VXYCut(data, X, aux - i, min, x, i, l);
@@ -42,6 +44,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
         struct coorList *l)
 {
     printf("[INFO] VXYCut launched %zu : %zu\n", X, Y);
+    printf("[INFO] VXYCut params %zu : %zu\n", x, y);
     if (X < min && Y < min) {
         uchar *carac = malloc(sizeof(uchar) * X * Y);
         size_t i = 0, j = 0;
@@ -62,11 +65,11 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,\
     size_t i = x, aux;
     while (i < x+X) {
         //Goes to the first column with at least 1 black pixel
-        while (i < x+X && tmp[i] == 255 * X)
+        while (i < x+X && tmp[i - x] == 255 * Y)
             ++i;
         aux = i;
         //Goes to the last column with at least 1 black pixel
-        while (aux < x+X && tmp[aux] < 255 * X)
+        while (aux < x+X && tmp[aux - x] < 255 * Y)
             ++aux;
         if (aux > i) {
             HXYCut(data, aux - i, Y, min, i, y, l);
@@ -98,7 +101,7 @@ size_t* getTab(uchar* img, char vert, size_t X, size_t Y, size_t x, size_t y,\
             ++j;
         }
     }
-    if (!vert) {
+    if (vert) {
         for (i = 0; i < X; ++i) {
             for (j = 0; j < Y; ++j)
                 tmp[i] += (size_t)aux[i][j];
