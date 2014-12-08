@@ -21,6 +21,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         listAdd(l, carac, X, Y);
         return;
     }
+
     size_t *tmp = getTab(data, (char)0, X, Y, x, y, calloc(Y, sizeof(size_t)));
     size_t i = y, aux;
     while (i < y+Y) {
@@ -61,6 +62,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         listAdd(l, carac, X, Y);
         return;
     }
+
     size_t *tmp = getTab(data, (char)1, X, Y, x, y, calloc(X, sizeof(size_t)));
     size_t i = x, aux;
     while (i < x+X) {

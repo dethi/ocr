@@ -12,7 +12,10 @@ struct coorList {
     struct coorList *next;
 };
 
+struct coorList* listInit();
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y);
-void reverse(struct coorList *f);
+void listReverse(struct coorList *l);
+int listLen(struct coorList *l);
+void listFree(struct coorList *l);
 
 #endif

@@ -84,20 +84,21 @@ void processing()
     filter_median(img);
 
     printf("[INFO] First call of HXYCut()\n");
-    struct coorList *l = malloc(sizeof(struct coorList));
+    struct coorList *l = listInit();
     HXYCut(img->data, (size_t)img->x, (size_t)img->y, 25, 0, 0, l);
     printf("[INFO] Detection passed\n");
-    free(img->data);
-    img->data = l->data;
-    img->x = l->X;
-    img->y = l->Y;
-    /*struct coorList *aux = NULL;
-    while (l->next != NULL) {
-        aux = l->next;
-        free(l);
-        l = aux;
-    }
-    free(aux);*/
+    printf("[INFO] (Before) List len: %d\n", listLen(l));
+    listReverse(l);
+    printf("[INFO] (After) List len: %d\n", listLen(l));
+    //listFree(l);
+    //printf("[INFO] Free\n");
+
+    t_img_desc *new = malloc(sizeof(t_img_desc));
+    new->data = l->next->data;
+    new->x = l->next->X;
+    new->y = l->next->Y;
+    new->comp = 1;
+    write_image("out_img.png", new);
 
     write_image("/tmp/out_img.png", img);
     printf("[INFO] Write /tmp/img_out.png\n");

@@ -1,7 +1,7 @@
 CC=clang
 LD=$(CC)
 CFLAGS=-std=c99 -Wall -Wextra -Werror -O3
-LDLIBS=-lm -lpthread
+LDLIBS=-lm
 
 # GTK
 CFLAGS+=`pkg-config gtk+-3.0 --cflags` \

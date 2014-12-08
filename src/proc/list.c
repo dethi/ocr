@@ -1,32 +1,56 @@
 #include "list.h"
 
+struct coorList* listInit()
+{
+    struct coorList *l = malloc(sizeof(struct coorList));
+    l->next = NULL;
+    return l;
+}
+
 void listAdd(struct coorList *l, uchar *data, size_t X, size_t Y)
 {
-    printf("[INFO] listAdd()\n");
     struct coorList *aux = malloc(sizeof(struct coorList));
     aux->next = l->next;
     l->next = aux;
-    l = l->next;
-    l->data = data;
-    l->X = X;
-    l->Y = Y;
+    aux->data = data;
+    aux->X = X;
+    aux->Y = Y;
 }
 
-void reverse(struct coorList *l)
+void listReverse(struct coorList *l)
 {
-    struct coorList *aux = malloc(sizeof(struct coorList));
-    struct coorList *tmp = aux;
-    struct coorList *h = l;
-    while (h->next != NULL) {
-        while (h->next != NULL) {
-            h = h->next;
-        }
-        if (h->X != 0 && h->Y != 0) {
-            aux->next = h;
-            aux = aux->next;
-        }
-        free(h);
-        h = l;
+    struct coorList *new = malloc(sizeof(struct coorList));
+    new->next = NULL;
+    struct coorList *ptr = l;
+
+    while (l->next != NULL) {
+        l = l->next;
+
+        if (l->X == 0 || l->Y == 0) {
+            struct coorList *tmp = l;
+            l = l->next;
+            free(tmp->data);
+            free(tmp);
+        } else
+            listAdd(new, l->data, l->X, l->Y);
     }
-    l->next = tmp;
+
+    free(ptr);
+}
+
+int listLen(struct coorList *l)
+{
+    if (l->next)
+        return 1 + listLen(l->next);
+    else
+        return 0;
+}
+
+void listFree(struct coorList *l)
+{
+    if (l->next)
+        listFree(l->next);
+
+    free(l->data);
+    free(l);
 }
