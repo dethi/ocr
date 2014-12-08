@@ -1,22 +1,20 @@
 #include "xy-cut.h"
 
 void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
-        struct coorList *l)
+        struct coorList *l, size_t GX)
 {
     //printf("[INFO] HXYCut launched %zu : %zu\n", X, Y);
     //printf("[INFO] HXYCut params %zu : %zu\n", x, y);
 
     if ( X < min && Y < min) {
-        uchar *carac = malloc(sizeof(uchar) * X * Y);
+        uchar *carac = malloc(X*Y* sizeof(uchar));
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
-            carac[i + X*j] = data[(x+i) + X*(y+j)];
+            carac[i + X*j] = data[(x+i) + GX*(y+j)];
+            ++i;
             if (i == X) {
                 ++j;
                 i = 0;
-            }
-            else {
-                ++i;
             }
         }
         listAdd(l, carac, X, Y);
@@ -35,7 +33,7 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         while (aux < y+Y && tmp[aux - y] < 255 * X)
             ++aux;
         if (aux > i && aux < y+Y) {
-            VXYCut(data, X, aux - i, min, x, i, l);
+            VXYCut(data, X, aux - i, min, x, i, l, GX);
         }
         i = aux;
     }
@@ -43,22 +41,20 @@ void HXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
 }
 
 void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
-        struct coorList *l)
+        struct coorList *l, size_t GX)
 {
     //printf("[INFO] VXYCut launched %zu : %zu\n", X, Y);
     //printf("[INFO] VXYCut params %zu : %zu\n", x, y);
 
     if (X < min && Y < min) {
-        uchar *carac = malloc(sizeof(uchar) * X * Y);
+        uchar *carac = malloc(X*Y* sizeof(uchar));
         size_t i = 0, j = 0;
         while (i<X && j<Y) {
-            carac[i + X*j] = data[(x+i) + X*(y+j)];
+            carac[i + X*j] = data[(x+i) + GX*(y+j)];
+            ++i;
             if (i == X) {
                 ++j;
                 i = 0;
-            }
-            else {
-                ++i;
             }
         }
         listAdd(l, carac, X, Y);
@@ -76,7 +72,7 @@ void VXYCut (uchar *data, size_t X, size_t Y, size_t min, size_t x, size_t y,
         while (aux < x+X && tmp[aux - x] < 255 * Y)
             ++aux;
         if (aux > i && aux < x+X) {
-            HXYCut(data, aux - i, Y, min, i, y, l);
+            HXYCut(data, aux - i, Y, min, i, y, l, GX);
         }
         i = aux;
     }
