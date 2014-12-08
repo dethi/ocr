@@ -12,22 +12,69 @@ struct coorList {
     uchar *data;
     struct coorList *next;
 };
+/*
+typedef struct s_List List;
+struct s_List {
+    List *next;
+    void *data;
+};
 
-//Apply RLSA with i and j parameters to img picture
-//FIX ME (Full of buggs)
-void RLSA(t_img_desc *img, int i, int j);
+struct list new_list(void *data) {
+    List *list = malloc(sizeof(list));
+    if(list) {
+        list->data = data;
+        list->next = NULL;
+    }
+}
 
-//Returns the X coor of the first character in a line
-size_t charX(t_img_desc *img, struct coorList *ld);
+struct Cara {
+    size_t x;
+    size_t y;
+    size_t height;
+    size_t width;
+};
 
-//Returns the length of the character located at begin in line ld
-size_t charLength(t_img_desc *img, struct coorList *ld, size_t begin);
+struct Line {
+    size_t x;
+    size_t y;
+    size_t height;
+    size_t width;
+    struct List *Cara lcara;
+};
 
-//Returns a coorList of all lines in RLSAed img
-//FIX ME (Detect titles as normal lines)
-struct coorList* getLines(t_img_desc *img);
+struct Bloc {
+    size_t x;
+    size_t y;
+    size_t height;
+    size_t widthi;
+    struct List *Line lline;
+}
 
-//Used for getLines
-void dimLine(struct coorList *l, t_img_desc *img, size_t i, size_t j);
+struct Cara new_cara() {
+    struct Cara cara = malloc(sizeof(struct Cara));
+    cara->x = 0;
+    cara->y = 0;
+    cara->height = 0;
+    cara->widtht = 0;
+    return cara;
+}
 
+struct Line new_line() {
+    struct Line line = malloc(sizeof(struct Line));
+    line->x = 0;
+    line->y = 0;
+    line->width = 0;
+    line->height = 0;
+    line->lcara = NULL;
+}
+
+struct Bloc new_bloc() {
+    struct Bloc bloc = malloc(sizeof(struct Bloc));
+    bloc->x = 0;
+    bloc->y = 0;
+    bloc->width = 0;
+    bloc->height = 0;
+    bloc->lline = NULL;
+}
+*/
 #endif

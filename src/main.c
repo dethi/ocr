@@ -64,52 +64,31 @@ void get_img(GtkFileChooser * widget, gpointer user_data)
             gtk_builder_get_object(data->builder, "label3"));
     gtk_label_set_text(label_img, img_name);
 
+    int w = gtk_widget_get_allocated_width((GtkWidget *)image);
+    int h = gtk_widget_get_allocated_height((GtkWidget *)image);
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(
-            img_name, 680, 500, NULL);
+            img_name, w, h, NULL);
     gtk_image_set_from_pixbuf(image, pixbuf);
 }
 
-// image processing in a different thread
-void *thread_processing(void *arg)
+/* Process image */
+void processing()
 {
     t_img_desc *img = load_image(img_name, 3);
-
-    printf("[INFO] Load %s ( %ix%i -- %i)\n", img_name, img->x, img->y,
-	   img->comp);
-
-    grey_scale(img);
-    filter_median(img);
-    binarize_otsu(img);
-
-    write_image("out_img.png", img);
-    printf("[INFO] Write img_out.png\n");
-
-    free_image(img);
-
-    pthread_exit(NULL);
-}
-
-// print the text produce by the ocr (actually just print "test" for now)
-void ocr_text(GtkButton * widget, gpointer user_data)
-{
-    /* Process image
-     * img_name = path to image
-     * txt_ocr = text that have to be processed
-     */
-
-    t_img_desc *img = load_image(img_name, 3);
-    printf("[INFO] Load %s (%ix%i -- %i)\n", img_name, img->x, img->y,
-	   img->comp);
+    printf("[INFO] Load %s (%ix%i -- %i)\n", img_name,
+            img->x, img->y, img->comp);
 
     grey_scale(img);
     binarize_otsu(img);
-
     printf("[INFO] Rotation of %.2f degree\n", rotate_img(img));
     filter_median(img);
 
+    /*
+    printf("[INFO] First call of HXYCut()\n");
     struct coorList *l = malloc(sizeof(struct coorList));
-    HXYCut(img->data, (size_t)img->x, (size_t)img->y, 10, 0, 0, l);
-    free(img);
+    VXYCut(img->data, (size_t)img->x, (size_t)img->y, 15, 0, 0, l);
+    printf("[INFO] Detection passed");
+    free(img->data);
     img->data = l->data;
     img->x = l->X;
     img->y = l->Y;
@@ -120,17 +99,30 @@ void ocr_text(GtkButton * widget, gpointer user_data)
         l = aux;
     }
     free(aux);
+    */
 
-    write_image("out_img.png", img);
-    printf("[INFO] Write img_out.png\n");
+    write_image("/tmp/out_img.png", img);
+    printf("[INFO] Write /tmp/img_out.png\n");
     free_image(img);
+}
 
-    /* End process image */
+// print the text produce by the ocr (actually just print "test" for now)
+void ocr_text(GtkButton * widget, gpointer user_data)
+{
+    processing();
 
-    // Multithreading, not used yet.
-    //pthread_t thread;
-    //pthread_create(&thread, NULL, thread_processing, NULL);
+    /* Update image view */
+    SGlobalData *data = (SGlobalData*) user_data;
+        gtk_builder_get_object(data->builder, "img_loader");
+    GtkImage *image = (GtkImage *)
+        gtk_builder_get_object(data->builder, "image1");
+    int w = gtk_widget_get_allocated_width((GtkWidget *)image);
+    int h = gtk_widget_get_allocated_height((GtkWidget *)image);
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(
+            "/tmp/out_img.png", w, h, NULL);
+    gtk_image_set_from_pixbuf(image, pixbuf);
 
+    /* Update text */
     gtk_text_buffer_set_text(buffer, txt_ocr, strlen(txt_ocr));
 }
 
@@ -143,7 +135,7 @@ void save_dial(GtkButton * widget, gpointer user_data)
     b_save = GTK_BUTTON(
             gtk_builder_get_object(data->builder, "button_save"));
     g_signal_connect_swapped(b_save, "clicked",
-			     (GCallback) gtk_widget_hide, dialog_save);
+            (GCallback) gtk_widget_hide, dialog_save);
 
     gtk_dialog_run(GTK_DIALOG(dialog_save));
     gtk_widget_hide(dialog_save);
