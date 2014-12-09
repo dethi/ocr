@@ -1,6 +1,6 @@
 CC=clang
 LD=$(CC)
-CFLAGS=-std=c99 -Wall -Wextra -Werror -O3
+CFLAGS=-std=c99 -Wall -Wextra -Werror -O3 -DNDEBUG
 LDLIBS=-lm
 
 # GTK
