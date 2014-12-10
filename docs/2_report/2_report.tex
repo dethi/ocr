@@ -268,7 +268,7 @@ Afin de détecter l'angle de rotation des images, nous avons implémenté la tra
 \caption{Espace de Hough}
 \end{figure}
 
-L'algorithme fonctionne suivant le principe suivant. On commence par représenté chaque droite du plan par un couple $(\rho, \theta)$ en coordonnées polaires. On crée ensuite une matrice appelée "acculumateur de Hough" initialisée à 0 qui contiendra les valeurs de $\rho$ et $\theta$. On parcourt ensuite chaque angle de l’intervalle $[0, \pi]$ en calculant à chaque itération une nouvelle valeur de $\rho$ :
+L'algorithme fonctionne suivant le principe suivant. On commence par représenté chaque droite du plan par un couple $(\rho, \theta)$ en coordonnées polaires. On crée ensuite une matrice appelée "acculumateur de Hough" initialisée à 0 qui contiendra les valeurs de $\rho$ et $\theta$. On parcourt ensuite chaque angle de l’intervalle $[0, \pi]$ en calculant à chaque itération une nouvelle valeur de $\rho$ que l'on incrémentera dans la matrice d'accumulation.
 
 \[ \rho = x\cos \left( \theta \right) + y\sin \left( \theta \right) \]
 
@@ -602,9 +602,13 @@ Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
 
 \section{Thibault}
 
-%TODO
+L'informatique me passionne depuis tout petit. C'est donc avec un grand enthousiasme que je me plonge à chaque fois dans un nouveau projet.
 
+Ce nouveau projet m'a permis d'acquérir de nombreuses connaissances algorithmiques en analyse d'image ainsi que sur les réseaux de neurones. C'est d'ailleurs cette deuxième partie qui m'a le plus plu. Je suis très satisfait du travail que j'ai réalisé sur le réseau de neurones, et notamment l'implémentation totalement générique que j'ai réussi à écrire. Je pense même l'extraire du projet pour en faire une bibliothèque dont je pourrai me servir pour d'autre projet.
 
+Cependant, je suis également un petit peu déçu du résultat final. J'aurai bien entendu préféré que l'OCR fonctionne complètement. Mais c'est le jeu. On ne peut pas toujours réussir tout à 100\%.
+
+De plus, malgré ce petit regret, je garderai un très bon souvenir de l'équipe que nous avons formé avec mes camarades. En début d'année nous ne nous connaissions pas pour la plupart, et malgré cela, nous avons réussi à former un groupe soudé qui s'entraide. Je pense que le projet à été bénéfique à tous les membres du groupes.
 
 \section{Ilan}
 
@@ -632,11 +636,9 @@ Même si la finalisation de notre projet n'as pas été à la hauteur de nos att
 
 \chapter{Conclusion}
 
-%TODO
+Le projet est désormais fini. Comme vous avez pu le lire dans ce rapport de projet, nous avons implémenté de nombreux algorithmes. Nous sommes globalement content des fonctionnalités que nous avons réalisées. De plus, ce projet nous a permis d'acquérir de nombreuses connaissances dans différents domaines.
 
-Nous sommes contents des fonctionnalités que nous avons réalisées pour cette première période de travail. Dans l'ensemble, le cahier des charges a été respecté. Mais il reste encore beaucoup de travail à réaliser, notamment au niveau de l'extraction et de la reconnaissance des caractères.
-
-Nous partons confiants pour la suite du projet. En effet, nous avons déjà réaliser pas mal de recherche pour la suite. Il ne nous reste plus qu'à implémenter et comparer les différents algorithmes que nous avons trouvés ces derniers jours.
+Nous repartons cependant tous un petit peu déçu de ne pas avoir réussi à faire fonctionner l'OCR complètement.
 
 \newpage
 \pagenumbering{Roman}
