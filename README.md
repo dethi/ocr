@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/dethi/ocr.svg?token=x9iDKPK5fQNGphzep8jS&branch=develop)](https://magnum.travis-ci.com/dethi/ocr)
+# OCR
 
 Requirements:
     
@@ -14,3 +14,6 @@ Launch the application:
     ```> ./ocr
     ```
 
+More info here: http://www.ohcasert.ovh/
+
+![GTK GUI](/docs/2_report/gui.png)
