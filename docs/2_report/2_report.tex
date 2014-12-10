@@ -11,7 +11,6 @@
 \geometry{top=2.5cm, bottom=2.5cm, left=4.5cm , right=3.5cm}
 \usepackage{graphicx}
 
-
 %%% PACKAGES
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
@@ -68,6 +67,7 @@
   {3.2mm}
 
 \begin{document}
+\lstset{frame=shadowbox, rulesepcolor=\color{lightgray}}
 \renewcommand{\labelitemi}{$\bullet$}
 
 \begin{titlepage}
@@ -260,7 +260,28 @@ Lorsque l'on traite un pixel, nous allons ajouter dans une liste les pixels envi
 
 \subsection{Détection de l'angle de rotation}
 
-\subsection{Rotation de l'image}
+Afin de détecter l'angle de rotation des images, nous avons implémenté la transformé de Hough. Le fonctionnement de cette algorithme est assez simple à comprendre.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{hough.jpg}
+\caption{Espace de Hough}
+\end{figure}
+
+L'algorithme fonctionne suivant le principe suivant. On commence par représenté chaque droite du plan par un couple $(\rho, \theta)$ en coordonnées polaires. On crée ensuite une matrice appelée "acculumateur de Hough" initialisée à 0 qui contiendra les valeurs de $\rho$ et $\theta$. On parcourt ensuite chaque angle de l’intervalle $[0, \pi]$ en calculant à chaque itération une nouvelle valeur de $\rho$ :
+
+\[ \rho = x\cos \left( \theta \right) + y\sin \left( \theta \right) \]
+
+À partir de cette matrice, il est simple de retrouver l'angle du document, car il suffit de trouver la variance maximale parmi toutes les valeurs de $\rho$.
+
+\subsection{Matrice de rotation}
+
+Maintenant que nous connaissons l'angle de rotation de l'image, il nous suffit de calculer la taille optimale de la nouvelle image, puis d'utiliser la matrice de rotation ci-dessous pour appliquer la rotation.
+
+\[ R \left( \theta \right) = \begin{pmatrix}
+   \cos \theta & - \sin \theta \\
+   \sin \theta & \cos \theta 
+\end{pmatrix} \]
 
 \section{Segmentation}
 
@@ -344,8 +365,6 @@ Le processus est répété sur chacune des zones permet ainsi de se rapprocher u
 
 \section{Réseau de neurones}
 
-%TODO : modif structure, enregistrement dans un fichier, apprentissage, resultat
-
 \subsection{Principe de base}
 
 Un réseau de neurones se compose, comme sont nom l'indique, de plusieurs neurones connectés entre eux. Chaque neurone à un ou plusieurs liens entrants et sortants. Ces liens, aussi appelés liaisons, sont affectés par des poids qui permettent de définir l'importance d'une liaison entre deux neurones par rapport à une autre. De plus, on rajoute à cela une fonction d'activation qui définie en fonction des variables d'entrées si un neurone est actif ou non. Le résultat de la fonction d'activation est renvoyé en sortie du neurone. On choisi généralement une fonction d'activation qui renvoie des valeurs entre $[0; 1]$ ou $[-1; 1]$.
@@ -394,7 +413,7 @@ Ensuite on parcours chaque couche du réseau, en partant de la couche de sortie,
 
 \subsubsection{Structure de donnée}
 
-Pour la représentation en mémoire de notre réseau de neurone, nous utilisons trois types différents. Le premier s'appelle $t\_neuron$. C'est celui-ci qui représente un neurone en mémoire. Chaque neurone possède une sortie, un bias (sauf les neurones de la couche d'entrée) et une liste de liens synaptiques.
+Pour la représentation en mémoire de notre réseau de neurone, nous avons d'abord opté pour l'utilisation de trois types différents. Le premier s'appelle $t\_neuron$. C'est celui-ci qui représente un neurone en mémoire. Chaque neurone possède une sortie, un bias (sauf les neurones de la couche d'entrée) et une liste de liens synaptiques.
 
 Le type $t\_connection$ représente un lien. Il possède un poids et deux champs de type $t\_neuron$ représentant les deux neurones reliés par le lien.
 
@@ -402,6 +421,36 @@ Enfin, le type $t\_network$ représente en mémoire notre réseau de neurones au
 
 \bigskip
 \lstinputlisting[language=C]{type_structure.c}
+
+Cependant, cette représentation n'est pas très pratique à manipuler. C'est pourquoi, après la fin de la première soutenance, nous avons commencé par changer notre type de donnée. Désormais notre approche est plus matriciel. Elle facilite l'écriture des différents algorithmes et occupe moins d'espace mémoire. Le réseau de neurones devient également plus simple à initialisé de manière automatique.
+
+\bigskip
+\lstinputlisting[language=C]{type_nn.c}
+
+On utilise donc deux types de donnés. Le premier type représente le réseau. Il est tout simplement constitué d'une variable indiquant le nombre de couche que possède le réseau de neurones ainsi qu'un tableau des différentes couches.
+
+Le deuxième type est plus fourni. Il possède tout d'abord deux variables : une décrivant le nombre de neurones contenus dans cette couche ainsi qu'une variable décrivant le nombre de liens que chaque neurones possèdent avec la couche précédente, c'est-à-dire plus simplement le nombre de neurones de la couche précédente. En plus de ces deux variables, la structure possède plusieurs tableaux décrivant la valeurs de sortie de chaque neurones, l'erreur actuel de chaque neurones, et les différents poids reliant cette couche à la couche précédente. On y trouve également un tableau permettant de sauvegarder la modification des poids effectuée à $T-1$ afin de pouvoir appliquer un momentum.
+
+\subsection{L'enregistrement des valeurs}
+
+Une fois notre apprentissage réalisé, il est intéressant de pouvoir sauvegarder les différents poids qui caractérisent le réseau de neurones. Avec notre dernière implémentation, il est très facile de parcourir le réseau pour avoir accès à tous les poids. 
+
+Il est également très facile de reconstruire le même réseau de neurones à conditions d'avoir quelques informations supplémentaires en plus des poids. Notre fichier d'enregistrement suit dont la structure ci-dessous :
+
+\begin{itemize}
+\item Un mot magique nous permettant de vérifier qu'il s'agit bien d'un fichier de sauvegarde : $--nn--$
+\item Le nombre de couches que possède le réseau de neurones
+\item Pour chaque couches :
+\begin{itemize}
+\item Sur la même ligne, le nombre de neurones de la couche actuel et le nombre de poids de chaque neurones
+\item La valeur de chaque poids, en représentation hexadécimal d'un double, séparée par un retour à la ligne
+\end{itemize}
+\end{itemize}
+
+Par exemple pour un réseau de neurone qui résout un XOR, cela donne : 
+
+\bigskip
+\lstinputlisting{xor.saved}
 
 \subsubsection{Fonction d'activation}
 
@@ -439,7 +488,7 @@ Pour cette soutenance, nous avons utilisé notre implémentation du réseau de n
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=6cm]{xor_neuron.jpg}
+\includegraphics[width=7cm]{xor_neuron.jpg}
 \caption{Réseau de neurones utilisé pour le XOR}
 \end{figure}
 
@@ -451,6 +500,14 @@ Comme on peut le voir sur la figure~\ref{xor}, le réseau de neurones apprends p
 \caption{Apprentissage de la fonction XOR par notre réseau de neurones}
 \label{xor}
 \end{figure}
+
+\subsection{L'apprentissage des caractères}
+
+Pour l'apprentissage des caractères, il a fallut tout d'abord dimensionner correctement le réseau de neurones. Celui-ci possède donc 400 neurones car il recevra en entrée des image de $20 \times 20$. Sur son unique couche caché, le réseau possèdera 180 neurones. Et enfin, en sortie il possèdera dans un premier temps 52 neurones. Ceci nous permet de reconnaître les lettres de A à Z, en minuscules et majuscules.
+
+Une fois le réseau correctement dimensionné, il faut lui fournir des images pour l'apprentissage jusqu'à que le résultat soit satisfaisant. Pour ce faire, nous avons trouvé sur internet une collection de plus de 10 000 images. Cette collection de données nous a été très utiles. Elle nous a permit de faire apprendre au réseau de neurones 5 polices d'écritures différentes afin de d'obtenir un résultat optimale sur plusieurs images.
+
+Dans l'ensemble, notre réseau de neurone se débrouille plutôt bien sur les images qu'il a apprit ainsi que quelques autres proches. Cependant, quand nous avons connecté notre segmentation et notre réseau de neurones, il nous a fallu implémenter un redimensionnement des images pour avoir la taille nécessaire pour l'entrée du réseau. Ce redimensionnement ne peut pas conserver le ratio et dans de nombreux cas, cela amène une déformation tellement importante du caractère que notre réseau de neurones nous retourne le caractère $i, j,m, n$. Ces caractères font partis des caractères que le réseau de neurones à du mal à apprendre. Il est donc logique que sur des images totalement déformées, dont il n'est plus capable de reconnaître quoique ce soit, il nous retourne l'une de ces valeurs. 
 
 \chapter{Interface graphique}
 
@@ -546,6 +603,8 @@ Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
 \section{Thibault}
 
 %TODO
+
+
 
 \section{Ilan}
 
