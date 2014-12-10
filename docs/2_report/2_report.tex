@@ -11,7 +11,6 @@
 \geometry{top=2.5cm, bottom=2.5cm, left=4.5cm , right=3.5cm}
 \usepackage{graphicx}
 
-
 %%% PACKAGES
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
@@ -28,7 +27,7 @@
 
 \hypersetup{breaklinks=true,
             pdfauthor={Thibault Deutsch (deutsc\_t); Ilan Dubois (dubois\_o); Arthur Douillard (douill\_a); Axel Mendoza (mendoz\_a)},
-            pdftitle={Rapport de soutenance 1},
+            pdftitle={Rapport de projet},
             colorlinks=true,
             citecolor=blue,
             urlcolor=blue,
@@ -51,9 +50,9 @@
 \fancyhead[C]{}
 \fancyhead[R]{Oh! Ça seRt}
 
-\title{Rapport de soutenance 1}
+\title{Rapport de projet}
 \author{Thibault Deutsch (deutsc\_t) \and Ilan Dubois (dubois\_o) \and Arthur Douillard (douill\_a) \and Axel Mendoza (mendoz\_a)}
-\date{29 octobre 2014}
+\date{10 décembre 2014}
 
 \dottedcontents{chapter}%
   [\dimexpr 10mm]
@@ -68,6 +67,7 @@
   {3.2mm}
 
 \begin{document}
+\lstset{frame=shadowbox, rulesepcolor=\color{lightgray}}
 \renewcommand{\labelitemi}{$\bullet$}
 
 \begin{titlepage}
@@ -82,7 +82,7 @@
 %----------------------------------------------------------------------------------------
 %	HEADING SECTIONS
 %----------------------------------------------------------------------------------------
-\textsc{\Large Rapport de soutenance 1}\\[0.15cm] % Major heading such as course name
+\textsc{\Large Rapport de projet}\\[0.15cm] % Major heading such as course name
 \textsc{\large 2\up{ème} année du cycle préparatoire}\\[3cm] % Minor heading such as course title
 
 %----------------------------------------------------------------------------------------
@@ -91,8 +91,8 @@
 \center
 \HRule \\[0.5cm]
 \includegraphics[width = 10cm]{logo.png}\\[1cm]
-\textsc{\Large Un OCR dévelopé en C}\\[0.1cm]
-\large 29 octobre 2014\\[0.1cm]
+\textsc{\Large Un OCR développé en C}\\[0.1cm]
+\large 10 décembre 2014\\[0.1cm]
 \HRule \\[3cm]
 
 \Large
@@ -112,7 +112,7 @@
 
 \chapter{Introduction}
 
-Ce document est le rapport de soutenance 1. Son objectif est de présenter une synthèse du travail fournit par l’équipe du projet (Neurone)\up{*}.\ Ce groupe est composé de quatre étudiants en deuxième année du cycle préparatoire de l’EPITA : Thibault DEUTSCH (deutsc\_t), Ilan DUBOIS (dubois\_o),  Axel MENDOZA (mendoz\_a), et Arthur DOUILLARD (douill\_a).
+Ce document est le rapport de projet. Son objectif est de présenter une synthèse du travail fournit par l’équipe (Neurone)\up{*}.\ Ce groupe est composé de quatre étudiants en deuxième année du cycle préparatoire de l’EPITA : Thibault DEUTSCH (deutsc\_t), Ilan DUBOIS (dubois\_o),  Axel MENDOZA (mendoz\_a), et Arthur DOUILLARD (douill\_a).
 
 Le projet consiste en la réalisation d’un logiciel de reconnaissance optique de caractères (OCR, en anglais \emph{optical character recognition}). Le but de ce logiciel est de convertir un document numérisé, à l'aide d'un scanner, en un fichier numérique modifiable. Pour cela, le programme doit être capable d'extraire la structure du document et de reconnaître les différents caractères.
 
@@ -186,7 +186,7 @@ Notre première idée fut d'utiliser un seuil fixe. Il s'agit de la méthode la 
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=9cm]{b_fixed.png}
+\includegraphics[width=10cm]{b_fixed.png}
 \caption{Binarisation à seuil fixe}
 \end{figure}
 
@@ -211,7 +211,7 @@ Ensuite nous procédons à une binarisation de la même manière que celle menti
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=9cm]{b_otsu.png}
+\includegraphics[width=10cm]{b_otsu.png}
 \caption{Binarisation utilisant la méthode d'Otsu}
 \end{figure}
 
@@ -221,11 +221,13 @@ Après m'être documenté sur l'élimination du bruit, à l'aide de documents se
 
 L'image à traiter proviendra d'un scanner, nous remarquerons que cette image aura certains défauts qu'il faudra éliminer à l'aide du flou en question. En effet, si l'image est floue, le passage d'une valeur à l'autre se fait plus progressivement et l'algorithme de détection de caractères et donc plus optimale. Mathématiquement, une image est rendue floue en utilisant un filtre qui élimine les détails associés à de plus hautes fréquences qui constitue le bruit et les parasites en imagerie numérique qui polluent l'information. Malheureusement, nous ne pouvons appliquer directement un filtre passe-bas ``classique'' sur notre image car cette méthode risque de supprimer les petits caractères isolés tel que les points sur les ``i'' ou les accents. C'est pour cela que nous avons choisit d'appliquer une méthode qui adapte le flou en fonction de la nature des pixels voisins.
 
+\subsection{Matrice de convolution et flou gaussien}
+
 Nous allons aborder maintenant le principe du flou gaussien. En premier lieu, il nous faut définir l'opération mathématique appelée ``convolution'' utilisé dans tout les filtres dit linéaires. Lorsqu'il s'agit de données numérisés comme dans notre cas en traitement d'image, la relation entre les valeurs des pixels d'entrée et celle des pixels de sortie est décrite par un tableau de nombres, généralement carré, appelé matrice de convolution.  Le filtre gaussien, comme son nom l'indique, utilise la loi de probabilité de Gauss et la courbe gaussienne. Le principale problème de ce filtre est que l'application directe de la formule gaussienne nécessite un temps de calcul considérable. Heureusement, certains algorithmes effectuent ce calcul à l'aide d'approximations de plus en plus précises qui améliore grandement la complexité de l'algorithme qui applique ce filtre sur notre image.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=9cm]{matconvol.jpg}
+\includegraphics[width=10cm]{matconvol.jpg}
 \caption{Application d'une matrice de convolution}
 \end{figure}
 
@@ -233,15 +235,57 @@ Au départ nous avons utilisé un filtre moyen, qui calcule les composants de ch
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=9cm]{filtre_gaussien.png}
+\includegraphics[width=10cm]{filtre_gaussien.png}
 \caption{Application du filtre gaussien sur une image bruitée}
 \end{figure}
 
 Le principe du filtre gaussien est donc le suivant : on parcours l'image pixel par pixel, en appliquant le masque sur chaque pixels et ses voisins. On stocke le résultat des calculs effectuer sur les pixel dans une variable constituant un tableau à deux dimensions et on retourne cette variable. Nous avons également utilisé une fonction qui nous renvoi le symétrique d'un pixel par rapport à la matrice de convolution lorsque ce pixel était en dehors de notre image. Lorsque l'on veut appliquer le masque sur un pixel au bord de l'image, on tente de sommer les composantes d'un pixel qui n'existe pas. Mais lorsque l'on somme le pixel symétrique à celui-ci et qu'on le divise par le coefficient au même emplacement dans le masque, le résultat n'est pas erroné.
+\subsection{Filtre médian}
+
+Lors de l'implémentation de la segmentation de l'image, nous avons remarqué que lorsque l'image contient des grains de bruits à plusieurs pixels adjacents, l'application d'un filtre gaussien $5 \times 5$ n'élimine pas correctement les informations parasites. De plus, le filtre gaussien rend l'image flou. Lorsque l'on parcours l'histogramme de notre image pour détecter les contours des paragraphes, lignes ou caractères, notre algorithme de détection considérait alors ces grains de bruits comme de minuscule caractères.
+
+Nous avons donc décider d'ajouter un filtre médian à notre logiciel. Cette méthode consiste à appliquer une matrice de convolution impaire sur chaque pixel de l'image comme précédemment avec le filtre gaussien. Nous avons put remarquer qu'un masque $3 \times 3$ appliqué à notre image suffisait pour faire disparaître les amas important de pixel crée par le bruit. 
+
+Lorsque l'on traite un pixel, nous allons ajouter dans une liste les pixels environnant celui-ci. Nous devons alors utiliser un tri à bulle qui est amplement suffisant pour une petite collection de données, afin de trouver le pixel médian de notre liste. Il faut impérativement allouer un tableau tampon où l'on stocke la nouvelle valeur de notre pixel. Pour finir, on libère l'image courante puis la remplace par notre tableau alloué précédemment.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{filtre-median.png}
+\caption{Application du filtre median sur une image bruitée}
+\end{figure}
 
 \chapter{Analyse de l'image et extraction des caractères}
 
+\section{Rotation de l'image}
+
+\subsection{Détection de l'angle de rotation}
+
+Afin de détecter l'angle de rotation des images, nous avons implémenté la transformé de Hough. Le fonctionnement de cette algorithme est assez simple à comprendre.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{hough.jpg}
+\caption{Espace de Hough}
+\end{figure}
+
+L'algorithme fonctionne suivant le principe suivant. On commence par représenté chaque droite du plan par un couple $(\rho, \theta)$ en coordonnées polaires. On crée ensuite une matrice appelée "acculumateur de Hough" initialisée à 0 qui contiendra les valeurs de $\rho$ et $\theta$. On parcourt ensuite chaque angle de l’intervalle $[0, \pi]$ en calculant à chaque itération une nouvelle valeur de $\rho$ que l'on incrémentera dans la matrice d'accumulation.
+
+\[ \rho = x\cos \left( \theta \right) + y\sin \left( \theta \right) \]
+
+À partir de cette matrice, il est simple de retrouver l'angle du document, car il suffit de trouver la variance maximale parmi toutes les valeurs de $\rho$.
+
+\subsection{Matrice de rotation}
+
+Maintenant que nous connaissons l'angle de rotation de l'image, il nous suffit de calculer la taille optimale de la nouvelle image, puis d'utiliser la matrice de rotation ci-dessous pour appliquer la rotation.
+
+\[ R \left( \theta \right) = \begin{pmatrix}
+   \cos \theta & - \sin \theta \\
+   \sin \theta & \cos \theta 
+\end{pmatrix} \]
+
 \section{Segmentation}
+
+\subsection{RLSA}
 
 RLSA (Run Length Smoothing Algorithm) est la méthode que nous avons choisis pour la segmentation des caractères, des lignes et des paragraphes. Elle nous permet en effet de noircir les zones à détecter. Une fois noircies, celle-ci sont ainsi parfaitement isolées du reste de l'image. Par l'exploitation des coordonnées de ces "zones noires" nous pouvons déterminer avec une bonne précision quel est la zone de l'image dans laquelle se trouve un caractère à analyser, une ligne à assembler ou un paragraphe à enregistrer. Nous obtenons ainsi par analyse de l'image noircie la liste des éléments à traiter dans les différentes fonctions que nous écrirons pour la seconde soutenance.
 
@@ -266,9 +310,56 @@ Nous effectuons donc une passe sur chaque rangée, stockons le résultat dans un
 
 Les avantages de RLSA sont nombreux. En premier lieux, il nous permet de reconnaître les différents éléments de l'image en changeant simplement les paramètres d'appel. Ensuite, grâce à ses deux passes, il fonctionne sur des images droites comme des images penchées. Nous pourrons donc très facilement détecter l'inclinaison à partir de la détection des lignes. Enfin il s'execute dans des temps raisonnables pour des images moyennes ce qui rend son utilisation agréable.
 
-Cependant, RLSA n'est pas parfait. En premier lieu, la nécessité de passer des arguments en fonction de l'image voire de la zone de l'image est problématique. Nous exécutons RLSA avec des paramètres fixés à partir de nos observations et essais successifs mais nous ne sommes pas encore capables de les optimiser. En second lieux, la détection des caractères est problématiques. Nous ne sommes pas parvenus à réellement noircir uniquement les caractères et ceux, quelques soient les paramètres.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{dilatation.png}
+\caption{Principe de dilatation en morphologie mathématique}
+\end{figure}
 
-Nous pensons qu'il s'agit d'une légère erreur d'implémentation mais pensons aussi que RLSA n'est pas la méthode la plus efficace pour cette application. Nous voulons donc pour la seconde soutenance trouver l'erreur d'implémentation. Dans le cas où ce correctif ne serait pas suffisant, nous devrons trouver une méthode plus adaptée à la détection de caractère.
+Cependant, lors de notre avancée dans le projet, nous ne parvenions toujours pas à améliorer l'algorithme afin qu'il détecte de façon convenable les éléments de la page. Ce problème persistant, nous avions décidé d'approfondir nos recherches sur les algorithmes de la famille de RLSA. C'est ainsi que nous avons découvert la morphologie mathématique\footnote{\url{https://fr.wikipedia.org/wiki/Morphologie_math\%C3\%A9matique}} et toute sa complexité. N'obtenant pas beaucoup plus de résultats, nous avons décidé de trouver un autre algorithme.
+
+\subsection{L'algorithme ``maison''}
+
+Pour réaliser la détection des éléments de l'image, nous avons décidé d’implémenter un algorithme au fonctionnement très intuitif : la segmentation successive des paragraphes, lignes et des caractères. Pour ce faire, nous avons utiliser les trois structures de données suivantes.
+
+\bigskip
+\lstinputlisting[language=C]{type_segmentation.c}
+
+La première étape est de crée l'histogramme de l'image, il faut effectuer la somme des composantes des pixels de chaque lignes de l'image et les stocker dans un tableau à une dimension. On parcours ainsi ce nouveau tableau, on avance verticalement tant que les colonnes contiennent seulement des pixels blancs. Cela nous à permis de trouver les cotés gauche et droit des différents paragraphes et de mettre à jour les informations contenu dans le struct Bloc. On ajoute l'intégralité des blocs trouvés dans une liste de Bloc.
+
+On parcours ensuite cette liste, on crée l'histogramme de chaque bloc, puis on parcours horizontalement l'image de gauche a droite en ajoutant à la liste incluse dans la structure bloc les lignes trouvées. On parcours à nouveau chaque listes de lignes en créant l'histogramme associé, puis on avance verticalement dans l'image découpant ainsi les caractères afin de les stocker dans les listes associées à la struc Line.
+
+Le gros avantage de cette méthode est que l'on possède dans les structures l'ordre d'envoi les caractères au réseau de neurones pour reconnaître les caractères. En effet, en parcourant la liste de blocs et chaque listes associées aux structures sous jacentes, on obtient les caractères dans l'ordre conventionnelle de lecture. Malheureusement, nous avons rencontré des difficulté pour l'implémenter. Nous avons finalement décidé d'abandonner cette méthode pour utiliser l'algorithme de segmentation XY-Cut.
+
+\subsection{XY-Cut}
+
+L'algorithme de segmentation XY-Cut est un algorithme récursif de découpage de caractère. Il permet à la fois de reconnaître tout type de blocs mais aussi, une fois amélioré, de reconnaître l'ordre de lecture des paragraphes\footnote{\url{http://pdf.aminer.org/000/295/221/optimized_xy_cut_for_determining_a_page_reading_order.pdf}}. Nous avons choisi d'utiliser cette méthode pour notre OCR.
+
+Son principe est de s'appeler alternativement sur un mode horizontal et vertical. A chaque appel, XY-Cut découpera l'image autour des cadres contenants des éléments de l'image.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{1.png}
+\caption{Illustration du fonctionnement de XY-Cut (1/3)}
+\end{figure}
+
+La longueur ``a'' correspond à la constante a partir de laquelle nous considérons que le cadre ne contiens plus qu'un caractère. Si le cadre envoyé en paramètre à XY-Cut est plus petit sur sa composante verticale et sur sa composante verticale, alors nous considérons que nous sommes en présence d'un caractère.
+
+Le resserage de XY-Cut autour de l'élément à détourer se déroule de façon simple. Considérons que nous sommes sur un appel vertical. La fonction XY-Cut génère en premier lieu un vecteur contenant la somme des valeurs de toutes les colonnes de l'image. La fonction s'appelle ensuite en mode horizontal sur chaque cadre contenant au moins un pixel noir. Les zones blanches sont ainsi entièrement éliminées du processus.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{2.png}
+\caption{llustration du fonctionnement de XY-Cut (2/3)}
+\end{figure}
+
+Le processus est répété sur chacune des zones permet ainsi de se rapprocher un peu plus à chaque appel de XY-Cut. Une fois que le cadre est suffisamment réduit, nous envoyons celui-ci au réseau de neurones. Nous avions initialement prévus de stocker le résultat des appels dans un arbre général afin de pouvoir traiter les caractères dans l'ordre mais l'utilisation de l'arbre s'est révélée inutile. En effet, dans notre cas, l'utilisation d'une liste suffit à conserver l'ordre des caractères.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{3.png}
+\caption{llustration du fonctionnement de XY-Cut (3/3)}
+\end{figure}
 
 \chapter{Reconnaissance des caractères}
 
@@ -322,15 +413,44 @@ Ensuite on parcours chaque couche du réseau, en partant de la couche de sortie,
 
 \subsubsection{Structure de donnée}
 
-Pour la représentation en mémoire de notre réseau de neurone, nous utilisons trois types différents. Le premier s'appelle $t\_neuron$. C'est celui-ci qui représente un neurone ne mémoire. Chaque neurone possède une sortie, un bias (sauf les neurones de la couche d'entrée) et une liste de liens synaptiques.
+Pour la représentation en mémoire de notre réseau de neurone, nous avons d'abord opté pour l'utilisation de trois types différents. Le premier s'appelle $t\_neuron$. C'est celui-ci qui représente un neurone en mémoire. Chaque neurone possède une sortie, un bias (sauf les neurones de la couche d'entrée) et une liste de liens synaptiques.
 
 Le type $t\_connection$ représente un lien. Il possède un poids et deux champs de type $t\_neuron$ représentant les deux neurones reliés par le lien.
 
 Enfin, le type $t\_network$ représente en mémoire notre réseau de neurones au complet. Il possède un pointeur vers l'ensemble des neurones, organisé en différentes couches.
 
 \bigskip
-
 \lstinputlisting[language=C]{type_structure.c}
+
+Cependant, cette représentation n'est pas très pratique à manipuler. C'est pourquoi, après la fin de la première soutenance, nous avons commencé par changer notre type de donnée. Désormais notre approche est plus matriciel. Elle facilite l'écriture des différents algorithmes et occupe moins d'espace mémoire. Le réseau de neurones devient également plus simple à initialisé de manière automatique.
+
+\bigskip
+\lstinputlisting[language=C]{type_nn.c}
+
+On utilise donc deux types de donnés. Le premier type représente le réseau. Il est tout simplement constitué d'une variable indiquant le nombre de couche que possède le réseau de neurones ainsi qu'un tableau des différentes couches.
+
+Le deuxième type est plus fourni. Il possède tout d'abord deux variables : une décrivant le nombre de neurones contenus dans cette couche ainsi qu'une variable décrivant le nombre de liens que chaque neurones possèdent avec la couche précédente, c'est-à-dire plus simplement le nombre de neurones de la couche précédente. En plus de ces deux variables, la structure possède plusieurs tableaux décrivant la valeurs de sortie de chaque neurones, l'erreur actuel de chaque neurones, et les différents poids reliant cette couche à la couche précédente. On y trouve également un tableau permettant de sauvegarder la modification des poids effectuée à $T-1$ afin de pouvoir appliquer un momentum.
+
+\subsection{L'enregistrement des valeurs}
+
+Une fois notre apprentissage réalisé, il est intéressant de pouvoir sauvegarder les différents poids qui caractérisent le réseau de neurones. Avec notre dernière implémentation, il est très facile de parcourir le réseau pour avoir accès à tous les poids. 
+
+Il est également très facile de reconstruire le même réseau de neurones à conditions d'avoir quelques informations supplémentaires en plus des poids. Notre fichier d'enregistrement suit dont la structure ci-dessous :
+
+\begin{itemize}
+\item Un mot magique nous permettant de vérifier qu'il s'agit bien d'un fichier de sauvegarde : $--nn--$
+\item Le nombre de couches que possède le réseau de neurones
+\item Pour chaque couches :
+\begin{itemize}
+\item Sur la même ligne, le nombre de neurones de la couche actuel et le nombre de poids de chaque neurones
+\item La valeur de chaque poids, en représentation hexadécimal d'un double, séparée par un retour à la ligne
+\end{itemize}
+\end{itemize}
+
+Par exemple pour un réseau de neurone qui résout un XOR, cela donne : 
+
+\bigskip
+\lstinputlisting{xor.saved}
 
 \subsubsection{Fonction d'activation}
 
@@ -368,7 +488,7 @@ Pour cette soutenance, nous avons utilisé notre implémentation du réseau de n
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=6cm]{xor_neuron.jpg}
+\includegraphics[width=7cm]{xor_neuron.jpg}
 \caption{Réseau de neurones utilisé pour le XOR}
 \end{figure}
 
@@ -381,13 +501,72 @@ Comme on peut le voir sur la figure~\ref{xor}, le réseau de neurones apprends p
 \label{xor}
 \end{figure}
 
+\subsection{L'apprentissage des caractères}
+
+Pour l'apprentissage des caractères, il a fallut tout d'abord dimensionner correctement le réseau de neurones. Celui-ci possède donc 400 neurones car il recevra en entrée des image de $20 \times 20$. Sur son unique couche caché, le réseau possèdera 180 neurones. Et enfin, en sortie il possèdera dans un premier temps 52 neurones. Ceci nous permet de reconnaître les lettres de A à Z, en minuscules et majuscules.
+
+Une fois le réseau correctement dimensionné, il faut lui fournir des images pour l'apprentissage jusqu'à que le résultat soit satisfaisant. Pour ce faire, nous avons trouvé sur internet une collection de plus de 10 000 images. Cette collection de données nous a été très utiles. Elle nous a permit de faire apprendre au réseau de neurones 5 polices d'écritures différentes afin de d'obtenir un résultat optimale sur plusieurs images.
+
+Dans l'ensemble, notre réseau de neurone se débrouille plutôt bien sur les images qu'il a apprit ainsi que quelques autres proches. Cependant, quand nous avons connecté notre segmentation et notre réseau de neurones, il nous a fallu implémenter un redimensionnement des images pour avoir la taille nécessaire pour l'entrée du réseau. Ce redimensionnement ne peut pas conserver le ratio et dans de nombreux cas, cela amène une déformation tellement importante du caractère que notre réseau de neurones nous retourne le caractère $i, j,m, n$. Ces caractères font partis des caractères que le réseau de neurones à du mal à apprendre. Il est donc logique que sur des images totalement déformées, dont il n'est plus capable de reconnaître quoique ce soit, il nous retourne l'une de ces valeurs. 
+
 \chapter{Interface graphique}
 
-Pour l'interface graphique, nous utiliserons la bibliothèque GTK. Cette bibliothèque va nous permettre de réaliser une interface graphique pour utiliser notre OCR. Sa composition sera des plus simples. Il y aura un bouton pour charger une image à analyser. L'image brute s'affichera ensuite à l'écran. Un autre bouton permettra de lancer l'analyse. Le résultat textuel s'affichera ensuite à côté de l'image et un bouton permettra de sauvegarder le résultat ainsi obtenu.
+La réussite d’un programme informatique se base sur deux choses : le résultat qu’il produit et son accessibilité. Il serait dommage de limiter l’utilisation d’un outil informatique à une poignée de personnes uniquement à cause d’un aspect spartiate - le shell par exemple - qui décourage beaucoup de néophytes. C‘est pourquoi l’interface graphique, GUI (pour Graphical User Interface), est un point majeur de tout projet ayant pour ambition de toucher un public large et varié.Nous avons donc décidé de concevoir l’interface graphique d’OhÇaSert à l’aide de la bibliothèque GTK-3.0. Nous avons utilisé sa version dans le langage C bien évidement. Le logiciel Glade a aussi fait partie des outils utilisés pour développer cette interface, cela pour plusieurs raisons. Glade nous permet de créer une interface suffisamment esthétique d’un point de vue visuel direct. S’il est certes possible d’obtenir le même résultat sans, cela est plus difficile et surtout plus long. La seconde raison complète la première : nous pouvons opérer des changements à la volée sur notre interface sans devoir re-compiler, ce qui est un gain de temps non négligeable.
 
-L'utilisation de GTK nous permettra en outre de faire une correction orthographique et ainsi d'améliorer l'analyse finale. Si l'utilisateur est satisfait, il pourra choisir de prendre en compte les résultats d'analyse afin d'améliorer l'OCR via le machine Learning.
+\section{Les différentes fenêtres}
+Si notre interface ne prétend pas être d’un esthétisme professionnel (le dessin n’a jamais été notre fort), elle se suffit parfaitement à l’utilisation d’un OCR : sobriété et efficacité sont notre credo. Ainsi notre interface est composée principalement d’une zone où est affichée l’image choisie et d’une zone de texte où afficher le résultat de notre OCR.
 
-Ainsi, nous nous assurons de toujours améliorer la précision de nos résultats. Mais nous permettrons aussi à l'utilisateur de rester maître du Machine Learning et ainsi d'éviter l'ajout d'un trop grand nombre d'erreurs ou de faux positifs.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui.png}
+\caption{Fenêtre principale}
+\end{figure}
+
+La première longue barre horizontale est la barre menu, dans l’onglet FILE se trouve les fonctions ``Save as'' et ``Quit''. Dans l’onglet EDIT, la fonction ``Delete'' permet de supprimer l’intégralité du texte se trouvant dans la zone de texte. Et enfin dans l’onglet HELP se trouve la fonction ``About''. Celle-ci ouvre une nouvelle fenêtre sur laquelle on peut retrouver la version du programme actuellement utilisé et un lien vers notre site web.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui-about.png}
+\caption{Fenêtre ``About''}
+\end{figure}
+
+Sur cette dernière fenêtre, vous trouverez également un bouton ``Credits''. Celui-ci permet de lister les logins des développeurs de ce projet.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui-credits.png}
+\caption{Fenêtre ``Credits''}
+\end{figure}
+
+\section{Le fonctionnement}
+
+L'utilisation de l'application est très simple et intuitive. L'utilisateur doit tout d'abord cliquer sur la grande barre horizontale. Celle-ci lui permet de sélectionner une image parmi ses documents.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui-open-file.png}
+\caption{Fenêtre permettant de charger une image}
+\end{figure}
+
+Ce gestionnaire de fichier récupère le chemin d'accès vers l’image et l’affiche dans la zone prévue à cet effet à l'aide du widget GtkImage. L'image chargé est redimensionné à la taille du dit widget via les fonctions de GtkPixbuf.
+
+Le bouton ``Start OCR'' exécute l'ensemble du processus d'analyse de l'image, de la segmentation et de la reconnaissance de caractère de notre OCR. Le résultat de l'analyse de l'image et de son traitement est alors affiché à la place de l'image original et le texte reconnu est inséré dans la zone prévu à cet effet.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui-result.png}
+\caption{Résultat final affiché dans l'interface}
+\end{figure}
+
+S’il y a des erreurs dans le texte généré, venant soit du texte original ou bien d’une mauvaise détection, le mot incriminé sera souligné en rouge. Un simple clic-droit dessus proposera diverses suggestions de correction. Le correcteur orthographique est par défaut en français, mais un simple clic-droit dans la zone de texte permet de changer de langue. Pour utiliser ce correcteur orthographique, il est nécessaire d'avoir installer sur sa machine les bibliothèques GtkSpell et Aspell-fr.
+
+Enfin, l'utilisateur peut choisir de sauvegarder le texte grâce au bouton  ``Save as''. Celui-ci lui permet de sélectionner une destination et un nom de fichier.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10cm]{gui-save.png}
+\caption{Fenêtre permettant de sauvegarder le résultat}
+\end{figure}
 
 \chapter{Site web}
 
@@ -419,11 +598,47 @@ Le site web consiste en une seule page que l'on fait défiler du haut vers le ba
 
 Notre site internet est accessible à l'adresse \url{http://www.ohcasert.ovh}.
 
+\chapter{Synthèses personnelles}
+
+\section{Thibault}
+
+L'informatique me passionne depuis tout petit. C'est donc avec un grand enthousiasme que je me plonge à chaque fois dans un nouveau projet.
+
+Ce nouveau projet m'a permis d'acquérir de nombreuses connaissances algorithmiques en analyse d'image ainsi que sur les réseaux de neurones. C'est d'ailleurs cette deuxième partie qui m'a le plus plu. Je suis très satisfait du travail que j'ai réalisé sur le réseau de neurones, et notamment l'implémentation totalement générique que j'ai réussi à écrire. Je pense même l'extraire du projet pour en faire une bibliothèque dont je pourrai me servir pour d'autre projet.
+
+Cependant, je suis également un petit peu déçu du résultat final. J'aurai bien entendu préféré que l'OCR fonctionne complètement. Mais c'est le jeu. On ne peut pas toujours réussir tout à 100\%.
+
+De plus, malgré ce petit regret, je garderai un très bon souvenir de l'équipe que nous avons formé avec mes camarades. En début d'année nous ne nous connaissions pas pour la plupart, et malgré cela, nous avons réussi à former un groupe soudé qui s'entraide. Je pense que le projet à été bénéfique à tous les membres du groupes.
+
+\section{Ilan}
+
+Au cours de la réalisation de ce projet, j'ai eu l’opportunité d'apprendre de très nombreuses choses sur le C et sur le traitement d'image. En ce qui concerne le C, les notions que j'ai découvertes sont très enrichissantes. J'ai appris à utiliser GDB qui s'est souvent révélé extrêmement utile. Notamment, lors de la réalisation de la segmentation des caractères. J'ai aussi eu l'occasion de mieux comprendre comment fonctionnait la gestion de la mémoire sur un système UNIX. Ces notions seront utiles pour la suite de on cursus, notamment en ING1.
+
+En terme de traitement d'image, j'ai eu l'occasion d'apprendre des algorithmes come XY-Cut. En outre, j'ai eu 'occasion de découvrir des notions plus avancées tel que la morphologie mathématique.
+
+De plus, ce projet m'a appris beaucoup de choses en terme de gestion de projet à plusieurs. Je pense maintenant pouvoir définir plus facilement les priorités lors de la réalisation d'un projet. Ma façon de gérer le temps a elle aussi été impactée par ce projet, elle et désormais plus optimale.
+
+\section{Arthur}
+
+Le projet OhÇaSert, destiné à concevoir un OCR, m’a beaucoup apporté sur des plans aussi nombreux que variés.Premièrement, étant donné que c’est ma première année à l’EPITA, je n’avais jamais pu participer à un projet d’informatique en groupe de cet ampleur avant celui-ci. Ce fut donc pour moi une expérience radicalement nouvelle et pour ainsi dire passionnante.En Septembre, à la rentrée je tâtonnais sur Linux, je bafouillais deux trois lignes de codes en C, mais voilà que l’OCR a fait de moi, à défaut d’un homme meilleur, un meilleur développeur : J’en suis venu à préférer, à ma propre surprise, Linux et plus particulièrement Ubuntu face à Windows. Le shell c’est le bien, voilà ce que j’ai retenu. L’existence même de malloc/calloc et autres joyeusetés me semblait confuse, maintenant je peux malloc() à tour de bras (mais pas toujours correctement encore, mais ça viendra !). N’ayant pratiqué que du python auparavant, cette gestion de la mémoire m’a en effet surpris au départ, mais j’en suis venu à l’apprécier, et je pense sérieusement continuer à pratiquer le C lors de mon voyage à l’étranger au S4 pour être prêt pour l'ING1.Outre l’aspect purement pratique que cette expérience, ce projet m’a appris à gérer mon temps afin d'éviter le rush, même si ce celui se révéla obligatoire et malgré quelques appréhensions excitant. En plus d’une gestion améliorée du temps j’ai aussi appris le travail en équipe, via Git, via des conversations Mumble interminables, traquant le bug dans ces moindres recoins. J’ai aussi appris qu’un groupe était autant source d’aide pour moi, que moi pour eux : ce fut un échange réciproquement et équitable d’information entre mes camarades qui nous a permit d’éliminer des tracasseries dans nos codes, et nous valant des nuits blanches en groupes.
+
+\section{Axel}
+
+Après la première soutenance, je me suis consacré à continuer l'implémentation du pré-traitement et une partie de la segmentation de l'image.
+Je me suis tout d'abord occupé d’implémenter un filtre médian, qui m'as parut plus efficace pour supprimer les grains importants du bruit.
+Par la suite, j'ai aidé Ilan à débugger son algorithme de segmentation de l'image en caractère XY-cut. 
+J'ai tenté une nouvelle approche du problème de la segmentation en blocs lignes et caractères mais Ilan a réussit à faire fonctionner XY-cut donc la méthode que j'ai utiliser n'as pas aboutit.
+
+Malheureusement, j'ai rencontré de nombreux problèmes lors de la finalisation de notre projet, par conséquent très peu de mon code à été utilisé dans la partie fonctionnelle de notre OCR.
+Je ne suis pas déçu ni décourager pour autant suite à cette expérience de groupe car même si la plupart de mes algorithmes n'ont pas aboutit, j'ai appris beaucoup de choses qui me servirons probablement pour l'année prochaine.
+Pour finir, je suis très content d'avoir former un groupe avec mes partenaires de projet car nous avons su nous délégué les différentes tâches et nous aider les uns les autres.
+Même si la finalisation de notre projet n'as pas été à la hauteur de nos attentes, je ne regrette rien et je suis prés pour de nouveaux projets informatiques après mon voyage en Corée !
+
 \chapter{Conclusion}
 
-Nous sommes contents des fonctionnalités que nous avons réalisées pour cette première période de travail. Dans l'ensemble, le cahier des charges a été respecté. Mais il reste encore beaucoup de travail à réaliser, notamment au niveau de l'extraction et de la reconnaissance des caractères.
+Le projet est désormais fini. Comme vous avez pu le lire dans ce rapport de projet, nous avons implémenté de nombreux algorithmes. Nous sommes globalement content des fonctionnalités que nous avons réalisées. De plus, ce projet nous a permis d'acquérir de nombreuses connaissances dans différents domaines.
 
-Nous partons confiants pour la suite du projet. En effet, nous avons déjà réaliser pas mal de recherche pour la suite. Il ne nous reste plus qu'à implémenter et comparer les différents algorithmes que nous avons trouvés ces derniers jours.
+Nous repartons cependant tous un petit peu déçu de ne pas avoir réussi à faire fonctionner l'OCR complètement.
 
 \newpage
 \pagenumbering{Roman}
